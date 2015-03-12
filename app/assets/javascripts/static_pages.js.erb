@@ -1,0 +1,117 @@
+// # Place all the behaviors and hooks related to the matching controller here.
+// # All this logic will automatically be available in application.js.
+// # You can use CoffeeScript in this file: http://coffeescript.org/
+#= require_self
+#= require_tree ./services/global
+#= require_tree ./services/main
+#= require_tree ./filters/global
+#= require_tree ./filters/main
+#= require_tree ./controllers/global
+#= require_tree ./controllers/main
+#= require_tree ./directives/global
+#= require_tree ./directives/main
+#= require_tree ./views/global
+#= require_tree ./views/main
+var myApp = angular.module('myApp', ['ui.router', 'ngAnimate']);
+
+myApp.config(function($locationProvider, $stateProvider, $urlRouterProvider){
+	
+	$locationProvider.html5Mode({
+		enabled: true,
+		requireBase: false
+	});
+
+	$urlRouterProvider.otherwise('/');
+
+	$stateProvider
+
+	// main page
+		.state('/', {
+			abstract: true,
+			url: '/',
+			views: {
+				'': {
+					templateUrl: "<%= asset_path('views/main/main.html') %>",
+				},
+				'navbar@/': {
+					templateUrl: "<%= asset_path('views/global/_navbar.html') %>",
+				},
+				'footer@/': {
+					templateUrl: "<%= asset_path('views/global/_footer.html') %>",
+				}
+			},
+    })
+	// alternate "pages" of root
+		.state('/.about', {
+				url: 'about',
+				
+				views: {
+					'': {
+						templateUrl: "<%= asset_path('views/global/_about.html') %>"
+					},
+					'table-data@/.about': {
+						controller: 'IndexController',
+						templateUrl: "<%= asset_path('views/global/_table-data.html') %>"
+					}
+				}
+		})
+		.state('/.home', {
+				url: '',
+				templateUrl: "<%= asset_path('views/global/_home.html') %>"
+		})
+
+
+	// new template page champions
+		.state('/champions', {
+			url: '/champions',
+			views: {
+				'': {
+					templateUrl: "<%= asset_path('views/main/champions.html') %>",
+				},
+				'champions@/champions': {
+					templateUrl: "<%= asset_path('views/main/_champions.html') %>",
+					controller: 'ChampionsController'
+				},
+				'navbar@/champions': {
+					templateUrl: "<%= asset_path('views/global/_navbar.html') %>",
+				},
+				'footer@/champions': {
+					templateUrl: "<%= asset_path('views/global/_footer.html') %>",
+				}
+			}
+		});
+
+
+
+		// .state('/home.navbar', {
+		// 	url: '/navbar',
+		// 	templateUrl: "<%= asset_path('views/global/_home.html') %>",
+		// 	controller: "IndexController"
+		// })
+
+		// .state('about', {
+		// 	url: '/about',
+		// 	views: {
+		// 		'': {
+		// 			templateUrl: "<%= asset_path('views/main/main.html') %>"
+		// 		},
+		// 		'navbar@about': {
+		// 			templateUrl: "<%= asset_path('views/global/_navbar.html') %>"
+		// 		},
+		// 		'about@about': {
+		// 			templateUrl: "<%= asset_path('views/global/_about.html') %>"
+		// 		}
+		// 	}	
+		// });
+		// .state('/', {
+		// 	url: '/',
+		// 	views: {
+		// 		'navBar': {
+		// 			templateUrl: "<%= asset_path('views/global/_navbar.html') %>",
+		// 		}
+		// 	},
+		// 	'/': {
+		// 		templateUrl: "<%= asset_path('views/main/main.html') %>"
+		// 	}
+		// })
+});

@@ -1,0 +1,34 @@
+{
+  "name": "lolwebsite",
+  "version": "0.0.01",
+  "authors": [
+    "Keith Pike <whogotbooboo@yahoo.com>"
+  ],
+  "description": "package for lolwebsite",
+  "main": "\"\"",
+  "moduleType": [
+    "es6",
+    "node"
+  ],
+  "keywords": [
+    "so",
+    "hot!"
+  ],
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "jquery": "~2.1.3",
+    "jquery-ui": "~1.11.3",
+    "angularjs": "~1.3.14",
+    "angular-ui-router": "~0.2.13",
+    "angular-animate": "~1.3.14",
+    "ui-bootstrap": "~0.12.1"
+  }
+}

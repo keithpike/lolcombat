@@ -1,0 +1,14 @@
+myApp.controller('ChampionsController', ['$scope', function($scope){
+	$scope.images = [
+		"<%= path_to_image('lol/items/1001.png') %>",
+		"<%= path_to_image('lol/items/1004.png') %>",
+		"<%= path_to_image('lol/items/1006.png') %>",
+		"<%= path_to_image('lol/items/1011.png') %>",
+		"<%= path_to_image('lol/items/1018.png') %>"
+		],
+
+	$scope.remove = function(index){
+		$scope.images.splice(index, 1);
+	}
+	$scope.pageClass = 'page-champions';
+}]);

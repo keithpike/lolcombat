@@ -1,0 +1,38 @@
+/*
+ * This is a manifest file that'll be compiled into application.css, which will include all the files
+ * listed below.
+ *
+ * Any CSS and SCSS file within this directory, lib/assets/stylesheets, vendor/assets/stylesheets,
+ * or any plugin's vendor/assets/stylesheets directory can be referenced here using a relative path.
+ *
+ * You're free to add application-wide styles to this file and they'll appear at the bottom of the
+ * compiled file so the styles you add here take precedence over styles defined in any styles
+ * defined in the other CSS/SCSS files in this directory. It is generally better to create a new
+ * file per style scope.
+ *
+ *= require animate
+ *= require _bootstrap
+ *= require_tree .
+ *= require_self
+ */
+
+
+/* put in champions component */
+li.ng-leave{
+	-webkit-animation: 	slideOutRight 1s,
+										 	fadeOut 1.5s;
+	-moz-animation: 		slideOutRight 1s,
+											fadeOut 1.5s;
+	-o-animation:		 		slideOutRight 1s
+											fadeOut 1.5s;
+	animation: 					slideOutRight 1s
+						 					fadeOut 1.5s;
+						 					
+}
+
+.pictureContainer.ng-enter{
+	-webkit-animation: 	bounceInDown 1s;
+	-moz-animation: 		bounceInDown 1s;
+	-o-animation:		 		bounceInDown 1s;
+	animation: 					bounceInDown 1s;
+}
