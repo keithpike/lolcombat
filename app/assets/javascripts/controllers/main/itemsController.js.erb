@@ -1,5 +1,20 @@
-myApp.controller('ItemsController', ['$scope', '$resource', function($scope){
-	//$scope.images = [],
+myApp.controller('ItemsController', function($scope, $resource){
+	$scope.isLoading = false;
+	$scope.images = [];
+	var resource = $resource(
+		"/v1/items",
+		{
+			callback: "JSON_CALLBACK"
+		},
+		{
+			getImages: {
+				method: "GET",
+				isArray: true
+			}
+		}
+	);
+
+	loadRemoteData();
 
 	$scope.add = function(el, idx, arr){
 		$scope.images.push(el)
@@ -13,14 +28,22 @@ myApp.controller('ItemsController', ['$scope', '$resource', function($scope){
 		$scope.images.splice(index, 1);
 	}
 
-	$scope.pageClass = 'page-champions';
+	$scope.getImages = function(){
+		loadRemoteData();
+	}
 
-  $scope.query = function($resource){
-	  return $resource('/v1/items', {}, {
-	    query: {method:'GET', params:{}, isArray:true}
-  	});
-	};
+	function loadRemoteData(){
+		debugger
+		$scope.isLoading = true;
+		resource.getImages().then(
+			function( images ){
+				$scope.isLoading = false;
+				$scope.images = images;
+			},
+			function( error ){
+				alert("wtf!");
+			}
+		);
+	}
 
-	$scope.images = $scope.query();
-
-}]);
+});

@@ -1,7 +1,7 @@
-<div class='pictureContainer'>
+<div ng-click='getImages()' class='pictureContainer'>
 	<div class='row'>
 		<ul>
-			<li ng-click='query()' ng-repeat='img in images'>
+			<li ng-repeat='img in images'>
 				<img ng-src='{{ img }}'/>
 			</li>
 		</ul>
