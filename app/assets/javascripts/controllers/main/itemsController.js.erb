@@ -1,15 +1,14 @@
-myApp.controller('ItemsController', function($scope, $resource){
+myApp.controller('ItemsController',['$scope', '$resource', function($scope, $resource){
 	$scope.isLoading = false;
 	$scope.images = [];
 	var resource = $resource(
 		"/v1/items",
 		{
-			callback: "JSON_CALLBACK"
+			// callback: "JSON_CALLBACK"
 		},
 		{
 			getImages: {
-				method: "GET",
-				isArray: true
+				method: "GET"
 			}
 		}
 	);
@@ -17,11 +16,13 @@ myApp.controller('ItemsController', function($scope, $resource){
 	loadRemoteData();
 
 	$scope.add = function(el, idx, arr){
-		$scope.images.push(el)
+		console.log("<%= path_to_image('lol/items/" + el.image.full + "') %>")
+		$scope.images.push("app/assets/lol/items/" + el.image.full);
 	}
 
 	$scope.addArrayElements = function(items){
-		items.forEach($scope.add)
+		items.items.forEach($scope.add);
+		debugger
 	}
 
 	$scope.remove = function(index){
@@ -33,12 +34,12 @@ myApp.controller('ItemsController', function($scope, $resource){
 	}
 
 	function loadRemoteData(){
-		debugger
 		$scope.isLoading = true;
-		resource.getImages().then(
-			function( images ){
+		resource.getImages().$promise.then(
+			function( apiResponses ){
 				$scope.isLoading = false;
-				$scope.images = images;
+				debugger
+				$scope.addArrayElements(apiResponses);
 			},
 			function( error ){
 				alert("wtf!");
@@ -46,4 +47,4 @@ myApp.controller('ItemsController', function($scope, $resource){
 		);
 	}
 
-});
+}]);
