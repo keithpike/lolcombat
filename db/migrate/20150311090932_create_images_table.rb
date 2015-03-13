@@ -8,6 +8,7 @@ class CreateImagesTable < ActiveRecord::Migration
       t.integer :y
       t.integer :w
       t.integer :h
+      t.references :imageable, polymorphic: true, index: true
       t.timestamps null: false
     end
     add_index :images, :full

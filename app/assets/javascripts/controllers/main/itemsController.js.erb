@@ -1,0 +1,26 @@
+myApp.controller('ItemsController', ['$scope', '$resource', function($scope){
+	//$scope.images = [],
+
+	$scope.add = function(el, idx, arr){
+		$scope.images.push(el)
+	}
+
+	$scope.addArrayElements = function(items){
+		items.forEach($scope.add)
+	}
+
+	$scope.remove = function(index){
+		$scope.images.splice(index, 1);
+	}
+
+	$scope.pageClass = 'page-champions';
+
+  $scope.query = function($resource){
+	  return $resource('/v1/items', {}, {
+	    query: {method:'GET', params:{}, isArray:true}
+  	});
+	};
+
+	$scope.images = $scope.query();
+
+}]);

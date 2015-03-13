@@ -6,4 +6,4 @@
 #   cities = City.create([{ name: 'Chicago' }, { name: 'Copenhagen' }])
 #   Mayor.create(name: 'Emanuel', city: cities.first)
 
-RiotApiHandler.new().seed_me_seymour()
+RiotApiHandler.new().seed_me_seymour_from_files("./app/riot_api_responses")

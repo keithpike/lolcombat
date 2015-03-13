@@ -1,7 +1,7 @@
 class CreateChampionsTable < ActiveRecord::Migration
   def change
     create_table :champions do |t|
-      t.text :champion_id, unique: true
+      t.integer :champion_id, unique: true
       t.text :key, unique: true
       t.text :name
       t.text :title
@@ -34,5 +34,7 @@ class CreateChampionsTable < ActiveRecord::Migration
       t.timestamps null: false
     end
     add_index :champions, :key
+    add_index :champions, :name
+    add_index :champions, :champion_id
   end
 end

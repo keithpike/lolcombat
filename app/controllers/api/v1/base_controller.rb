@@ -92,7 +92,7 @@ module Api::V1
       # PATCH/PUT /api/{plural_resource_name}/1
       def update
         if get_resource.update(resource_params)
-          render :show
+          render json: get_resource
         else
           render json: get_resource.errors, status: :unprocessable_entity
         end

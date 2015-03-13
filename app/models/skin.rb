@@ -1,4 +1,4 @@
 class Skin < ActiveRecord::Base
-	has_one :image, as: :imageable
 	belongs_to :champion
+	has_one :image, as: :imageable, dependent: :destroy
 end

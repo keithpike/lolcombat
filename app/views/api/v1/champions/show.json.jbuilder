@@ -1,0 +1,1 @@
+json.partial!('champion', champion: @champion) unless @champion.nil?	

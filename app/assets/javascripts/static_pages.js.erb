@@ -12,7 +12,7 @@
 #= require_tree ./directives/main
 #= require_tree ./views/global
 #= require_tree ./views/main
-var myApp = angular.module('myApp', ['ui.router', 'ngAnimate']);
+var myApp = angular.module('myApp', ['ui.router', 'ngAnimate', 'ngResource']);
 
 myApp.config(function($locationProvider, $stateProvider, $urlRouterProvider){
 	
@@ -42,19 +42,6 @@ myApp.config(function($locationProvider, $stateProvider, $urlRouterProvider){
 			},
     })
 	// alternate "pages" of root
-		.state('/.about', {
-				url: 'about',
-				
-				views: {
-					'': {
-						templateUrl: "<%= asset_path('views/global/_about.html') %>"
-					},
-					'table-data@/.about': {
-						controller: 'IndexController',
-						templateUrl: "<%= asset_path('views/global/_table-data.html') %>"
-					}
-				}
-		})
 		.state('/.home', {
 				url: '',
 				templateUrl: "<%= asset_path('views/global/_home.html') %>"
@@ -79,7 +66,24 @@ myApp.config(function($locationProvider, $stateProvider, $urlRouterProvider){
 					templateUrl: "<%= asset_path('views/global/_footer.html') %>",
 				}
 			}
+		})
+		.state('/items', {
+			url: '/items',
+			
+			views: {
+				'': {
+					templateUrl: "<%= asset_path('views/main/items.html') %>",
+					controller: "ItemsController"
+				},
+				'items@/items': {
+					templateUrl: "<%= asset_path('views/main/_items.html') %>"
+				},
+				'navbar@/items': {
+					templateUrl: "<%= asset_path('views/global/_navbar.html') %>"
+				}
+			}
 		});
+
 
 
 

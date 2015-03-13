@@ -4,35 +4,37 @@ module Api::V1
 		# 	render json: Champion.all
 		# end
 
-		# def index
-  #     plural_resource_name = "@#{resource_name.pluralize}"
-  #     resources = resource_class.where(query_params)
-  #                               #.page(page_params[:page])
-  #                               #.per(page_params[:page_size])
-  #     instance_variable_set(plural_resource_name, resources)
-  #     render json: instance_variable_get(plural_resource_name)
-  #   end
-
-    def show
-    	# todo: add friendly id gem to allow to search by name as well
-      render json: Champion.find_by_key(params[:id])
+		def index
+      plural_resource_name = "@#{resource_name.pluralize}"
+      resources = resource_class.where(query_params).includes('image')
+                                #.page(page_params[:page])
+                                #.per(page_params[:page_size])
+      instance_variable_set(plural_resource_name, resources)
+      render :index
     end
+
+   #  def show
+   #  	# todo: add friendly id gem to allow to search by name as well
+			# @champion = Champion.find_by_key(params[:id])
+   #    render :show
+   #  end
 
 		# def create
 		# 	render json: "Create functionality is not available until authentication is added"
 		# 	# add after I put up some form of authentication
 
-		# 	# riot_champs = RiotApiHandler.new().get_champions('./champion')
+		# 	# riot_champs = RiotApiHandler.new().get_resources('./champion', 'champion')
 		# 	# riot_champs.each do |champ|
-		# 	# 	Champion.create(champ)
+		# 	#	  Champion.create(champ)
 		# 	# end
+
 		# 	# render json: "champs created"
 		# end
 
-		def update
-		# 	# add after I put up some form of authentication
-			render json: "Update functionality is not available until authentication is added"
-		end
+		# def update
+		# # 	# add after I put up some form of authentication
+		# 	render json: "Update functionality is not available until authentication is added"
+		# end
 
 		# def destroy
 		# 	render json: "Delete functionality is DEFINITELY not available until authentication is added"
@@ -42,7 +44,12 @@ module Api::V1
 
 
 		private
-		
+
+    def set_resource(resource = nil)
+      resource ||= resource_class.find_by_name(params[:id])
+      instance_variable_set("@#{resource_name}", resource)
+    end
+
 		def champion_params
 			params.require(:champion).permit(
 				:champion_id,
@@ -75,5 +82,6 @@ module Api::V1
 				:attaclspeed_per_level_float
 			)
 		end
+
 	end
 end
