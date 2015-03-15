@@ -13,6 +13,7 @@
 
 # Ignore static assets
 /app/assets/images/lol
+/public/assets/images
 
 # Ignore the default SQLite database.
 /db/*.sqlite3

@@ -1,10 +1,10 @@
 myApp.controller('ChampionsController', ['$scope', function($scope){
 	$scope.images = [
-		"<%= path_to_image('lol/items/1001.png') %>",
-		"<%= path_to_image('lol/items/1004.png') %>",
-		"<%= path_to_image('lol/items/1006.png') %>",
-		"<%= path_to_image('lol/items/1011.png') %>",
-		"<%= path_to_image('lol/items/1018.png') %>"
+		"<%= asset_path('assets/images/lol/item/1001.png') %>",
+		"<%= asset_path('assets/images/lol/item/1004.png') %>",
+		"<%= asset_path('assets/images/lol/item/1006.png') %>",
+		"<%= asset_path('assets/images/lol/item/1011.png') %>",
+		"<%= asset_path('assets/images/lol/item/1018.png') %>"
 		],
 
 	$scope.remove = function(index){

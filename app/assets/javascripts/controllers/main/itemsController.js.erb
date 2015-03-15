@@ -1,50 +1,50 @@
-myApp.controller('ItemsController',['$scope', '$resource', function($scope, $resource){
-	$scope.isLoading = false;
-	$scope.images = [];
-	var resource = $resource(
-		"/v1/items",
-		{
-			// callback: "JSON_CALLBACK"
-		},
-		{
-			getImages: {
-				method: "GET"
-			}
-		}
-	);
-
-	loadRemoteData();
-
-	$scope.add = function(el, idx, arr){
-		console.log("<%= path_to_image('lol/items/" + el.image.full + "') %>")
-		$scope.images.push("app/assets/lol/items/" + el.image.full);
-	}
-
-	$scope.addArrayElements = function(items){
-		items.items.forEach($scope.add);
-		debugger
-	}
-
-	$scope.remove = function(index){
-		$scope.images.splice(index, 1);
-	}
-
-	$scope.getImages = function(){
-		loadRemoteData();
-	}
-
-	function loadRemoteData(){
-		$scope.isLoading = true;
-		resource.getImages().$promise.then(
-			function( apiResponses ){
-				$scope.isLoading = false;
-				debugger
-				$scope.addArrayElements(apiResponses);
+myApp
+	.controller('ItemsController',['$scope', '$resource', function($scope, $resource){
+		$scope.isLoading = false;
+		$scope.images = [];
+		var resource = $resource(
+			"/v1/items",
+			{
+				// callback: "JSON_CALLBACK"
 			},
-			function( error ){
-				alert("wtf!");
+			{
+				getImages: {
+					method: "GET"
+				}
 			}
 		);
-	}
 
-}]);
+		$scope.add = function(el, idx, arr){
+			this.push("<%= asset_path('assets/images/lol/item/" + el.image.full + "') %>");
+		}
+
+		$scope.addArrayElements = function(testing){
+			var temp_array = [];
+			testing.items.forEach($scope.add, temp_array);
+			$scope.images = temp_array;
+		}
+
+		$scope.remove = function(index){
+			$scope.images.splice(index, 1);
+		}
+
+		$scope.getImages = function(){
+			console.log($scope.images.length);
+			$scope.images.length === 0 ? loadRemoteData() : null
+		}
+
+		function loadRemoteData(){
+			$scope.isLoading = true;
+			resource.getImages().$promise.then(
+				function( apiResponses ){
+					$scope.isLoading = false;
+					$scope.addArrayElements(apiResponses);
+				},
+				function( error ){
+					alert("wtf!");
+				}
+			);
+		}
+
+		$scope.getImages()
+	}]);
