@@ -1,0 +1,35 @@
+/**
+* ChampionSelector Module
+*
+* Description
+*/
+angular.module('ChampionSelector', [
+	//'models.champions'
+])
+
+	.config(function($stateProvider){
+		$stateProvider
+			.state('appStart.champions', {
+				url: '/champions',
+				views: {
+					'championSelector': {
+						templateUrl: "<%= asset_path('./championSelector.html') %>",
+					}
+				}
+			});
+	})
+
+	.controller('ChampionsSelectorController', ['$scope', function($scope){
+		var championSelectorController = this;
+		$scope.images = [
+			"<%= asset_path('assets/images/lol/item/1001.png') %>",
+			"<%= asset_path('assets/images/lol/item/1004.png') %>",
+			"<%= asset_path('assets/images/lol/item/1006.png') %>",
+			"<%= asset_path('assets/images/lol/item/1011.png') %>",
+			"<%= asset_path('assets/images/lol/item/1018.png') %>"
+			],
+
+		$scope.remove = function(index){
+			$scope.images.splice(index, 1);
+		}
+	}]);

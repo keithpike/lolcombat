@@ -1,50 +1,57 @@
-myApp
-	.controller('ItemsController',['$scope', '$resource', function($scope, $resource){
-		$scope.isLoading = false;
-		$scope.images = [];
-		var resource = $resource(
-			"/v1/items",
-			{
-				// callback: "JSON_CALLBACK"
-			},
-			{
-				getImages: {
-					method: "GET"
-				}
-			}
-		);
+// /**
+// * itemSelector Module
+// *
+// * Description
+// */
+// //angular.module('myApp.championsComparison.itemSelector', ['myApp.models.items']).
 
-		$scope.add = function(el, idx, arr){
-			this.push("<%= asset_path('assets/images/lol/item/" + el.image.full + "') %>");
-		}
+// myApp
+// 	.controller('ItemsController',['$scope', '$resource', function($scope, $resource){
+// 		$scope.isLoading = false;
+// 		$scope.images = [];
+// 		var resource = $resource(
+// 			"/v1/items",
+// 			{
+// 				// callback: "JSON_CALLBACK"
+// 			},
+// 			{
+// 				getImages: {
+// 					method: "GET"
+// 				}
+// 			}
+// 		);
 
-		$scope.addArrayElements = function(testing){
-			var temp_array = [];
-			testing.items.forEach($scope.add, temp_array);
-			$scope.images = temp_array;
-		}
+// 		$scope.add = function(el, idx, arr){
+// 			this.push("https://s3-us-west-1.amazonaws.com/lolcomparitor/Images/item/" + el.image.full);
+// 		}
 
-		$scope.remove = function(index){
-			$scope.images.splice(index, 1);
-		}
+// 		$scope.addArrayElements = function(testing){
+// 			var temp_array = [];
+// 			testing.items.forEach($scope.add, temp_array);
+// 			$scope.images = temp_array;
+// 		}
 
-		$scope.getImages = function(){
-			console.log($scope.images.length);
-			$scope.images.length === 0 ? loadRemoteData() : null
-		}
+// 		$scope.remove = function(index){
+// 			$scope.images.splice(index, 1);
+// 		}
 
-		function loadRemoteData(){
-			$scope.isLoading = true;
-			resource.getImages().$promise.then(
-				function( apiResponses ){
-					$scope.isLoading = false;
-					$scope.addArrayElements(apiResponses);
-				},
-				function( error ){
-					alert("wtf!");
-				}
-			);
-		}
+// 		$scope.getImages = function(){
+// 			console.log($scope.images.length);
+// 			$scope.images.length === 0 ? loadRemoteData() : null
+// 		}
 
-		$scope.getImages()
-	}]);
+// 		function loadRemoteData(){
+// 			$scope.isLoading = true;
+// 			resource.getImages().$promise.then(
+// 				function( apiResponses ){
+// 					$scope.isLoading = false;
+// 					$scope.addArrayElements(apiResponses);
+// 				},
+// 				function( error ){
+// 					alert("wtf!");
+// 				}
+// 			);
+// 		}
+
+// 		$scope.getImages()
+// 	}]);

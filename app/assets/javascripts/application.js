@@ -14,4 +14,5 @@
 //= require angular-ui-router/angular-ui-router
 //= require angular-resource/angular-resource.min
 //= require angular-animate/angular-animate
+//= require underscore/underscore-min
 //= require static_pages

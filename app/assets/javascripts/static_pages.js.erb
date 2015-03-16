@@ -2,120 +2,63 @@
 // # All this logic will automatically be available in application.js.
 // # You can use CoffeeScript in this file: http://coffeescript.org/
 #= require_self
-#= require_tree ./services/global
-#= require_tree ./services/main
-#= require_tree ./filters/global
-#= require_tree ./filters/main
-#= require_tree ./controllers/global
-#= require_tree ./controllers/main
-#= require_tree ./directives/global
-#= require_tree ./directives/main
-#= require_tree ./views/global
-#= require_tree ./views/main
-var myApp = angular.module('myApp', ['ui.router', 'ngAnimate', 'ngResource']);
+#= require_tree ./myApp
 
-myApp.config(function($locationProvider, $stateProvider, $urlRouterProvider){
-	
-	$locationProvider.html5Mode({
-		enabled: true,
-		requireBase: false
-	});
+angular.module('myApp', [
+	'ui.router', 
+	'ngAnimate', 
+	'ngResource',
+	'championComparison',
+	//'championInfo',
+	//'itemInfo'
+])
+	.config(function($locationProvider, $stateProvider, $urlRouterProvider){
 
-	$urlRouterProvider.otherwise('/');
-
-	$stateProvider
-
-	// main page
-		.state('/', {
-			abstract: true,
-			url: '/',
-			views: {
-				'': {
-					templateUrl: "<%= asset_path('views/main/main.html') %>",
-				},
-				'navbar@/': {
-					templateUrl: "<%= asset_path('views/global/_navbar.html') %>",
-				},
-				'footer@/': {
-					templateUrl: "<%= asset_path('views/global/_footer.html') %>",
-				}
-			},
-    })
-	// alternate "pages" of root
-		.state('/.home', {
-				url: '',
-				templateUrl: "<%= asset_path('views/global/_home.html') %>"
-		})
-
-
-	// new template page champions
-		.state('/champions', {
-			url: '/champions',
-			views: {
-				'': {
-					templateUrl: "<%= asset_path('views/main/champions.html') %>",
-				},
-				'champions@/champions': {
-					templateUrl: "<%= asset_path('views/main/_champions.html') %>",
-					controller: 'ChampionsController'
-				},
-				'navbar@/champions': {
-					templateUrl: "<%= asset_path('views/global/_navbar.html') %>",
-				},
-				'footer@/champions': {
-					templateUrl: "<%= asset_path('views/global/_footer.html') %>",
-				}
-			}
-		})
-		.state('/items', {
-			url: '/items',
-			
-			views: {
-				'': {
-					templateUrl: "<%= asset_path('views/main/items.html') %>",
-					controller: "ItemsController"
-				},
-				'items@/items': {
-					templateUrl: "<%= asset_path('views/main/_items.html') %>"
-				},
-				'navbar@/items': {
-					templateUrl: "<%= asset_path('views/global/_navbar.html') %>"
-				}
-			}
+		$locationProvider.html5Mode({
+			enabled: true,
+			requireBase: false,
+			rewriteLinks: false
 		});
 
+		$urlRouterProvider.otherwise('/');
 
+		$stateProvider
+			.state('appStart', {
+				url: '/',
+				views:{
+					'': {
+						templateUrl: "<%= asset_path('myApp/index.html') %>"
+					}
+				}
+	    })
 
-
-		// .state('/home.navbar', {
-		// 	url: '/navbar',
-		// 	templateUrl: "<%= asset_path('views/global/_home.html') %>",
-		// 	controller: "IndexController"
-		// })
-
-		// .state('about', {
-		// 	url: '/about',
-		// 	views: {
-		// 		'': {
-		// 			templateUrl: "<%= asset_path('views/main/main.html') %>"
-		// 		},
-		// 		'navbar@about': {
-		// 			templateUrl: "<%= asset_path('views/global/_navbar.html') %>"
-		// 		},
-		// 		'about@about': {
-		// 			templateUrl: "<%= asset_path('views/global/_about.html') %>"
+		// // new template page champions
+		// 	.state('appStart.champions', {
+		// 		url: '/champions',
+		// 		views: {
+		// 			'': {
+		// 				templateUrl: "<%= asset_path('views/main/_champions.html') %>",
+		// 				controller: 'ChampionsController'
+		// 			},
+		// 			'navbar': {
+		// 				templateUrl: "<%= asset_path('views/global/_navbar.html') %>",
+		// 			},
+		// 			'footer': {
+		// 				templateUrl: "<%= asset_path('views/global/_footer.html') %>",
+		// 			}
 		// 		}
-		// 	}	
+		// 	})
+		// 	.state('appStart.items', {
+		// 		url: '/items',
+				
+		// 		views: {
+		// 			'': {
+		// 				templateUrl: "<%= asset_path('views/main/_items.html') %>",
+		// 				controller: "ItemsController"
+		// 			},
+		// 			'navbar': {
+		// 				templateUrl: "<%= asset_path('views/global/_navbar.html') %>"
+		// 			}
+		// 		}
 		// });
-		// .state('/', {
-		// 	url: '/',
-		// 	views: {
-		// 		'navBar': {
-		// 			templateUrl: "<%= asset_path('views/global/_navbar.html') %>",
-		// 		}
-		// 	},
-		// 	'/': {
-		// 		templateUrl: "<%= asset_path('views/main/main.html') %>"
-		// 	}
-		// })
-});
+	});

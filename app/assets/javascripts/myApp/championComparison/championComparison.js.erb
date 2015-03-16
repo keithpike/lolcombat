@@ -1,0 +1,32 @@
+/**
+* championComparison Module
+*
+* Description
+*/
+angular.module('championComparison', [
+	//'itemsSelector'
+	//'championCalculator',
+	//'championSelector',
+	//'itemRuneMasterySelector',
+	//'models.items',
+	//'models.champions'
+])
+	.config(function($stateProvider){
+		$stateProvider
+			.state('appStart.home', {
+				url: '/',
+				 views: {
+				 	// 'navbar': {
+				 	// 	templateUrl: "<%= asset_path('myApp/navbar/navbar.html') %>",
+				 	// },
+				// 	'footer': {
+				// 		templateUrl: "<%= asset_path('myApp/footer/footer.html') %>",
+				// 	}
+				 }
+			});
+	})
+
+	.controller('championComparisonController', function championComparisonController(){
+		var championComparisonController = this;
+
+	})

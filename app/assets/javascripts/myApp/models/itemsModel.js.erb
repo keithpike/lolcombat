@@ -1,0 +1,133 @@
+/**
+* myApp.models.items Module
+*
+* Description
+*/
+angular.module('models.items', [])
+	.service('ItemsModel', function($http, $q){
+		var model = this,
+				URLS = {
+					GET: "/v1/items"
+				},
+				items,
+				currentItem;
+		
+		function extract(result){
+			return result.data;
+		}
+
+		function cacheItems(result){
+			items = extract(result);
+			return items;
+		}
+
+    function showError(error){
+      debugger
+      console.log("an error has occurred: " + error)
+    }
+
+    function setCurrentItem(itemKey){
+    	return model.asyncGetItemByKey(itemKey).then(function(itemKey){
+    		currentItem = itemKey;
+    	});
+    }
+
+    function getCurrentItem(){
+    	return currentItem;
+    }
+
+    function getItemImage(itemKey){
+    	return model.asyncGetItemByKey(itemKey).then(function(itemKey){
+    		return result.image.full;
+    	});
+    }
+    
+    function getItemImages(){
+    	return model.getItems().then(function(items){
+    		var images = {};
+    		return _.each(items, function(item){
+    			return _.extend(images, item.image.full);
+    		});
+    	});
+    }    
+
+		model.getItems = function(){
+			return (items) ? $q.when(items) : $http.get(URLS.GET).then(cacheItems, showError);
+		}
+
+		model.asyncGetItemByKey = function(itemKey) {
+			return $q(function(resolve, reject){
+				setTimeout(function() {
+					function findItem(key) {
+						// loop over items and return item that matches or nil
+            return _.find(items, function(item){
+                return item.item_id == key;
+            });
+					}
+					if(items){
+						resolve(findItem(itemKey)); 
+					} else {
+						model.getItems()
+							.then(function(){
+								resolve(findItem(itemKey));
+							});
+					}
+					end
+				}, 2000);
+			});
+		};
+
+
+
+	})
+;
+
+
+
+		// $scope.isLoading = false;
+		// $scope.images = [];
+		// var resource = $resource(
+		// 	"/v1/items",
+		// 	{
+		// 		// callback: "JSON_CALLBACK"
+		// 	},
+		// 	{
+		// 		getImages: {
+		// 			method: "GET"
+		// 		}
+		// 	}
+		// );
+
+		// $scope.add = function(el, idx, arr){
+		// 	this.push("https://s3-us-west-1.amazonaws.com/lolcomparitor/Images/item/" + el.image.full);
+		// }
+
+		// $scope.addArrayElements = function(testing){
+		// 	var temp_array = [];
+		// 	testing.items.forEach($scope.add, temp_array);
+		// 	$scope.images = temp_array;
+		// }
+
+		// $scope.remove = function(index){
+		// 	$scope.images.splice(index, 1);
+		// }
+
+		// $scope.getImages = function(){
+		// 	console.log($scope.images.length);
+		// 	$scope.images.length === 0 ? loadRemoteData() : null
+		// }
+
+		// function loadRemoteData(){
+		// 	$scope.isLoading = true;
+		// 	resource.getImages().$promise.then(
+		// 		function( apiResponses ){
+		// 			$scope.isLoading = false;
+		// 			$scope.addArrayElements(apiResponses);
+		// 		},
+		// 		function( error ){
+		// 			alert("wtf!");
+		// 		}
+		// 	);
+		// }
+
+		// $scope.getImages()

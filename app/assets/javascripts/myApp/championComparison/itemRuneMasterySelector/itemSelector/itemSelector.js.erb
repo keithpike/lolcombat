@@ -1,0 +1,26 @@
+/**
+* itemSelector Module
+*
+* Description
+*/
+angular.module('itemSelector', [
+	'models.items'
+])
+
+	.controller('ItemsController', function($stateParams, itemsModel){
+		var itemsController = this;
+
+		function loadRequiredData(){
+			ItemsModel.getImages()
+				.then(function(result){
+					itemsController.itemImages = result;
+				});
+			ItemsModel.getItems()
+				.then(function(result){
+					itemsController.itemsData = result;
+				});
+		}
+		
+		loadRequiredData();
+
+	});

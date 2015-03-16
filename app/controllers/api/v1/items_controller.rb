@@ -9,7 +9,7 @@ module Api::V1
                                 #.per(page_params[:page_size])
 
       instance_variable_set(plural_resource_name, resources)
-      render :index
+      render :index, status: :ok
     end
 
 
