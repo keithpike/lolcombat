@@ -1,6 +1,6 @@
 <div class='row'>
 	<div class='col-md-8 col-md-offset-2 picturesContainer' >
-		<div ng-If='itemsController.getCurrentItem()'class='itemInfoContainer'>
+		<div ng-If='itemsController.itemData' class='itemInfoContainer'>
 			<img ng-src='{{ itemsController.getCurrentItemImage() }}'>
 			</img>
 			<div class='itemGoldcostContainer' ng-bind="'Cost: ' + itemsController.getGoldCost(itemsController.getCurrentItem())">

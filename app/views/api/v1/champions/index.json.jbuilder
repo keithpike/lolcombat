@@ -3,6 +3,7 @@ json.champions @champions do |champion|
 	json.champion_id 	champion.champion_id
 	json.key 					champion.key
 	json.name 				champion.name
+	json.title				champion.title
 	json.tags 				champion.tags
 	json.blurb 				champion.blurb
 

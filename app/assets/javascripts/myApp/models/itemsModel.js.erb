@@ -9,7 +9,7 @@ angular.module('models.items', [])
 				URLS = {
 					GET: "/v1/items"
 				},
-				items,
+				items = {},
 				currentItem;
 		
 		function extract(result) {
@@ -17,12 +17,34 @@ angular.module('models.items', [])
 		}
 
 		function cacheItems(result) {
-			items = extract(result);
+			_.each(extract(result), addItem);
 			return items;
 		}
 
+		function extractDetailed(result) {
+			return result.data;
+		}
+
+		function cacheDetailedItem(result) {
+			return addItem(extractDetailed(result));
+		}
+
+		function addItem(item) {
+			if (item.item_id) {
+				if(itemExist(item)) {
+					_.extend(items[item.item_id], item);	
+				} else {
+					items[item.item_id] = item;
+				}
+				return item;
+			}
+		}
+
+		function itemExist(item) {
+			return items[item.item_id] ? true : false;
+		}
+
     function showError() {
-      debugger
       console.log("an error has occurred: ")
     }
 
@@ -30,30 +52,25 @@ angular.module('models.items', [])
     	return model.asyncGetItemByKey(itemKey).then(function(item){
     		currentItem = item;
     	});
-    }
+    };
 
+    model.resetCurrentItem = function() {
+    	return currentItem = undefined;
+    };
 
     function getItemImage(itemKey) {
     	return model.asyncGetItemByKey(itemKey).then(function(item){
     		return item.image.full;
     	});
     }
-    
-    function getItemImages() {
-    	return model.getItems().then(function(items) {
-    		var images = [];
-    		_.each(items, function(item) {
-    			return images.push(item.image.full);
-    		});
-    		return images;
-    	});
-    }
-
-
 
 		model.getItems = function() {
-			return (items) ? $q.when(items) : $http.get(URLS.GET).then(cacheItems, showError);
-		}
+			return $http.get(URLS.GET, {cache: true}).then(cacheItems, showError);
+		};
+
+		model.getItem = function(key) {
+			return $http.get((URLS.GET + "/" + key), {cache: true}).then(cacheDetailedItem);
+		};
 
 		model.asyncGetItemByKey = function(itemKey) {
 			return $q(function(resolve, reject){
@@ -83,10 +100,6 @@ angular.module('models.items', [])
     model.getCurrentItemImage = function() {
     	return currentItem ? currentItem.image.full : '';
     };
-
-		model.getItemImages = function() {
-			return getItemImages();
-		};
 
 		model.getItemImage = function(item) {
 			return item ? item.image.full : '';

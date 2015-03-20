@@ -1,13 +1,14 @@
 <div class='row'>
 	<div class='col-md-8 col-md-offset-2 picturesContainer' >
-		<div ng-If='championsController.getCurrentChampion()'class='championInfoContainer'>
+		<div ng-If='championsController.championData' class='championInfoContainer'>
 			<img ng-src='{{ championsController.getCurrentChampionImage() }}'>
 			</img>
 			<div class='championContainer' ng-bind-html="championsController.getChampionDisplay(championsController.getCurrentChampion())">
 			</div>
 		</div>
-		<div class='notFound' ng-if='!championsController.getCurrentChampion()'>
+		<div class='notFound' ng-bind-html="'<span>Oh NO!! We did not find your champion in our database!</span>'" ng-if='!championsController.championData'>
 			<!-- TODO create 404 handling -->
+
 		</div>
 	</div>
 </div>

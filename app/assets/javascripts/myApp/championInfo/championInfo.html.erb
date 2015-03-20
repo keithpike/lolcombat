@@ -7,7 +7,7 @@
 				data-trigger='hover'
 				data-container='body'
 				data-html='true'
-				data-content='<div class="championTooltipContainer"><span class="championTooltipName">{{ championsController.getName(champion) }}</span></br><span class="championTooltipDescription">{{ championsController.getBlurb(champion) }}</span></div>'
+				data-content='<div class="championTooltipContainer"><span class="championTooltipName">{{ championsController.getName(champion) }}</span></br><span class="championTooltipTitle">{{ championsController.getTitle(champion) }}</span></br></br><span class="championTooltipBlurb">{{ championsController.getBlurb(champion) }}</span></div>'
 				bs-popover>
 				<img ng-src='{{ ::championsController.getImage(champion) }}'>
 				</img>

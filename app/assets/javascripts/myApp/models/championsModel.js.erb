@@ -20,20 +20,19 @@ angular.module('models.champions', [])
 			_.each(extract(result), addChampion);
 			return champions;
 		}
+
 		function extractDetailed(result) {
 			return result.data
 		}
 
 		function cacheDetailedChampion(result) {
-			var champion = extractDetailed(result);
-			return addChampion(champion);
+			return addChampion(extractDetailed(result));
 		}
 
 		function addChampion(champion) {
-			idx = getChampionIndexByKey(champion.champion_id);
 			if (champion.champion_id) {
-				if(typeof(idx) !== 'undefined') {
-					_.extend(champions[idx], champion);	
+				if(championExist(champion)) {
+					_.extend(champions[champion.champion_id], champion);	
 				} else {
 					champions[champion.champion_id] = champion;
 				}
@@ -41,16 +40,8 @@ angular.module('models.champions', [])
 			}
 		}
 
-		function getChampionIndexByKey(key) {
-// 
-			var idx;
-			_.find(champions, function(champion, champion_idx) { 
-			  if(champion.champion_id == key) {
-			  	idx = champion_idx;
-			  	return true;
-			  };
-			});
-			return idx;
+		function championExist(champion) {
+			return champions[champion.champion_id] ? true : false;
 		}
 
     function showError() {
@@ -63,20 +54,13 @@ angular.module('models.champions', [])
     	});
     }
 
+    model.resetCurrentChampion = function() {
+    	return currentChampion = undefined;
+    };
 
     function getChampionImage(championKey) {
     	return model.asyncGetChampionByName(championKey).then(function(champion){
     		return champion.image.full;
-    	});
-    }
-    
-    function getChampionImages() {
-    	return model.getChampions().then(function(champions) {
-    		var images = [];
-    		_.each(champions, function(champion) {
-    			return images.push(champion.image.full);
-    		});
-    		return images;
     	});
     }
 
@@ -120,10 +104,6 @@ angular.module('models.champions', [])
     model.getCurrentChampionImage = function() {
     	return currentChampion ? currentChampion.image.full : '';
     };
-
-		model.getChampionImages = function() {
-			return getChampionImages();
-		};
 
 		model.getChampionImage = function(champion) {
 			return champion ? champion.image.full : '';

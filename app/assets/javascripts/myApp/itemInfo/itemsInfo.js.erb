@@ -24,7 +24,19 @@ angular.module('itemInfo', [
 					'footer': {
 						templateUrl: "<%= asset_path('myApp/footer/footer.html') %>",
 					}
+				},
+				resolve: {
+					itemsData: function(ItemsModel) {
+						return ItemsModel.getItems()
+							.then(function(result) {
+								return result;
+							});
+					},
+					currentItem: function($stateParams, ItemsModel) {
+						return ItemsModel.resetCurrentItem();
+					}
 				}
+
 			})
 
 			.state('appStart.items.selected', {
@@ -33,7 +45,7 @@ angular.module('itemInfo', [
 				views: {
 					'@appStart': {
 						templateUrl: "<%= asset_path('myApp/itemInfo/itemInfo.selected.html') %>",
-						controller: 'ItemsController as itemsController'
+						controller: 'DetailedItemsController as itemsController'
 					},
 				 	'navbar': {
 				 		templateUrl: "<%= asset_path('myApp/navbar/navbar.html') %>",
@@ -41,7 +53,23 @@ angular.module('itemInfo', [
 					'footer': {
 						templateUrl: "<%= asset_path('myApp/footer/footer.html') %>",
 					}
+				},
+				resolve: {
+
+					itemData: function($stateParams, ItemsModel){
+						return ItemsModel.getItem($stateParams.key)
+							.then(function(result){
+								return result;
+							});
+					},
+
+					currentItem: function($stateParams, ItemsModel, itemData){
+						return ItemsModel.setCurrentItem($stateParams.key);
+					}
+
+
 				}
+
 			});
 
 
@@ -53,23 +81,23 @@ angular.module('itemInfo', [
 	//   	);
 	// })
 
-	.controller('ItemsController', function(ItemsModel, $stateParams){
-		// TODO: implement in a lazy loading fashion
+	.controller('ItemsController', function(ItemsModel, $stateParams, itemsData){
 		var itemsController = this;
+		itemsController.itemsData = itemsData;
 
-		function loadRequiredData(){
-			ItemsModel.getItems()
-				.then(function(result){
-					itemsController.itemsData = result;
-					ItemsModel.setCurrentItem($stateParams.key);
-				});
-		}
-		loadRequiredData();
+		itemsController.getCurrentItem = ItemsModel.getCurrentItem;
+		itemsController.getCurrentItemImage = ItemsModel.getCurrentItemImage;
+		itemsController.getImage = ItemsModel.getItemImage;
+		itemsController.getId = ItemsModel.getItemId;
+		itemsController.getName = ItemsModel.getItemName;
+		itemsController.getDescription = ItemsModel.getItemDescription;
+		itemsController.getGoldCost = ItemsModel.getItemGoldCost;
+	})
 
-		//implemented to be reminder that controller is just middleman with some form of logic
-		itemsController.getNameByIndex = function(idx) {
-			return ItemsModel.getItemName(itemsData[idx]);
-		};
+	.controller('DetailedItemsController', function(ItemsModel, $stateParams, itemData){
+		var itemsController = this;
+		itemsController.itemData = itemData;
+
 
 		itemsController.getCurrentItem = ItemsModel.getCurrentItem;
 		itemsController.getCurrentItemImage = ItemsModel.getCurrentItemImage;
@@ -80,3 +108,4 @@ angular.module('itemInfo', [
 		itemsController.getGoldCost = ItemsModel.getItemGoldCost;
 	
 	});
+
