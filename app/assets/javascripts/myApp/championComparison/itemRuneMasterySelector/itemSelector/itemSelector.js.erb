@@ -4,23 +4,36 @@
 * Description
 */
 angular.module('itemSelector', [
-	'models.items'
+	'models.items',
+	'mgcrea.ngStrap.popover'
 ])
 
-	.controller('ItemsController', function($stateParams, itemsModel){
-		var itemsController = this;
+	.config(function($stateProvider){
+		$stateProvider
+			.state('appStart.itemSelector', {
+				views: {
+				 	'': {
+				 		templateUrl: "<%= asset_path('myApp/championComparison/itemRuneMasterySelector/itemSelector/itemSelector.html') %>",
+				 		controller: 'ItemSelectionController as itemSelectionController'
+				 	}
+				 }
+			});
+	})
 
+	.controller('ItemSelectionController', function(ItemsModel){
+		var itemSelectionController = this;
+		
 		function loadRequiredData(){
-			ItemsModel.getImages()
-				.then(function(result){
-					itemsController.itemImages = result;
-				});
 			ItemsModel.getItems()
 				.then(function(result){
-					itemsController.itemsData = result;
+					itemSelectionController.itemsData = result;
+					ItemsModel.getItemImages()
+						.then(function(result){
+							itemSelectionController.itemImages = result;
+						});
 				});
 		}
-		
+
 		loadRequiredData();
 
 	});

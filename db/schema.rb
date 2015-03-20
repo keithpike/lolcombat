@@ -110,6 +110,7 @@ ActiveRecord::Schema.define(version: 20150313044537) do
   create_table "items", force: :cascade do |t|
     t.text     "name"
     t.text     "item_id"
+    t.text     "description"
     t.text     "sanitizedDescription"
     t.text     "tags",                                default: [], array: true
     t.text     "requiredChampion"

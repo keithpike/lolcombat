@@ -1,0 +1,188 @@
+/**
+* myApp.models.champions Module
+*
+* Description
+*/
+angular.module('models.champions', [])
+	.service('ChampionsModel', function($http, $q){
+		var model = this,
+				URLS = {
+					GET: "/v1/champions",
+				},
+				champions = {},
+				currentChampion;
+		
+		function extract(result) {
+			return result.data.champions;
+		}
+
+		function cacheChampions(result) {
+			_.each(extract(result), addChampion);
+			return champions;
+		}
+		function extractDetailed(result) {
+			return result.data
+		}
+
+		function cacheDetailedChampion(result) {
+			var champion = extractDetailed(result);
+			return addChampion(champion);
+		}
+
+		function addChampion(champion) {
+			idx = getChampionIndexByKey(champion.champion_id);
+			if (champion.champion_id) {
+				if(typeof(idx) !== 'undefined') {
+					_.extend(champions[idx], champion);	
+				} else {
+					champions[champion.champion_id] = champion;
+				}
+				return champion;
+			}
+		}
+
+		function getChampionIndexByKey(key) {
+// 
+			var idx;
+			_.find(champions, function(champion, champion_idx) { 
+			  if(champion.champion_id == key) {
+			  	idx = champion_idx;
+			  	return true;
+			  };
+			});
+			return idx;
+		}
+
+    function showError() {
+      console.log("an error has occurred: ")
+    }
+
+    model.setCurrentChampion = function(championKey) {	
+    	return model.asyncGetChampionByName(championKey).then(function(champion){
+    		currentChampion = champion;
+    	});
+    }
+
+
+    function getChampionImage(championKey) {
+    	return model.asyncGetChampionByName(championKey).then(function(champion){
+    		return champion.image.full;
+    	});
+    }
+    
+    function getChampionImages() {
+    	return model.getChampions().then(function(champions) {
+    		var images = [];
+    		_.each(champions, function(champion) {
+    			return images.push(champion.image.full);
+    		});
+    		return images;
+    	});
+    }
+
+
+		model.getChampions = function() {
+			return $http.get(URLS.GET, {cache: true}).then(cacheChampions);
+			// return (champions) ? $q.when(champions) : $http.get(URLS.GET).then(cacheChampions, showError);
+		}
+
+		model.getChampion = function(key) {
+			return $http.get((URLS.GET + "/" + key), {cache: true}).then(cacheDetailedChampion);
+		// 	return (champions) ? $q.when(champions) : $http.get(URLS.GET + "/" + key).then(cacheChampions, showError);
+		}
+
+
+		model.asyncGetChampionByName = function(championName) {
+			return $q(function(resolve, reject){
+				setTimeout(function() {
+					function findChampion(name) {
+						// loop over champions and return champion that matches or nil
+            return _.find(champions, function(champion) {
+              return champion.name == name;
+            });
+					}
+					if(champions) {
+						resolve(findChampion(championName)); 
+					} else {
+						model.getChampions()
+							.then(function() {
+								resolve(findChampion(championName));
+							});
+					}
+				}, 0);
+			});
+		};
+
+		model.getCurrentChampion = function() {
+    	return currentChampion;
+    };
+
+    model.getCurrentChampionImage = function() {
+    	return currentChampion ? currentChampion.image.full : '';
+    };
+
+		model.getChampionImages = function() {
+			return getChampionImages();
+		};
+
+		model.getChampionImage = function(champion) {
+			return champion ? champion.image.full : '';
+		};
+
+		model.getChampionSprite = function(champion) {
+			return champion ? champion.image.sprite : '';
+		};
+
+		model.getChampionId = function(champion) {
+    	return champion ? champion.champion_id : '';
+    };
+
+    model.getChampionName = function(champion) {
+    	return champion ? champion.name : '';
+    };
+
+    model.getChampionTitle = function(champion) {
+    	return champion ? champion.title : '';
+    };
+
+    model.getChampionLore = function(champion) {
+    	return champion ? champion.lore : '';
+    };
+
+    model.getChampionBlurb = function(champion) {
+    	return champion ? champion.blurb : '';
+    };
+
+    model.getChampionAllyTips = function(champion) {
+    	return champion ? champion.allytips : '';
+    };
+
+    model.getChampionEnemyTips = function(champion) {
+    	return champion ? champion.enemytips : '';
+    };
+    model.getStats = function(champion) {
+    	return { 
+	       'hp': 											champion.hp,
+	       'hp per level': 						champion.hp_per_level,
+	       'mp': 											champion.mp,
+	       'mp per level': 						champion.mp_per_level,
+	       'movespeed': 							champion.movespeed,
+	       'armor': 									champion.armor,
+	       'armor per level': 				champion.armor_per_level,
+	       'spellblock': 							champion.spellblock,
+	       'spellblock per level': 		champion.spellblock_per_level,
+	       'attackrange': 						champion.attackrange,
+	       'hpregen': 								champion.hpregen,
+	       'hpregen per level': 			champion.hpregen_per_level,
+	       'mpregen': 								champion.mpregen,
+	       'mpregen per level': 			champion.mpregen_per_level,
+	       'crit': 										champion.crit,
+	       'crit per level': 					champion.crit_per_level,
+	       'attackdamage': 						champion.attackdamage,
+	       'attackdamage per level': 	champion.attackdamage_per_level,
+	       'attackspeedoffset': 			champion.attackspeedoffset,
+	       'attackspeed per level': 	champion.attackspeed_per_level
+    	};
+    };
+	})
+;

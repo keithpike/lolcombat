@@ -7,7 +7,6 @@ module Api::V1
       resources = resource_class.where(query_params).includes('image')
                                 #.page(page_params[:page])
                                 #.per(page_params[:page_size])
-
       instance_variable_set(plural_resource_name, resources)
       render :index, status: :ok
     end

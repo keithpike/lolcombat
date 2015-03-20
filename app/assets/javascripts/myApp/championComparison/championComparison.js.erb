@@ -4,7 +4,7 @@
 * Description
 */
 angular.module('championComparison', [
-	//'itemsSelector'
+	'itemSelector',
 	//'championCalculator',
 	//'championSelector',
 	//'itemRuneMasterySelector',
@@ -15,18 +15,21 @@ angular.module('championComparison', [
 		$stateProvider
 			.state('appStart.home', {
 				url: '/',
+
 				 views: {
-				 	// 'navbar': {
-				 	// 	templateUrl: "<%= asset_path('myApp/navbar/navbar.html') %>",
-				 	// },
-				// 	'footer': {
-				// 		templateUrl: "<%= asset_path('myApp/footer/footer.html') %>",
-				// 	}
+				 	'':{
+				 		templateUrl: "<%= asset_path('myApp/championComparison/championComparison.html') %>",
+				 	},
+				 	'navbar': {
+				 		templateUrl: "<%= asset_path('myApp/navbar/navbar.html') %>",
+				 	},
+					'footer': {
+						templateUrl: "<%= asset_path('myApp/footer/footer.html') %>",
+					}
 				 }
 			});
 	})
 
-	.controller('championComparisonController', function championComparisonController(){
+	.controller('ChampionComparisonController', function championComparisonController(){
 		var championComparisonController = this;
-
 	})

@@ -1,0 +1,19 @@
+
+<div class='row'>
+	<div class='col-md-8 col-md-offset-2 picturesContainer' >
+		<div class='itemWrapper'
+			ng-repeat='item in itemsController.itemsData'>
+			<a ui-sref='appStart.items.selected({key: itemsController.getId(item)})' class='itemPictureContainer'
+				data-placement='right-bottom'
+				data-trigger='hover'
+				data-container='body'
+				data-html='true'
+				data-content='<div class="itemTooltipContainer"><span class="itemTooltipName">{{ itemsController.getName(item) }}</span></br><span class="itemTooltipDescription">{{ itemsController.getDescription(item) }}</span></div>'
+				bs-popover>
+				<img ng-src='{{ ::itemsController.getImage(item) }}'>
+				</img>
+				<span class='itemName' style='position:bottom;'>{{ itemsController.getName(item) }}</span>
+			</a>
+		</div>
+	</div>
+</div>

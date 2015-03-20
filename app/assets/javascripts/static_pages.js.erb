@@ -9,22 +9,21 @@ angular.module('myApp', [
 	'ngAnimate', 
 	'ngResource',
 	'championComparison',
-	//'championInfo',
-	//'itemInfo'
+	'championInfo',
+	'itemInfo'
 ])
 	.config(function($locationProvider, $stateProvider, $urlRouterProvider){
 
 		$locationProvider.html5Mode({
 			enabled: true,
-			requireBase: false,
-			rewriteLinks: false
+			requireBase: false
 		});
 
 		$urlRouterProvider.otherwise('/');
 
 		$stateProvider
 			.state('appStart', {
-				url: '/',
+				url: '',
 				views:{
 					'': {
 						templateUrl: "<%= asset_path('myApp/index.html') %>"

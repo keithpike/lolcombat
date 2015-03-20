@@ -1,0 +1,103 @@
+/**
+* championSelector Module
+*
+* Description
+*/
+angular.module('championInfo', [
+	'models.champions',
+	'mgcrea.ngStrap.popover',
+	'ngSanitize'
+])
+
+	.config(function($stateProvider){
+		$stateProvider
+			.state('appStart.champions', {
+				url: '/champions',
+				views: {
+				 	'': {
+				 		templateUrl: "<%= asset_path('myApp/championInfo/championInfo.html') %>",
+				 		controller: 'ChampionsController as championsController'
+				 	},
+				 	'navbar': {
+				 		templateUrl: "<%= asset_path('myApp/navbar/navbar.html') %>",
+				 	},
+					'footer': {
+						templateUrl: "<%= asset_path('myApp/footer/footer.html') %>",
+					}
+				}
+			})
+
+			.state('appStart.champions.selected', {
+				//TODO: provide slugs for search term
+				url: '/:key',
+				views: {
+					'@appStart': {
+						templateUrl: "<%= asset_path('myApp/championInfo/championInfo.selected.html') %>",
+						controller: 'DetailedChampionsController as championsController'
+					},
+				 	'navbar': {
+				 		templateUrl: "<%= asset_path('myApp/navbar/navbar.html') %>",
+				 	},
+					'footer': {
+						templateUrl: "<%= asset_path('myApp/footer/footer.html') %>",
+					}
+				}
+			});
+
+
+	})
+	// TODO: reference template so tooltips can read out template instead of inline
+	// .run(function($templateCache) {
+	//   $templateCache.put('championTooltip.html',
+	//   	'<div class="championTooltipContainer"><span class="championTooltipName">{{ championsController.getName($index) }}</span></br><span class="championTooltipDescription">{{ championsController.getDescription($index) }}</span></div>'
+	//   	);
+	// })
+
+	.controller('ChampionsController', function(ChampionsModel, $stateParams){
+		// TODO: implement in a lazy loading fashion
+		var championsController = this;
+
+		function loadRequiredData(){
+			ChampionsModel.getChampions()
+				.then(function(result){
+					championsController.championsData = result;
+					ChampionsModel.setCurrentChampion($stateParams.key);
+				});
+		}
+		loadRequiredData();
+
+		championsController.getCurrentChampion = ChampionsModel.getCurrentChampion;
+		championsController.getCurrentChampionImage = ChampionsModel.getCurrentChampionImage;
+		championsController.getImage = ChampionsModel.getChampionImage;
+		championsController.getId = ChampionsModel.getChampionId;
+		championsController.getName = ChampionsModel.getChampionName;
+		championsController.getBlurb = ChampionsModel.getChampionBlurb;
+	})
+
+		.controller('DetailedChampionsController', function(ChampionsModel, $stateParams){
+		// TODO: implement in a lazy loading fashion
+		var championsController = this;
+
+		function loadRequiredData(){
+			ChampionsModel.getChampion($stateParams.key)
+				.then(function(result){
+					championsController.championData = result;
+					ChampionsModel.setCurrentChampion($stateParams.key);
+				});
+		}
+		loadRequiredData();
+
+		championsController.getCurrentChampion = ChampionsModel.getCurrentChampion;
+		championsController.getCurrentChampionImage = ChampionsModel.getCurrentChampionImage;
+		championsController.getImage = ChampionsModel.getChampionImage;
+		championsController.getId = ChampionsModel.getChampionId;
+		championsController.getName = ChampionsModel.getChampionName;
+		// championsController.getstats = function(champion){
+		// 	stats = ChampionsModel.getChampionStats(champion);
+		// 	_.each(stats, function(stat){
+		// 		return 
+		// 	})
+		// }
+			
+	})
+;

@@ -3,6 +3,7 @@ class CreateItems < ActiveRecord::Migration
     create_table :items do |t|
     	t.text :name
     	t.text :item_id
+    	t.text :description
     	t.text :sanitizedDescription
     	t.text :tags, array: true, default: []
     	t.text :requiredChampion

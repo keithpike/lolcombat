@@ -12,10 +12,12 @@
  *
  *= require normalize
  *= require animate
- *= require _bootstrap
+ *= require _bootstrap 
  *= require_tree .
  *= require_self
  */
+
+
 
 
 /* put in champions component */

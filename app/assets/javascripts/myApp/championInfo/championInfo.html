@@ -1,0 +1,18 @@
+<div class='row'>
+	<div class='col-md-8 col-md-offset-2 picturesContainer' >
+		<div class='championWrapper'
+			ng-repeat='champion in championsController.championsData'>
+			<a ui-sref='appStart.champions.selected({key: championsController.getName(champion)})' class='championPictureContainer'
+				data-placement='right-bottom'
+				data-trigger='hover'
+				data-container='body'
+				data-html='true'
+				data-content='<div class="championTooltipContainer"><span class="championTooltipName">{{ championsController.getName(champion) }}</span></br><span class="championTooltipDescription">{{ championsController.getBlurb(champion) }}</span></div>'
+				bs-popover>
+				<img ng-src='{{ ::championsController.getImage(champion) }}'>
+				</img>
+				<span class='championName' style='position:bottom;'>{{ championsController.getName(champion) }}</span>
+			</a>
+		</div>
+	</div>
+</div>

@@ -1,0 +1,82 @@
+/**
+* itemSelector Module
+*
+* Description
+*/
+angular.module('itemInfo', [
+	'models.items',
+	'mgcrea.ngStrap.popover',
+	'ngSanitize'
+])
+
+	.config(function($stateProvider){
+		$stateProvider
+			.state('appStart.items', {
+				url: '/items',
+				views: {
+				 	'': {
+				 		templateUrl: "<%= asset_path('myApp/itemInfo/itemInfo.html') %>",
+				 		controller: 'ItemsController as itemsController'
+				 	},
+				 	'navbar': {
+				 		templateUrl: "<%= asset_path('myApp/navbar/navbar.html') %>",
+				 	},
+					'footer': {
+						templateUrl: "<%= asset_path('myApp/footer/footer.html') %>",
+					}
+				}
+			})
+
+			.state('appStart.items.selected', {
+				//TODO: provide slugs for search term
+				url: '/:key',
+				views: {
+					'@appStart': {
+						templateUrl: "<%= asset_path('myApp/itemInfo/itemInfo.selected.html') %>",
+						controller: 'ItemsController as itemsController'
+					},
+				 	'navbar': {
+				 		templateUrl: "<%= asset_path('myApp/navbar/navbar.html') %>",
+				 	},
+					'footer': {
+						templateUrl: "<%= asset_path('myApp/footer/footer.html') %>",
+					}
+				}
+			});
+
+
+	})
+	// TODO: reference template so tooltips can read out template instead of inline
+	// .run(function($templateCache) {
+	//   $templateCache.put('itemTooltip.html',
+	//   	'<div class="itemTooltipContainer"><span class="itemTooltipName">{{ itemsController.getName($index) }}</span></br><span class="itemTooltipDescription">{{ itemsController.getDescription($index) }}</span></div>'
+	//   	);
+	// })
+
+	.controller('ItemsController', function(ItemsModel, $stateParams){
+		// TODO: implement in a lazy loading fashion
+		var itemsController = this;
+
+		function loadRequiredData(){
+			ItemsModel.getItems()
+				.then(function(result){
+					itemsController.itemsData = result;
+					ItemsModel.setCurrentItem($stateParams.key);
+				});
+		}
+		loadRequiredData();
+
+		//implemented to be reminder that controller is just middleman with some form of logic
+		itemsController.getNameByIndex = function(idx) {
+			return ItemsModel.getItemName(itemsData[idx]);
+		};
+
+		itemsController.getCurrentItem = ItemsModel.getCurrentItem;
+		itemsController.getCurrentItemImage = ItemsModel.getCurrentItemImage;
+		itemsController.getImage = ItemsModel.getItemImage;
+		itemsController.getId = ItemsModel.getItemId;
+		itemsController.getName = ItemsModel.getItemName;
+		itemsController.getDescription = ItemsModel.getItemDescription;
+		itemsController.getGoldCost = ItemsModel.getItemGoldCost;
+	
+	});

@@ -1,3 +1,27 @@
 // Place all the styles related to the api/items controller here.
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: http://sass-lang.com/
+.itemPictureContainer {
+	margin: 3px 3px 4px 4px;
+	background-color:gray;
+	float: left;
+	width: 64px;
+	height: 64px;
+}
+
+.itemSelectorContainer{
+	background-color: transparent;
+	overflow-y: scroll;
+	overflow-x: visible;
+	height:212px;
+}
+
+.itemPictureContainer:hover {
+	outline-style: solid;
+	outline-color: coral;
+	outline-width: medium;
+}
+
+.itemTooltipName {
+	font-weight: bold;
+}

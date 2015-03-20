@@ -12,46 +12,46 @@ angular.module('models.items', [])
 				items,
 				currentItem;
 		
-		function extract(result){
-			return result.data;
+		function extract(result) {
+			return result.data.items;
 		}
 
-		function cacheItems(result){
+		function cacheItems(result) {
 			items = extract(result);
 			return items;
 		}
 
-    function showError(error){
+    function showError() {
       debugger
-      console.log("an error has occurred: " + error)
+      console.log("an error has occurred: ")
     }
 
-    function setCurrentItem(itemKey){
-    	return model.asyncGetItemByKey(itemKey).then(function(itemKey){
-    		currentItem = itemKey;
+    model.setCurrentItem = function(itemKey) {
+    	return model.asyncGetItemByKey(itemKey).then(function(item){
+    		currentItem = item;
     	});
     }
 
-    function getCurrentItem(){
-    	return currentItem;
-    }
 
-    function getItemImage(itemKey){
-    	return model.asyncGetItemByKey(itemKey).then(function(itemKey){
-    		return result.image.full;
+    function getItemImage(itemKey) {
+    	return model.asyncGetItemByKey(itemKey).then(function(item){
+    		return item.image.full;
     	});
     }
     
-    function getItemImages(){
-    	return model.getItems().then(function(items){
-    		var images = {};
-    		return _.each(items, function(item){
-    			return _.extend(images, item.image.full);
+    function getItemImages() {
+    	return model.getItems().then(function(items) {
+    		var images = [];
+    		_.each(items, function(item) {
+    			return images.push(item.image.full);
     		});
+    		return images;
     	});
-    }    
+    }
 
-		model.getItems = function(){
+
+
+		model.getItems = function() {
 			return (items) ? $q.when(items) : $http.get(URLS.GET).then(cacheItems, showError);
 		}
 
@@ -60,74 +60,56 @@ angular.module('models.items', [])
 				setTimeout(function() {
 					function findItem(key) {
 						// loop over items and return item that matches or nil
-            return _.find(items, function(item){
-                return item.item_id == key;
+            return _.find(items, function(item) {
+              return item.item_id == key;
             });
 					}
-					if(items){
+					if(items) {
 						resolve(findItem(itemKey)); 
 					} else {
 						model.getItems()
-							.then(function(){
+							.then(function() {
 								resolve(findItem(itemKey));
 							});
 					}
-					end
-				}, 2000);
+				}, 0);
 			});
 		};
 
+		model.getCurrentItem = function() {
+    	return currentItem;
+    };
 
+    model.getCurrentItemImage = function() {
+    	return currentItem ? currentItem.image.full : '';
+    };
 
+		model.getItemImages = function() {
+			return getItemImages();
+		};
+
+		model.getItemImage = function(item) {
+			return item ? item.image.full : '';
+		};
+
+		model.getItemSprite = function(item) {
+			return item ? item.image.sprite : '';
+		};
+
+		model.getItemId = function(item) {
+    	return item ? item.item_id : '';
+    };
+
+    model.getItemName = function(item) {
+    	return item ? item.name : '';
+    };
+
+    model.getItemDescription = function(item) {
+    	return item ? item.description : '';
+    };
+
+    model.getItemGoldCost = function(item) {
+    	return item ? item.total_gold : '';
+    };
 	})
 ;
-
-
-
-		// $scope.isLoading = false;
-		// $scope.images = [];
-		// var resource = $resource(
-		// 	"/v1/items",
-		// 	{
-		// 		// callback: "JSON_CALLBACK"
-		// 	},
-		// 	{
-		// 		getImages: {
-		// 			method: "GET"
-		// 		}
-		// 	}
-		// );
-
-		// $scope.add = function(el, idx, arr){
-		// 	this.push("https://s3-us-west-1.amazonaws.com/lolcomparitor/Images/item/" + el.image.full);
-		// }
-
-		// $scope.addArrayElements = function(testing){
-		// 	var temp_array = [];
-		// 	testing.items.forEach($scope.add, temp_array);
-		// 	$scope.images = temp_array;
-		// }
-
-		// $scope.remove = function(index){
-		// 	$scope.images.splice(index, 1);
-		// }
-
-		// $scope.getImages = function(){
-		// 	console.log($scope.images.length);
-		// 	$scope.images.length === 0 ? loadRemoteData() : null
-		// }
-
-		// function loadRemoteData(){
-		// 	$scope.isLoading = true;
-		// 	resource.getImages().$promise.then(
-		// 		function( apiResponses ){
-		// 			$scope.isLoading = false;
-		// 			$scope.addArrayElements(apiResponses);
-		// 		},
-		// 		function( error ){
-		// 			alert("wtf!");
-		// 		}
-		// 	);
-		// }
-
-		// $scope.getImages()

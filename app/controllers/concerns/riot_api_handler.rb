@@ -57,12 +57,21 @@ class RiotApiHandler
 		end
 		result = json_modification(received_json[initial_key][initial_key2], base_hash_changes)
 		merge_all_hashes!(result, changes)
+
+		unless result['image']['full'].nil? || received_json['type'].nil?
+			result["image"]["full"] = "#{get_image_path_by_data_type(received_json['type'])}#{result['image']['full']}" 
+			result["image"]["sprite"] = "#{get_image_path_by_data_type('sprite')}#{result['image']['sprite']}" 
+		end
+		result
+
 	end
 
 	def get_json_file_data(path, file_name, initial_key, base_hash_changes, other_hash_changes)
 		a = load_as_json("#{path}/#{file_name}.json")
 		create_json_object(a, initial_key, file_name, base_hash_changes, other_hash_changes)
 	end
+
+
 
 	def create_json_objects_from_api(json_data, keys, initial_data_key, base_hash_changes, other_hash_changes)
 		results = []
@@ -94,6 +103,23 @@ class RiotApiHandler
 		results
 	end
 
+	def get_image_path_by_data_type(data_type)
+			case(data_type)
+			when "champion"
+				'https://s3-us-west-1.amazonaws.com/lolcomparitor/Images/champion/'
+			when "item"
+				'https://s3-us-west-1.amazonaws.com/lolcomparitor/Images/item/'
+			when "rune"
+				'https://s3-us-west-1.amazonaws.com/lolcomparitor/Images/rune/'
+			when "mastery"
+				'https://s3-us-west-1.amazonaws.com/lolcomparitor/Images/mastery/'
+			when "sprite"
+				'https://s3-us-west-1.amazonaws.com/lolcomparitor/Images/sprite/'
+			else
+				[]
+			end
+	end
+	
 	def get_modifiers_by_data_type(data_type)
 			case(data_type)
 			when "champion"
@@ -142,7 +168,7 @@ class RiotApiHandler
 
 		json_modifications_for_item = [
 			["id", "item_id"],
-			["description", ""],
+			#["description", ""],
 			#["image", ""],
 			["stats", ""],
 			["from", ""],
@@ -179,9 +205,7 @@ class RiotApiHandler
 		json_modifications_for_image = []
 		json_modifications_for_passive = []
 		json_modifications_for_skin = []
-		json_modifications_for_ability = [
-			[]
-		]
+		json_modifications_for_ability = []
 		json_modifications_for_coefficient = []
 		
 
