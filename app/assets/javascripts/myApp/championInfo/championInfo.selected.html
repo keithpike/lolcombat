@@ -1,13 +1,21 @@
 <div class='row'>
 	<div class='col-md-8 col-md-offset-2 picturesContainer' >
-		<div ng-If='championsController.championData' class='championInfoContainer'>
+		<div ng-If='championsController.getCurrentChampion()' class='championInfoContainer'>
 			<img ng-src='{{ championsController.getCurrentChampionImage() }}'>
 			</img>
-			<div class='championContainer' ng-bind-html="championsController.getChampionDisplay(championsController.getCurrentChampion())">
+			<div class='championContainer'>
+				<div class='championNameContainer' ng-bind="championsController.getName(championsController.getCurrentChampion())">
+				</div>
+				<div class='championTitleContainer' ng-bind="championsController.getTitle(championsController.getCurrentChampion())">
+				</div>
+				<div class='championLoreContainer' ng-bind-html="championsController.getLore(championsController.getCurrentChampion())">
+				</div>
+				<div class='championTitleContainer' ng-bind-html="championsController.getStats(championsController.getCurrentChampion())">
+				</div>
 			</div>
 		</div>
-		<div class='notFound' ng-bind-html="'<span>Oh NO!! We did not find your champion in our database!</span>'" ng-if='!championsController.championData'>
-			<!-- TODO create 404 handling -->
+		<div class='notFound' ng-bind-html="'<span>Oh NO!! We did not find your champion in our database!</span>'" ng-if='!championsController.getCurrentChampion'>
+			<!-- TODO create not found handling -->
 
 		</div>
 	</div>

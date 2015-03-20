@@ -103,15 +103,8 @@ angular.module('championInfo', [
 		championsController.getId = ChampionsModel.getChampionId;
 		championsController.getName = ChampionsModel.getChampionName;
 		championsController.getTitle = ChampionsModel.getChampionTitle;
-		championsController.getstats = function(champion) {
-			stats = ChampionsModel.getChampionStats(champion);
-			_.each(stats, function(stat){
-				return 
-			})
-		};
-		championsController.getChampionDisplay = function(champion){
-
-		};
-			
+		championsController.getLore = ChampionsModel.getChampionLore;
+		championsController.getStats = ChampionsModel.getChampionStatsHtml;
+		
 	})
 ;

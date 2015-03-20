@@ -1,3 +1,20 @@
 // Place all the styles related to the api/champions controller here.
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: http://sass-lang.com/
+.championPictureContainer{
+	background-color:gray;
+	display: inline-block;
+	float: none;
+	width: 120px;
+	height: 120px;
+}
+.championWrapper{
+	float: left;
+	height: 170px;
+	margin: 10px 20px 0 0;
+	width: auto;
+}
+.championName{
+	display: block;
+	text-align: center;
+}

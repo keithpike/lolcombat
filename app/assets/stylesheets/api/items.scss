@@ -2,11 +2,18 @@
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: http://sass-lang.com/
 .itemPictureContainer {
-	margin: 3px 3px 4px 4px;
-	background-color:gray;
-	float: left;
+	display: block;
+	margin: auto;
+	background-color: gray;
 	width: 64px;
 	height: 64px;
+}
+
+.itemWrapper{
+	float: left;
+	height: 120px;
+	margin: 10px 0 0 0;
+	width: 100px;
 }
 
 .itemSelectorContainer{
@@ -21,6 +28,12 @@
 	outline-color: coral;
 	outline-width: medium;
 }
+
+.itemName{
+	display: block;
+	text-align: center;
+}
+
 
 .itemTooltipName {
 	font-weight: bold;

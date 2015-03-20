@@ -17,7 +17,7 @@ angular.module('models.champions', [])
 		}
 
 		function cacheChampions(result) {
-			_.each(extract(result), addChampion);
+			angular.forEach(extract(result), addChampion);
 			return champions;
 		}
 
@@ -32,7 +32,7 @@ angular.module('models.champions', [])
 		function addChampion(champion) {
 			if (champion.champion_id) {
 				if(championExist(champion)) {
-					_.extend(champions[champion.champion_id], champion);	
+					angular.extend(champions[champion.champion_id], champion);	
 				} else {
 					champions[champion.champion_id] = champion;
 				}
@@ -140,7 +140,21 @@ angular.module('models.champions', [])
     model.getChampionEnemyTips = function(champion) {
     	return champion ? champion.enemytips : '';
     };
-    model.getStats = function(champion) {
+
+    model.getChampionStatsHtml = function(champion) {
+    	return "<span class='hpDisplay'> HP: " + champion.hp + "<span class='hpPLDisplay'>(" + champion.hp_per_level + ")</span></span>" +
+			"<span class='attackDmgDisplay'> Attack Damage: " + champion.attackdamage.toFixed(2) + "<span class='attackDmgPLDisplay'>(" + champion.attackdamage_per_level.toFixed(2) + ")</span></span>" +
+			"<span class='hpRegenDisplay'> HP Regen: " + champion.hpregen + "<span class='hpRegenPLDisplay'>(" + champion.hpregen_per_level + ")</span></span>" +
+			"<span class='attackSpeedDisplay'> Attack Speed: " + (.625 / (1 + champion.attackspeedoffset)).toFixed(3) + "<span class='attackSpeedPLDisplay'>(" + champion.attackspeed_per_level + "%)</span></span>" +
+			"<span class='mpDisplay'> MP: " + champion.mp + "<span class='mpPLDisplay'>(" + champion.mp_per_level + ")</span></span>" +
+			"<span class='armorDisplay'> Armor: " + champion.armor + "<span class='armorPLDisplay'>(" + champion.armor_per_level + ")</span></span>" +
+			"<span class='mpRegenDisplay'> MP Regen: " + champion.mpregen + "<span class='mpRegenPLDisplay'>(" + champion.mpregen_per_level + ")</span></span>" +
+			"<span class='magicResistDisplay'> Magic Resist: " + champion.spellblock + "<span class='magicResistPLDisplay'>(" + champion.spellblock_per_level + ")</span></span>" +
+			"<span class='rangeDisplay'> Attack Range: " + champion.attackrange +
+			"<span class='moveSpeedDisplay'> Movespeed: " + champion.movespeed
+    };
+
+    model.getChampionStats = function(champion) {
     	return { 
 	       'hp': 											champion.hp,
 	       'hp per level': 						champion.hp_per_level,
@@ -163,6 +177,14 @@ angular.module('models.champions', [])
 	       'attackspeedoffset': 			champion.attackspeedoffset,
 	       'attackspeed per level': 	champion.attackspeed_per_level
     	};
+    };
+
+    model.getSpriteStyle = function(champion) {
+    	// TODO return style for champion's sprite
+    	// champion.image.x
+    	// champion.image.y
+    	// champion.image.w
+    	// champion.image.h
     };
 	})
 ;

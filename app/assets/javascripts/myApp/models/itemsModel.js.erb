@@ -17,7 +17,7 @@ angular.module('models.items', [])
 		}
 
 		function cacheItems(result) {
-			_.each(extract(result), addItem);
+			angular.forEach(extract(result), addItem);
 			return items;
 		}
 
@@ -32,7 +32,7 @@ angular.module('models.items', [])
 		function addItem(item) {
 			if (item.item_id) {
 				if(itemExist(item)) {
-					_.extend(items[item.item_id], item);	
+					angular.extend(items[item.item_id], item);	
 				} else {
 					items[item.item_id] = item;
 				}
@@ -123,6 +123,10 @@ angular.module('models.items', [])
 
     model.getItemGoldCost = function(item) {
     	return item ? item.total_gold : '';
+    };
+
+    model.getSpriteStyle = function(champion) {
+    	// return champion.image.
     };
 	})
 ;
