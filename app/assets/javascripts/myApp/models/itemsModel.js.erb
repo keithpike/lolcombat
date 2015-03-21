@@ -125,8 +125,13 @@ angular.module('models.items', [])
     	return item ? item.total_gold : '';
     };
 
-    model.getSpriteStyle = function(champion) {
-    	// return champion.image.
+    model.getSpriteStyle = function(item) {
+    	return {
+    		'background-image': 'url(' + model.getItemSprite(item) +')',
+    		'background-position': '-' + item.image.x + 'px ' + '-' + item.image.y + 'px',
+    		'width': item.image.w + 'px',
+    		'height': item.image.h + 'px'
+    	};
     };
 	})
 ;

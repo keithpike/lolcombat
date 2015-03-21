@@ -3,6 +3,8 @@
 		<div ng-If='itemsController.itemData' class='itemInfoContainer'>
 			<img ng-src='{{ itemsController.getCurrentItemImage() }}'>
 			</img>
+			<div class='itemNameContainer' ng-bind='itemsController.getName(itemsController.getCurrentItem())'>
+			</div>
 			<div class='itemGoldcostContainer' ng-bind="'Cost: ' + itemsController.getGoldCost(itemsController.getCurrentItem())">
 				<!-- TODO: add gold coin icon -->
 			</div>

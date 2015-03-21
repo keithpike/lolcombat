@@ -90,6 +90,7 @@ angular.module('championInfo', [
 		championsController.getName = ChampionsModel.getChampionName;
 		championsController.getBlurb = ChampionsModel.getChampionBlurb;
 		championsController.getTitle = ChampionsModel.getChampionTitle;
+		championsController.getSpriteStyle = ChampionsModel.getChampionSpriteStyle;
 	})
 
 		.controller('DetailedChampionsController', function(ChampionsModel, $stateParams, championData){

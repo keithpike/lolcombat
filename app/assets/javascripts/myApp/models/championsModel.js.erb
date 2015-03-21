@@ -12,6 +12,16 @@ angular.module('models.champions', [])
 				champions = {},
 				currentChampion;
 		
+		function capitalize(value) {
+			// TODO take this out to a helper function or completely
+			var words = value.split(" ");
+			words = angular.forEach(words, function(word, idx) {
+				words[idx] = word[0].toUpperCase() + word.substring(1).toLowerCase();
+			});
+
+			return words.join(" ");
+		}
+
 		function extract(result) {
 			return result.data.champions;
 		}
@@ -48,7 +58,8 @@ angular.module('models.champions', [])
       console.log("an error has occurred: ")
     }
 
-    model.setCurrentChampion = function(championKey) {	
+    model.setCurrentChampion = function(championKey) {
+    	championKey = capitalize(championKey);
     	return model.asyncGetChampionByName(championKey).then(function(champion){
     		currentChampion = champion;
     	});
@@ -71,6 +82,7 @@ angular.module('models.champions', [])
 		}
 
 		model.getChampion = function(key) {
+			key = capitalize(key);
 			return $http.get((URLS.GET + "/" + key), {cache: true}).then(cacheDetailedChampion);
 		// 	return (champions) ? $q.when(champions) : $http.get(URLS.GET + "/" + key).then(cacheChampions, showError);
 		}
@@ -179,12 +191,14 @@ angular.module('models.champions', [])
     	};
     };
 
-    model.getSpriteStyle = function(champion) {
+    model.getChampionSpriteStyle = function(champion) {
     	// TODO return style for champion's sprite
-    	// champion.image.x
-    	// champion.image.y
-    	// champion.image.w
-    	// champion.image.h
+    	return {
+    		'background-image': 'url(' + model.getChampionSprite(champion) +')',
+    		'background-position': '-' + champion.image.x + 'px ' + '-' + champion.image.y + 'px',
+    		'width': champion.image.w + 'px',
+    		'height': champion.image.h + 'px'
+    	};
     };
 	})
 ;

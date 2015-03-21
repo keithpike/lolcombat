@@ -8,8 +8,8 @@ angular.module('championComparison', [
 	//'championCalculator',
 	//'championSelector',
 	//'itemRuneMasterySelector',
-	//'models.items',
-	//'models.champions'
+	'models.items',
+	'models.champions'
 ])
 	.config(function($stateProvider){
 		$stateProvider
@@ -19,6 +19,12 @@ angular.module('championComparison', [
 				 views: {
 				 	'':{
 				 		templateUrl: "<%= asset_path('myApp/championComparison/championComparison.html') %>",
+				 		controller: 'ChampionComparisonController',
+				 		resolve: {
+				 			items: function(ItemsModel){
+				 				return ItemsModel.getItems();
+				 			}
+				 		}
 				 	},
 				 	'navbar': {
 				 		templateUrl: "<%= asset_path('myApp/navbar/navbar.html') %>",
