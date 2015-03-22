@@ -6,15 +6,21 @@
 			<div class='championContainer'>
 				<div class='championNameContainer' ng-bind="championsController.getName(championsController.getCurrentChampion())">
 				</div>
+				<div class='championResourceContainer' ng-bind="championsController.getResourceType(championsController.getCurrentChampion())">
+				</div>
 				<div class='championTitleContainer' ng-bind="championsController.getTitle(championsController.getCurrentChampion())">
+				</div>
+				<div class='championRolesContainer'>
+					<div class='championRole' ng-repeat='role in championsController.getRoles(championsController.getCurrentChampion())' ng-bind='role'>
+					</div>
+				</div>
+				<div class='championStatsContainer' ng-bind-html="championsController.getStats(championsController.getCurrentChampion())">
 				</div>
 				<div class='championLoreContainer' ng-bind-html="championsController.getLore(championsController.getCurrentChampion())">
 				</div>
-				<div class='championTitleContainer' ng-bind-html="championsController.getStats(championsController.getCurrentChampion())">
-				</div>
 			</div>
 		</div>
-		<div class='notFound' ng-bind-html="'<span>Oh NO!! We did not find your champion in our database!</span>'" ng-if='!championsController.getCurrentChampion'>
+		<div class='notFound' ng-bind-html="'<span>Oh NO!! We did not find your champion in our database!</span>'" ng-if='!championsController.getCurrentChampion()'>
 			<!-- TODO create not found handling -->
 
 		</div>

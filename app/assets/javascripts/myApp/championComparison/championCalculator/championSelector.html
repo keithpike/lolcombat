@@ -1,0 +1,8 @@
+<div class='row'>
+	<div class='col-md-8 col-md-offset-2 PicturesContainer' >
+		<div class='championSmallWrapper' ng-repeat='champion in championSelectorController.championsData | orderObjectBy: "name"'>
+				<div class='championSmallPictureContainer' ng-style='championSelectorController.getSpriteStyle(champion)'>
+				</div>
+		</div>
+	</div>
+</div>

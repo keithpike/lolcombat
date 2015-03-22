@@ -17,5 +17,6 @@
 //= require angular-strap/angular-strap.min
 //= require angular-strap/angular-strap-tpl.min
 //= require angular-sanitize/angular-sanitize.min
+//= require angular-order-object-by/ng-order-object-by
 //= require underscore/underscore-min
 //= require static_pages

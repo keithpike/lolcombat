@@ -1,26 +1,29 @@
 /**
-* myApp.models.champions Module
+* myApp.models.championComparisons Module
 *
 * Description
 */
-angular.module('models.champions', [])
-	.service('ChampionsModel', function($http, $q){
+angular.module('models.championComparisons', [])
+	.service('ChampionComparisonModel', function($http, $q){
 		var model = this,
-				URLS = {
-					GET: "/v1/champions",
-				},
-				champions = {},
-				currentChampion;
+				comparisons = {},
+				currentComparison;
 		
-		function capitalize(value) {
-			// TODO take this out to a helper function or completely
-			var words = value.split(" ");
-			words = angular.forEach(words, function(word, idx) {
-				words[idx] = word[0].toUpperCase() + word.substring(1);
-			});
 
-			return words.join(" ");
-		}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 		function extract(result) {
 			return result.data.champions;

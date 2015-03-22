@@ -1,7 +1,7 @@
 <div class='row'>
 	<div class='col-md-8 col-md-offset-2 picturesContainer' >
 		<div class='championWrapper'
-			ng-repeat='champion in championsController.championsData'>
+			ng-repeat='champion in championsController.championsData | orderObjectBy: "name"'>
 			<a ui-sref='appStart.champions.selected({key: championsController.getName(champion)})' class='championLink'>
 				<div class='championPictureContainer'
 				data-placement='right-bottom'
@@ -10,10 +10,10 @@
 				data-html='true'
 				data-content='<div class="championTooltipContainer"><span class="championTooltipName">{{ championsController.getName(champion) }}</span></br><span class="championTooltipTitle">{{ championsController.getTitle(champion) }}</span></br></br><span class="championTooltipBlurb">{{ championsController.getBlurb(champion) }}</span></div>'
 				bs-popover>
-					<img ng-src='{{ ::championsController.getImage(champion) }}'>
+					<img class='resize' ng-src='{{ ::championsController.getImage(champion) }}'>
 					</img>
 				</div>
-				<span class='championName'>{{ championsController.getName(champion) }}</span>
+				<span class='championName' ng-bind='championsController.getName(champion)'</span>
 			</a>
 		</div>
 	</div>

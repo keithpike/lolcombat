@@ -1,0 +1,78 @@
+/**
+* championComparison Module
+*
+* Description
+*/
+
+angular.module('championCalculator', [
+	//'itemSelector',
+	//'championSelector',
+	//'itemRuneMasterySelector',
+	'models.items',
+	'models.champions',
+	'models.championComparisons',
+	'ngOrderObjectBy'
+])
+	.config(function($stateProvider){
+		$stateProvider
+			.state('appStart.comparison.calculator', {
+				url: '/calculator',
+				views: {
+				 	'championComparison': {
+				 		templateUrl: "<%= asset_path('myApp/championComparison/championCalculator/championComparison.html') %>",
+				 		controller: "ChampionComparisonController"
+				 	},
+
+				 	'championSelector': {
+				 		templateUrl: "<%= asset_path('myApp/championComparison/championCalculator/championSelector.html') %>",
+				 		controller: "ChampionSelectorController as championSelectorController",
+
+				 	}
+				},
+		 		resolve: {
+		 			items: function(ItemsModel) {
+		 				return ItemsModel.getItems();
+		 			},
+		 			champions: function(ChampionsModel) {
+		 				return ChampionsModel.getChampions();
+		 			}
+		 		}
+			});
+	})
+	.directive('hulChampionComparison', function() {
+		return function(){
+			// put form template here
+			console.log("woohoo a directive!");
+		};
+	})
+
+	.controller('ChampionComparisonController', function championComparisonController(){
+		var championComparisonController = this;
+		debugger
+	})
+
+	.controller('ItemSelectorController', function itemSelectorController(){
+		var itemSelectorController = this;
+	})
+
+	.controller('RuneSelectorController', function runeSelectorController(){
+		var runeSelectorController = this;
+	})
+
+	.controller('MasterySelectorController', function masterySelectorController(){
+		var masterySelectorController = this;
+	})
+
+	.controller('ChampionSelectorController', function championSelectorController(champions, ChampionsModel){
+		var championSelectorController = this;
+debugger
+		championSelectorController.championsData = champions;
+		championSelectorController.getName = ChampionsModel.getChampionName;
+		championSelectorController.getImage = ChampionsModel.getChampionSprite;
+		championSelectorController.getSpriteStyle = ChampionsModel.getChampionSpriteStyle;
+	})
+
+
+
+
+

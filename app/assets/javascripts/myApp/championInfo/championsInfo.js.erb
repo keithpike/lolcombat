@@ -6,7 +6,8 @@
 angular.module('championInfo', [
 	'models.champions',
 	'mgcrea.ngStrap.popover',
-	'ngSanitize'
+	'ngSanitize',
+	'ngOrderObjectBy'
 ])
 
 	.config(function($stateProvider){
@@ -103,6 +104,8 @@ angular.module('championInfo', [
 		championsController.getImage = ChampionsModel.getChampionImage;
 		championsController.getId = ChampionsModel.getChampionId;
 		championsController.getName = ChampionsModel.getChampionName;
+		championsController.getResourceType = ChampionsModel.getChampionResourceType;
+		championsController.getRoles = ChampionsModel.getChampionTags;
 		championsController.getTitle = ChampionsModel.getChampionTitle;
 		championsController.getLore = ChampionsModel.getChampionLore;
 		championsController.getStats = ChampionsModel.getChampionStatsHtml;

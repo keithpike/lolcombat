@@ -16,9 +16,6 @@ angular.module('ChampionSelector', [
 						templateUrl: "<%= asset_path('./championSelector.html') %>",
 						controller: 'ChampionsSelectorController',
 						resolve: {
-				 			champions: function(ChampionsModel){
-				 				return ChampionsModel.getChampions();
-				 			}
 				 		}
 					}
 				}

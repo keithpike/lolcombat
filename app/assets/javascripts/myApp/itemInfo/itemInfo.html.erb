@@ -2,7 +2,7 @@
 <div class='row'>
 	<div class='col-md-8 col-md-offset-2 picturesContainer' >
 		<div class='itemWrapper'
-		ng-repeat='item in itemsController.itemsData'>
+		ng-repeat='item in itemsController.itemsData | orderObjectBy: "name"'>
 			<a class='itemPictureLink'
 				ui-sref='appStart.items.selected({key: itemsController.getId(item)})'>
 				<div class='itemPictureContainer'
@@ -15,7 +15,7 @@
 					<img ng-src='{{ ::itemsController.getImage(item) }}'>
 					</img>
 				</div>
-			<span class='itemName'>{{ itemsController.getName(item) }}</span>
+			<span class='itemName' ng-bind='itemsController.getName(item)'</span>
 			</a>
 		</div>
 	</div>

@@ -3,39 +3,16 @@
 *
 * Description
 */
-angular.module('championComparison', [
-	'itemSelector',
-	//'championCalculator',
-	//'championSelector',
-	//'itemRuneMasterySelector',
-	'models.items',
-	'models.champions'
-])
+angular.module('championComparison', ['championCalculator'])
 	.config(function($stateProvider){
 		$stateProvider
-			.state('appStart.home', {
-				url: '/',
-
-				 views: {
-				 	'':{
+			.state('appStart.comparison', {
+				abstract: true,
+				url: '/calculator',
+				views: {
+				 	'': {
 				 		templateUrl: "<%= asset_path('myApp/championComparison/championComparison.html') %>",
-				 		controller: 'ChampionComparisonController',
-				 		resolve: {
-				 			items: function(ItemsModel){
-				 				return ItemsModel.getItems();
-				 			}
-				 		}
-				 	},
-				 	'navbar': {
-				 		templateUrl: "<%= asset_path('myApp/navbar/navbar.html') %>",
-				 	},
-					'footer': {
-						templateUrl: "<%= asset_path('myApp/footer/footer.html') %>",
-					}
-				 }
+				 	}
+				}
 			});
-	})
-
-	.controller('ChampionComparisonController', function championComparisonController(){
-		var championComparisonController = this;
 	})
