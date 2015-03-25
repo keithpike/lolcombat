@@ -1,7 +1,18 @@
 <div class='row'>
-	<div class='col-md-8 col-md-offset-2 PicturesContainer' >
+	<div class='col-md-8 col-md-offset-2 championSelectorContainer' >
 		<div class='championSmallWrapper' ng-repeat='champion in championSelectorController.championsData | orderObjectBy: "name"'>
-				<div class='championSmallPictureContainer' ng-style='championSelectorController.getSpriteStyle(champion)'>
+				<div 
+					unselectable='on'
+					class='championSmallPictureContainer unselectable' 
+					ng-class='{selected: championSelectorController.checkSelected(champion)}' 
+					ng-click='championSelectorController.selectChampion(champion)' 
+					ng-style='championSelectorController.getSpriteStyle(champion)'
+					data-placement='right-bottom'
+					data-trigger='hover'
+					data-container='body'
+					data-html='true'
+					data-content='<div class="championTooltipContainer"><span class="championTooltipName">{{ championSelectorController.getName(champion) }}</span></br><span class="championTooltipTitle">{{ championSelectorController.getTitle(champion) }}</span></div>'
+					bs-popover>
 				</div>
 		</div>
 	</div>

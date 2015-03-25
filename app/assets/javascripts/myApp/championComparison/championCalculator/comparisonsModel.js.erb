@@ -1,0 +1,359 @@
+/**
+* myApp.models.championComparisons Module
+*
+* Description
+*/
+angular.module('models.championComparisons', [])
+	.service('ChampionComparisonModel', function(){
+		var model = this,
+				comparisons = [
+					{
+						'champion': {'name': 'none'},
+						'items': [undefined, undefined, undefined, undefined, undefined, undefined],
+						'level': 1,
+					},
+					{
+						'champion': {'name': 'none'},
+						'items': [undefined, undefined, undefined, undefined, undefined, undefined],
+						'level': 1,
+					}],
+					selectedComparison,
+					timeframe;
+		model.getComparisonChampionByIndex = function(idx) {
+			if (typeof(idx) != 'undefined' && idx >=0 && idx <= 1) {
+				return comparisons[idx].champion;
+			}
+		};
+
+		model.getComparisonBackgroundStyle = function(backgroundUrl) {
+			if (backgroundUrl) {
+				return {
+					"background-image": 'url("' + backgroundUrl +'")'
+				};
+			}
+		};
+
+		model.checkComparisonSelected = function(idx) {
+			if (typeof(idx) != 'undefined' && selectedComparison) {
+				return comparisons[idx] == selectedComparison ? true : false;
+			} else {
+				return false;
+			}
+		}
+
+		model.championSelected = function(champion) {
+			if (champion) {
+				var openComparisonIdx = findComparison( {'name' : 'none'} );
+				var championComparisonIdx = findComparison(champion);
+				if (typeof(championComparisonIdx) == 'undefined' &&
+						typeof(openComparisonIdx) != 'undefined' ) {
+
+					setComparisonChampion(openComparisonIdx, champion);
+					model.setSelectedComparison(openComparisonIdx);
+				
+				} else if (typeof(championComparisonIdx != 'undefined')) {
+					resetChampionComparison(championComparisonIdx);
+				}
+			}
+		};
+
+		function resetChampionComparison(idx) {
+
+			comparisons[idx] = {
+						'champion': {'name': 'none'},
+						'items': [undefined, undefined, undefined, undefined, undefined, undefined],
+						'level': 1,
+					};
+			model.setSelectedComparison(findFilledComparison());
+		}
+
+		function findFilledComparison(){
+			if (model.comparisonFilled(0)) {
+				return 0;
+			} else if (model.comparisonFilled(1)) {
+				return 1;
+			} else {
+				return undefined;
+			}
+		}
+
+		function setComparisonChampion(idx, champion) {
+			comparisons[idx].champion = champion;
+		}
+
+		model.setSelectedComparison = function(idx) {
+			if (typeof(idx) != 'undefined' && idx < 2 && idx >= 0) {
+				console.log("comparison set to " + idx);
+				selectedComparison = comparisons[idx];
+			} else {
+				// console.log("comparison set to nothing!");
+				selectedComparison = undefined;
+			}
+		};
+
+		model.checkSelected = function(champion){
+			if (champion) {
+				return (typeof(findComparison(champion)) != 'undefined') ? true : false;
+			}
+		};
+
+		model.comparisonFilled = function(idx) {
+			return comparisons[idx].champion.name != 'none' ? true : false;
+		};
+
+		model.getComparisonItems = function(idx) {
+			return comparisons[idx].items;
+		};
+
+		model.getComparisonItemClass = function(idx, item) {
+			var className = ''
+			var className2 = ''
+			if (typeof(idx) != 'undefined') {
+				className = 'itemPic' + idx;
+			}
+			if (!item) {
+				className2 = ' itemPlaceholder'
+			}
+			return className + className2
+		};
+
+		model.selectItem = function(item){
+			if (item && selectedComparison) {
+				model.addItem(item);
+			}
+		};
+
+		model.addItem = function(item) {
+			var comparisonIdx = findComparison(selectedComparison.champion);
+			if (typeof(comparisonIdx) != 'undefined') {
+				var itemSlotToFill = itemsFillable(comparisons[comparisonIdx].items);
+				if (typeof(itemSlotToFill) != 'undefined') {
+					comparisons[comparisonIdx].items[itemSlotToFill] = item;
+				}
+			}
+		};
+
+		model.removeItem = function(itemIdx, comparisonIdx){
+			if (typeof(itemIdx) != 'undefined' && typeof(comparisonIdx) != 'undefined') {
+				delete comparisons[comparisonIdx].items[itemIdx];
+			}
+		};
+
+		function findComparison(champion) {
+			if (comparisons[0].champion.name == champion.name) {
+				return 0;
+			} else if (comparisons[1].champion.name == champion.name) {
+				return 1;
+			} else {
+				return undefined;
+			}
+		}
+
+		function itemsFillable(items) {
+			var idx = _.indexOf(items, undefined);
+			return (idx != -1) ? idx : undefined;
+		}
+	});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// 		function extract(result) {
+// 			return result.data.champions;
+// 		}
+
+// 		function cacheChampions(result) {
+// 			angular.forEach(extract(result), addChampion);
+// 			return champions;
+// 		}
+
+// 		function extractDetailed(result) {
+// 			return result.data
+// 		}
+
+// 		function cacheDetailedChampion(result) {
+// 			return addChampion(extractDetailed(result));
+// 		}
+
+// 		function addChampion(champion) {
+// 			if (champion.champion_id) {
+// 				if(championExist(champion)) {
+// 					angular.extend(champions[champion.champion_id], champion);	
+// 				} else {
+// 					champions[champion.champion_id] = champion;
+// 				}
+// 				return champion;
+// 			}
+// 		}
+
+// 		function championExist(champion) {
+// 			return champions[champion.champion_id] ? true : false;
+// 		}
+
+//     function showError() {
+//       console.log("an error has occurred: ")
+//     }
+
+//     model.setCurrentChampion = function(championKey) {
+//     	championKey = capitalize(championKey);
+//     	return model.asyncGetChampionByName(championKey).then(function(champion){
+//     		currentChampion = champion;
+//     	});
+//     }
+
+//     model.resetCurrentChampion = function() {
+//     	return currentChampion = undefined;
+//     };
+
+//     function getChampionImage(championKey) {
+//     	return model.asyncGetChampionByName(championKey).then(function(champion){
+//     		return champion.image.full;
+//     	});
+//     }
+
+
+// 		model.getChampions = function() {
+// 			return $http.get(URLS.GET, {cache: true}).then(cacheChampions);
+// 			// return (champions) ? $q.when(champions) : $http.get(URLS.GET).then(cacheChampions, showError);
+// 		}
+
+// 		model.getChampion = function(key) {
+// 			key = capitalize(key);
+// 			return $http.get((URLS.GET + "/" + key), {cache: true}).then(cacheDetailedChampion);
+// 		// 	return (champions) ? $q.when(champions) : $http.get(URLS.GET + "/" + key).then(cacheChampions, showError);
+// 		}
+
+
+// 		model.asyncGetChampionByName = function(championName) {
+// 			return $q(function(resolve, reject){
+// 				setTimeout(function() {
+// 					function findChampion(name) {
+// 						// loop over champions and return champion that matches or nil
+//             return _.find(champions, function(champion) {
+//               return champion.name == name;
+//             });
+// 					}
+// 					if(champions) {
+// 						resolve(findChampion(championName)); 
+// 					} else {
+// 						model.getChampions()
+// 							.then(function() {
+// 								resolve(findChampion(championName));
+// 							});
+// 					}
+// 				}, 0);
+// 			});
+// 		};
+
+// 		model.getCurrentChampion = function() {
+//     	return currentChampion;
+//     };
+
+//     model.getCurrentChampionImage = function() {
+//     	return currentChampion ? currentChampion.image.full : '';
+//     };
+
+// 		model.getChampionImage = function(champion) {
+// 			return champion ? champion.image.full : '';
+// 		};
+
+// 		model.getChampionSprite = function(champion) {
+// 			return champion ? champion.image.sprite : '';
+// 		};
+
+// 		model.getChampionId = function(champion) {
+//     	return champion ? champion.champion_id : '';
+//     };
+
+//     model.getChampionName = function(champion) {
+//     	return champion ? champion.name : '';
+//     };
+
+//     model.getChampionTitle = function(champion) {
+//     	return champion ? champion.title : '';
+//     };
+
+//     model.getChampionLore = function(champion) {
+//     	return champion ? champion.lore : '';
+//     };
+
+//     model.getChampionBlurb = function(champion) {
+//     	return champion ? champion.blurb : '';
+//     };
+
+//     model.getChampionAllyTips = function(champion) {
+//     	return champion ? champion.allytips : '';
+//     };
+
+//     model.getChampionTags = function(champion) {
+//     	return champion ? champion.tags : '';
+//     };
+
+//     model.getChampionResourceType = function(champion) {
+//     	return champion ? champion.resource_type : '';
+//     };
+
+//     model.getChampionEnemyTips = function(champion) {
+//     	return champion ? champion.enemytips : '';
+//     };
+
+//     model.getChampionStatsHtml = function(champion) {
+//     	return "<span class='hpDisplay'> HP: " + champion.hp + "<span class='hpPLDisplay'>(" + champion.hp_per_level + ")</span></span>" +
+// 			"<span class='attackDmgDisplay'> Attack Damage: " + champion.attackdamage.toFixed(2) + "<span class='attackDmgPLDisplay'>(" + champion.attackdamage_per_level.toFixed(2) + ")</span></span>" +
+// 			"<span class='hpRegenDisplay'> HP Regen: " + champion.hpregen + "<span class='hpRegenPLDisplay'>(" + champion.hpregen_per_level + ")</span></span>" +
+// 			"<span class='attackSpeedDisplay'> Attack Speed: " + (.625 / (1 + champion.attackspeedoffset)).toFixed(3) + "<span class='attackSpeedPLDisplay'>(" + champion.attackspeed_per_level + "%)</span></span>" +
+// 			"<span class='mpDisplay'> MP: " + champion.mp + "<span class='mpPLDisplay'>(" + champion.mp_per_level + ")</span></span>" +
+// 			"<span class='armorDisplay'> Armor: " + champion.armor + "<span class='armorPLDisplay'>(" + champion.armor_per_level + ")</span></span>" +
+// 			"<span class='mpRegenDisplay'> MP Regen: " + champion.mpregen + "<span class='mpRegenPLDisplay'>(" + champion.mpregen_per_level + ")</span></span>" +
+// 			"<span class='magicResistDisplay'> Magic Resist: " + champion.spellblock + "<span class='magicResistPLDisplay'>(" + champion.spellblock_per_level + ")</span></span>" +
+// 			"<span class='rangeDisplay'> Attack Range: " + champion.attackrange + "</span>" +
+// 			"<span class='moveSpeedDisplay'> Movespeed: " + champion.movespeed + "</span>"
+//     };
+
+//     model.getChampionStats = function(champion) {
+//     	return { 
+// 	       'hp': 											champion.hp,
+// 	       'hp per level': 						champion.hp_per_level,
+// 	       'mp': 											champion.mp,
+// 	       'mp per level': 						champion.mp_per_level,
+// 	       'movespeed': 							champion.movespeed,
+// 	       'armor': 									champion.armor,
+// 	       'armor per level': 				champion.armor_per_level,
+// 	       'spellblock': 							champion.spellblock,
+// 	       'spellblock per level': 		champion.spellblock_per_level,
+// 	       'attackrange': 						champion.attackrange,
+// 	       'hpregen': 								champion.hpregen,
+// 	       'hpregen per level': 			champion.hpregen_per_level,
+// 	       'mpregen': 								champion.mpregen,
+// 	       'mpregen per level': 			champion.mpregen_per_level,
+// 	       'crit': 										champion.crit,
+// 	       'crit per level': 					champion.crit_per_level,
+// 	       'attackdamage': 						champion.attackdamage,
+// 	       'attackdamage per level': 	champion.attackdamage_per_level,
+// 	       'attackspeedoffset': 			champion.attackspeedoffset,
+// 	       'attackspeed per level': 	champion.attackspeed_per_level
+//     	};
+//     };
+
+//     model.getChampionSpriteStyle = function(champion) {
+//     	// TODO return style for champion's sprite
+//     	return {
+//     		'background-image': 'url(' + model.getChampionSprite(champion) +')',
+//     		'background-position': '-' + champion.image.x + 'px ' + '-' + champion.image.y + 'px',
+//     		'width': champion.image.w + 'px',
+//     		'height': champion.image.h + 'px'
+//     	};
+//     };
+// 	})
+// ;

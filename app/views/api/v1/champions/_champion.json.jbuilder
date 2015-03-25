@@ -32,3 +32,6 @@ json.attackspeed_per_level 	champion.attackspeed_per_level
 json.set! :image do
 	json.partial!('api/v1/images/image', image: champion.image) unless champion.image.nil?
 end
+json.set! :splash do
+	json.partial!('api/v1/splashes/splash', splash: champion.splashes.first)
+end

@@ -22,6 +22,11 @@ angular.module('models.champions', [])
 			return words.join(" ");
 		}
 
+		model.getCleanLowerCaseName = function(dirtyName) {
+			var cleanName = dirtyName.replace(/'/, '')
+			return cleanName[0].toUpperCase() + cleanName.substring(1).toLowerCase();
+		};
+
 		function extract(result) {
 			return result.data.champions;
 		}
@@ -70,11 +75,16 @@ angular.module('models.champions', [])
     };
 
     function getChampionImage(championKey) {
-    	return model.asyncGetChampionByName(championKey).then(function(champion){
+    	model.asyncGetChampionByName(championKey).then(function(champion) {
     		return champion.image.full;
     	});
     }
 
+    function getChampionSplash(championKey) {
+    	model.asyncGetDetailedChampionByName(championKey).then(function(champion) {
+    		return champion.splash.path;
+    	})
+    }
 
 		model.getChampions = function() {
 			return $http.get(URLS.GET, {cache: true}).then(cacheChampions);
@@ -87,6 +97,22 @@ angular.module('models.champions', [])
 		// 	return (champions) ? $q.when(champions) : $http.get(URLS.GET + "/" + key).then(cacheChampions, showError);
 		}
 
+		model.asyncGetDetailedChampionByName = function(championName) {
+			return $q(function(resolve, reject){
+				setTimeout(function() {
+					function findChampion(name) {
+						// loop over champions and return champion that matches or nil
+            return _.find(champions, function(champion) {
+              return champion.name == name;
+            });
+					}
+					model.getChampion(championName)
+						.then(function() {
+							resolve(findChampion(championName));
+						});
+				}, 0);
+			});
+		};
 
 		model.asyncGetChampionByName = function(championName) {
 			return $q(function(resolve, reject){
@@ -119,6 +145,10 @@ angular.module('models.champions', [])
 
 		model.getChampionImage = function(champion) {
 			return champion ? champion.image.full : '';
+		};
+
+		model.getChampionSplash = function(champion) {
+			return champion.splash ? champion.splash.path : '';
 		};
 
 		model.getChampionSprite = function(champion) {
@@ -200,7 +230,6 @@ angular.module('models.champions', [])
     };
 
     model.getChampionSpriteStyle = function(champion) {
-    	// TODO return style for champion's sprite
     	return {
     		'background-image': 'url(' + model.getChampionSprite(champion) +')',
     		'background-position': '-' + champion.image.x + 'px ' + '-' + champion.image.y + 'px',

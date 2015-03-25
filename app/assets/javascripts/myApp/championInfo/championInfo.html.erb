@@ -1,5 +1,5 @@
 <div class='row'>
-	<div class='col-md-8 col-md-offset-2 picturesContainer' >
+	<div class='col-md-8 col-md-offset-2 picturesContainer'>
 		<div class='championWrapper'
 			ng-repeat='champion in championsController.championsData | orderObjectBy: "name"'>
 			<a ui-sref='appStart.champions.selected({key: championsController.getName(champion)})' class='championLink'>

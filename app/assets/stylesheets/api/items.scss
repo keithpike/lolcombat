@@ -38,3 +38,69 @@
 .itemTooltipName {
 	font-weight: bold;
 }
+
+.itemSmallWrapper{
+	float: left;
+	height: 48px;
+	margin: 5px 5px 0 0;
+	width: 48px;
+}
+
+.itemSmallPictureContainer{
+	display: inline-block;
+	float: none;
+	width: 48px;
+	height: 48px;
+}
+
+.itemSelectorContainer{
+	height: 160px;
+	overflow-y: scroll;
+}
+
+.comparisonItemWrapper{
+	height: 96px;
+	float: right;
+}
+
+.itemPic0{
+	float: left;
+	display: inline-block;
+	height: 48px;
+	width: 48px;
+}
+.itemPic1{
+	float: left;
+	display: inline-block;
+	height: 48px;
+	width: 48px;
+}
+.itemPic2{
+	float: left;
+	display: inline-block;
+	height: 48px;
+	width: 48px;
+}
+.itemPic3{
+	float: left;
+	clear: both;
+	display: inline-block;
+	height: 48px;
+	width: 48px;
+}
+.itemPic4{
+	float: left;
+	display: inline-block;
+	height: 48px;
+	width: 48px;
+}
+.itemPic5{
+	float: left;
+	display: inline-block;
+	height: 48px;
+	width: 48px;
+}
+.itemPlaceholder{
+	background-image: url("https://s3-us-west-1.amazonaws.com/lolcomparitor/Images/item/0.png");
+	background-size: 48px 48px;
+}

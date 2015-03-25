@@ -29,10 +29,90 @@ img.resize{
 	margin: 5px 5px 0 0;
 	width: 48px;
 }
-
+// .championSmallPictureContainer.selected{
+// 	border-color: coral;
+// 	border-style: solid;
+// 	border-width: medium;
+// }
+.championComparisonWrapper{
+  -webkit-transition: opacity 1s ease-in-out;
+  -moz-transition: opacity 1s ease-in-out;
+  -ms-transition: opacity 1s ease-in-out;
+  -o-transition: opacity 1s ease-in-out;
+  transition: opacity 1s ease-in-out;
+}
 .championSmallPictureContainer{
 	display: inline-block;
 	float: none;
 	width: 48px;
 	height: 48px;
 }
+
+.comparisonsContainer{
+	overflow-x: visible;
+}
+
+.championSelectorContainer{
+	height: 160px;
+	overflow-y: scroll;
+}
+
+.championComparisonRight{
+	position: absolute;
+	right: 0px;
+	height: 600px;
+}
+.championComparisonsWrapper{
+	overflow-x: hidden;
+}
+
+.championComparisonRight.ng-leave{
+	-webkit-animation: 	slideOutRight 1.5s,
+										 	fadeOut 1.5s;
+	-moz-animation: 		slideOutRight 1.5s,
+											fadeOut 1.5s;
+	-o-animation:		 		slideOutRight 1.5s,
+											fadeOut 1.5s;
+	animation: 					slideOutRight 1.5s,
+						 					fadeOut 1.5s;
+						 					
+}
+
+.championComparisonRight.ng-enter{
+	-webkit-animation: 	slideInRight 1.5s,
+										 	fadeIn 1.5s;
+	-moz-animation: 		slideInRight 1.5s,
+											fadeIn 1.5s;
+	-o-animation:		 		slideInRight 1.5s,
+											fadeIn 1.5s;
+	animation: 					slideInRight 1.5s,
+						 					fadeIn 1.5s;
+}
+
+.championComparisonLeft{
+	height: 600px;
+}
+
+.championComparisonLeft.ng-leave{
+	-webkit-animation: 	slideOutLeft 1.5s,
+										 	fadeOut 1.5s;
+	-moz-animation: 		slideOutLeft 1.5s,
+											fadeOut 1.5s;
+	-o-animation:		 		slideOutLeft 1.5s,
+											fadeOut 1.5s;
+	animation: 					slideOutLeft 1.5s,
+						 					fadeOut 1.5s;
+						 					
+}
+
+.championComparisonLeft.ng-enter{
+	-webkit-animation: 	slideInLeft 1.5s,
+										 	fadeIn 1.5s;
+	-moz-animation: 		slideInLeft 1.5s,
+											fadeIn 1.5s;
+	-o-animation:		 		slideInLeft 1.5s,
+											fadeIn 1.5s;
+	animation: 					slideInLeft 1.5s,
+						 					fadeIn 1.5s;
+}
+

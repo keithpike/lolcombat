@@ -133,6 +133,15 @@ class RiotApiHandler
 			end
 	end
 
+	def get_clean_name(champion_name)
+		clean_name = champion_name.split(" ");
+		clean_name.map do |name|
+			name.slice!(/['\\.]/)
+			name.capitalize!	
+		end
+		clean_name.join("")		
+	end
+
 	public
 
 	def initialize()
@@ -289,6 +298,8 @@ class RiotApiHandler
 			image = champion.delete("image")
 			a = Champion.create(champion)
 			a.create_image(image)
+			splash_path = "https://s3-us-west-1.amazonaws.com/lolcomparitor/Images/splash/#{get_clean_name(a.name)}_0.png"  
+			Splash.create({"champion_id" => a.id, "path" => splash_path})
 		end
 		seed_data['items'] = get_resources_from_api_test(path + '/items.json')
 		seed_data['items'].each do |item|
@@ -300,7 +311,7 @@ class RiotApiHandler
 	end
 
 	def seed_me_seymour_from_api(urls)
-
+		
 	end
 
 

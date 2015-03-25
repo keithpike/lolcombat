@@ -1,10 +1,6 @@
 module Api::V1
 	class AbilitiesController < Api::V1::BaseController
 	
-
-
-
-
 		private
 
 		def ability_params

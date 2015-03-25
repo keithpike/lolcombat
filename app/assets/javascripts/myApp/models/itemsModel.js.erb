@@ -106,7 +106,7 @@ angular.module('models.items', [])
 		};
 
 		model.getItemSprite = function(item) {
-			return item ? item.image.sprite : '';
+			return typeof(item) != 'undefined' ? item.image.sprite : '';
 		};
 
 		model.getItemId = function(item) {
@@ -114,24 +114,33 @@ angular.module('models.items', [])
     };
 
     model.getItemName = function(item) {
-    	return item ? item.name : '';
+    	return typeof(item) != 'undefined' ? item.name : '';
     };
 
     model.getItemDescription = function(item) {
-    	return item ? item.description : '';
+    	return typeof(item) != 'undefined' ? item.description : '';
     };
 
     model.getItemGoldCost = function(item) {
     	return item ? item.total_gold : '';
     };
 
-    model.getSpriteStyle = function(item) {
-    	return {
-    		'background-image': 'url(' + model.getItemSprite(item) +')',
-    		'background-position': '-' + item.image.x + 'px ' + '-' + item.image.y + 'px',
-    		'width': item.image.w + 'px',
-    		'height': item.image.h + 'px'
-    	};
+    model.testgetItemSpriteStyle = function(item) {
+    	debugger
+    	console.log("item is " + typeof(item));
+    	console.log(model.getItemSpriteStyle(item));
+    	return model.getItemSpriteStyle(item);
+    }
+
+    model.getItemSpriteStyle = function(item) {
+    	if (item) {
+	    	return {
+	    		"background-image": 'url(' + model.getItemSprite(item) +')',
+	    		'background-position': '-' + item.image.x + 'px ' + '-' + item.image.y + 'px',
+	    		'width': item.image.w + 'px',
+	    		'height': item.image.h + 'px'
+	    	};
+	    } 
     };
 	})
 ;

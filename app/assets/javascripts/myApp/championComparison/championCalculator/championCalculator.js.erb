@@ -5,9 +5,6 @@
 */
 
 angular.module('championCalculator', [
-	//'itemSelector',
-	//'championSelector',
-	//'itemRuneMasterySelector',
 	'models.items',
 	'models.champions',
 	'models.championComparisons',
@@ -20,13 +17,17 @@ angular.module('championCalculator', [
 				views: {
 				 	'championComparison': {
 				 		templateUrl: "<%= asset_path('myApp/championComparison/championCalculator/championComparison.html') %>",
-				 		controller: "ChampionComparisonController"
+				 		controller: "ChampionComparisonController as championComparisonController"
 				 	},
 
 				 	'championSelector': {
 				 		templateUrl: "<%= asset_path('myApp/championComparison/championCalculator/championSelector.html') %>",
 				 		controller: "ChampionSelectorController as championSelectorController",
+				 	},
 
+				 	'itemsRunesMasteriesSelector': {
+						templateUrl: "<%= asset_path('myApp/championComparison/championCalculator/itemSelector.html') %>",
+				 		controller: "ItemSelectorController as itemSelectorController",
 				 	}
 				},
 		 		resolve: {
@@ -46,14 +47,32 @@ angular.module('championCalculator', [
 		};
 	})
 
-	.controller('ChampionComparisonController', function championComparisonController(){
+	.controller('ChampionComparisonController', ['ChampionComparisonModel', 'ItemsModel', 'ChampionsModel', function championComparisonController(ChampionComparisonModel, ItemsModel, ChampionsModel){
 		var championComparisonController = this;
-		debugger
-	})
 
-	.controller('ItemSelectorController', function itemSelectorController(){
+		championComparisonController.comparisonFilled = ChampionComparisonModel.comparisonFilled;
+		championComparisonController.selectComparison = ChampionComparisonModel.setSelectedComparison;
+		championComparisonController.getComparisonItems = ChampionComparisonModel.getComparisonItems;
+		championComparisonController.getComparisonItemClass = ChampionComparisonModel.getComparisonItemClass;
+		championComparisonController.removeItem = ChampionComparisonModel.removeItem;
+		championComparisonController.getName = ItemsModel.getItemName;
+		championComparisonController.getDescription = ItemsModel.getItemDescription;
+		championComparisonController.getSpriteStyle = ItemsModel.getItemSpriteStyle; 
+		championComparisonController.getComparisonChampionByIndex = ChampionComparisonModel.getComparisonChampionByIndex;
+		championComparisonController.getComparisonBackgroundStyle = ChampionComparisonModel.getComparisonBackgroundStyle;
+		championComparisonController.getChampionSplash = ChampionsModel.getChampionSplash;
+		championComparisonController.checkComparisonSelected = ChampionComparisonModel.checkComparisonSelected;
+	}])
+
+	.controller('ItemSelectorController', ['items', 'ItemsModel', 'ChampionComparisonModel', function itemSelectorController(items, ItemsModel, ChampionComparisonModel){
 		var itemSelectorController = this;
-	})
+		
+		itemSelectorController.itemsData = items;
+		itemSelectorController.getName = ItemsModel.getItemName;
+		itemSelectorController.getDescription = ItemsModel.getItemDescription;
+		itemSelectorController.getSpriteStyle = ItemsModel.getItemSpriteStyle;
+		itemSelectorController.selectItem = ChampionComparisonModel.selectItem;
+	}])
 
 	.controller('RuneSelectorController', function runeSelectorController(){
 		var runeSelectorController = this;
@@ -63,16 +82,27 @@ angular.module('championCalculator', [
 		var masterySelectorController = this;
 	})
 
-	.controller('ChampionSelectorController', function championSelectorController(champions, ChampionsModel){
+	.controller('ChampionSelectorController', ['champions', 'ChampionsModel', 'ChampionComparisonModel', function championSelectorController(champions, ChampionsModel, ChampionComparisonModel){
 		var championSelectorController = this;
-debugger
+		// championSelectorController.handleClick = ChampionComparisonModel.testAddItem;//function(champion){
+		// 	debugger
+		// 	console.log(champion.name + " has been clicked");
+		// };
+		// ChampionSelectorController.comparisonOneItems
+
 		championSelectorController.championsData = champions;
+		championSelectorController.checkSelected = ChampionComparisonModel.checkSelected;
+		championSelectorController.getComparisonOneItems = ChampionComparisonModel.getComparisonItems(0);
+		championSelectorController.getImage = ChampionsModel.getChampionImage;
 		championSelectorController.getName = ChampionsModel.getChampionName;
-		championSelectorController.getImage = ChampionsModel.getChampionSprite;
+		championSelectorController.getTitle = ChampionsModel.getChampionTitle;
 		championSelectorController.getSpriteStyle = ChampionsModel.getChampionSpriteStyle;
-	})
-
-
+		championSelectorController.selectChampion = function(champion) {
+			ChampionsModel.getChampion(ChampionsModel.getChampionName(champion));
+			ChampionComparisonModel.championSelected(champion);
+		};
+	}])
+;
 
 
 

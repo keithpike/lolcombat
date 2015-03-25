@@ -1,0 +1,18 @@
+<div class='row'>
+	<div class='col-md-8 col-md-offset-2 itemSelectorContainer' >
+		<div class='itemSmallWrapper' ng-repeat='item in itemSelectorController.itemsData | orderObjectBy: "name"'>
+				<div 
+					unselectable='on'
+					class='itemSmallPictureContainer unselectable' 
+					ng-click='itemSelectorController.selectItem(item)' 
+					ng-style='itemSelectorController.getSpriteStyle(item)'
+					data-placement='right-top'
+					data-trigger='hover'
+					data-container='body'
+					data-html='true'
+					data-content='<div class="itemTooltipContainer"><span class="itemTooltipName">{{ itemSelectorController.getName(item) }}</span></br><span class="itemTooltipDescription">{{ itemSelectorController.getDescription(item) }}</span></div>'
+					bs-popover>
+					</div>
+		</div>
+	</div>
+</div>

@@ -45,7 +45,7 @@ angular.module('championInfo', [
 				views: {
 					'@appStart': {
 						templateUrl: "<%= asset_path('myApp/championInfo/championInfo.selected.html') %>",
-						controller: 'DetailedChampionsController as championsController'
+						controller: 'ChampionsController as championsController'
 					},
 				 	'navbar': {
 				 		templateUrl: "<%= asset_path('myApp/navbar/navbar.html') %>",
@@ -73,7 +73,8 @@ angular.module('championInfo', [
 
 
 	})
-	// TODO: reference template so tooltips can read out template instead of inline
+	// TODO: 	reference template so tooltips can read out template instead of inline
+	// 				Possibly add to gulp/grunt task?
 	// .run(function($templateCache) {
 	//   $templateCache.put('championTooltip.html',
 	//   	'<div class="championTooltipContainer"><span class="championTooltipName">{{ championsController.getName($index) }}</span></br><span class="championTooltipDescription">{{ championsController.getDescription($index) }}</span></div>'
@@ -84,31 +85,17 @@ angular.module('championInfo', [
 		var championsController = this;
 
 		championsController.championsData = championsData;
-		championsController.getCurrentChampion = ChampionsModel.getCurrentChampion;
-		championsController.getCurrentChampionImage = ChampionsModel.getCurrentChampionImage;
-		championsController.getImage = ChampionsModel.getChampionImage;
-		championsController.getId = ChampionsModel.getChampionId;
-		championsController.getName = ChampionsModel.getChampionName;
 		championsController.getBlurb = ChampionsModel.getChampionBlurb;
-		championsController.getTitle = ChampionsModel.getChampionTitle;
-		championsController.getSpriteStyle = ChampionsModel.getChampionSpriteStyle;
-	})
-
-		.controller('DetailedChampionsController', function(ChampionsModel, $stateParams, championData){
-		var championsController = this;
-
-		championsController.championData = championData;
-
 		championsController.getCurrentChampion = ChampionsModel.getCurrentChampion;
 		championsController.getCurrentChampionImage = ChampionsModel.getCurrentChampionImage;
 		championsController.getImage = ChampionsModel.getChampionImage;
 		championsController.getId = ChampionsModel.getChampionId;
+		championsController.getLore = ChampionsModel.getChampionLore;
 		championsController.getName = ChampionsModel.getChampionName;
 		championsController.getResourceType = ChampionsModel.getChampionResourceType;
 		championsController.getRoles = ChampionsModel.getChampionTags;
-		championsController.getTitle = ChampionsModel.getChampionTitle;
-		championsController.getLore = ChampionsModel.getChampionLore;
+		championsController.getSpriteStyle = ChampionsModel.getChampionSpriteStyle;
 		championsController.getStats = ChampionsModel.getChampionStatsHtml;
-		
+		championsController.getTitle = ChampionsModel.getChampionTitle;
 	})
 ;
