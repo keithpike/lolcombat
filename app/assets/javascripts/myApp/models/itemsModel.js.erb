@@ -142,5 +142,207 @@ angular.module('models.items', [])
 	    	};
 	    } 
     };
+
+    model.getItemStats = function(item) {
+  		var stats = {};
+    	if (item) {
+				if (item.FlatHPPoolMod) {
+					angular.extend(stats, item.FlatHPPoolMod)
+				}
+				if (item.rFlatHPModPerLevel) {
+					angular.extend(stats, item.rFlatHPModPerLevel)
+				}
+				if (item.FlatMPPoolMod) {
+					angular.extend(stats, item.FlatMPPoolMod)
+				}
+				if (item.rFlatMPModPerLevel) {
+					angular.extend(stats, item.rFlatMPModPerLevel)
+				}
+				if (item.PercentHPPoolMod) {
+					angular.extend(stats, item.PercentHPPoolMod)
+				}
+				if (item.PercentMPPoolMod) {
+					angular.extend(stats, item.PercentMPPoolMod)
+				}
+				if (item.FlatHPRegenMod) {
+					angular.extend(stats, item.FlatHPRegenMod)
+				}
+				if (item.rFlatHPRegenModPerLevel) {
+					angular.extend(stats, item.rFlatHPRegenModPerLevel)
+				}
+				if (item.PercentHPRegenMod) {
+					angular.extend(stats, item.PercentHPRegenMod)
+				}
+				if (item.FlatMPRegenMod) {
+					angular.extend(stats, item.FlatMPRegenMod)
+				}
+				if (item.rFlatMPRegenModPerLevel) {
+					angular.extend(stats, item.rFlatMPRegenModPerLevel)
+				}
+				if (item.PercentMPRegenMod) {
+					angular.extend(stats, item.PercentMPRegenMod)
+				}
+				if (item.FlatArmorMod) {
+					angular.extend(stats, item.FlatArmorMod)
+				}
+				if (item.rFlatArmorModPerLevel) {
+					angular.extend(stats, item.rFlatArmorModPerLevel)
+				}
+				if (item.PercentArmorMod) {
+					angular.extend(stats, item.PercentArmorMod)
+				}
+				if (item.rFlatArmorPenetrationMod) {
+					angular.extend(stats, item.rFlatArmorPenetrationMod)
+				}
+				if (item.rFlatArmorPenetrationModPerLevel) {
+					angular.extend(stats, item.rFlatArmorPenetrationModPerLevel)
+				}
+				if (item.rPercentArmorPenetrationMod) {
+					angular.extend(stats, item.rPercentArmorPenetrationMod)
+				}
+				if (item.rPercentArmorPenetrationModPerLevel) {
+					angular.extend(stats, item.rPercentArmorPenetrationModPerLevel)
+				}
+				if (item.FlatPhysicalDamageMod) {
+					angular.extend(stats, item.FlatPhysicalDamageMod)
+				}
+				if (item.rFlatPhysicalDamageModPerLevel) {
+					angular.extend(stats, item.rFlatPhysicalDamageModPerLevel)
+				}
+				if (item.PercentPhysicalDamageMod) {
+					angular.extend(stats, item.PercentPhysicalDamageMod)
+				}
+				if (item.FlatMagicDamageMod) {
+					angular.extend(stats, item.FlatMagicDamageMod)
+				}
+				if (item.rFlatMagicDamageModPerLevel) {
+					angular.extend(stats, item.rFlatMagicDamageModPerLevel)
+				}
+				if (item.PercentMagicDamageMod) {
+					angular.extend(stats, item.PercentMagicDamageMod)
+				}
+				if (item.FlatMovementSpeedMod) {
+					angular.extend(stats, item.FlatMovementSpeedMod)
+				}
+				if (item.rFlatMovementSpeedModPerLevel) {
+					angular.extend(stats, item.rFlatMovementSpeedModPerLevel)
+				}
+				if (item.PercentMovementSpeedMod) {
+					angular.extend(stats, item.PercentMovementSpeedMod)
+				}
+				if (item.rPercentMovementSpeedModPerLevel) {
+					angular.extend(stats, item.rPercentMovementSpeedModPerLevel)
+				}
+				if (item.FlatAttackSpeedMod) {
+					angular.extend(stats, item.FlatAttackSpeedMod)
+				}
+				if (item.PercentAttackSpeedMod) {
+					angular.extend(stats, item.PercentAttackSpeedMod)
+				}
+				if (item.rPercentAttackSpeedModPerLevel) {
+					angular.extend(stats, item.rPercentAttackSpeedModPerLevel)
+				}
+				if (item.rFlatDodgeMod) {
+					angular.extend(stats, item.rFlatDodgeMod)
+				}
+				if (item.rFlatDodgeModPerLevel) {
+					angular.extend(stats, item.rFlatDodgeModPerLevel)
+				}
+				if (item.PercentDodgeMod) {
+					angular.extend(stats, item.PercentDodgeMod)
+				}
+				if (item.FlatCritChanceMod) {
+					angular.extend(stats, item.FlatCritChanceMod)
+				}
+				if (item.rFlatCritChanceModPerLevel) {
+					angular.extend(stats, item.rFlatCritChanceModPerLevel)
+				}
+				if (item.PercentCritChanceMod) {
+					angular.extend(stats, item.PercentCritChanceMod)
+				}
+				if (item.FlatCritDamageMod) {
+					angular.extend(stats, item.FlatCritDamageMod)
+				}
+				if (item.rFlatCritDamageModPerLevel) {
+					angular.extend(stats, item.rFlatCritDamageModPerLevel)
+				}
+				if (item.PercentCritDamageMod) {
+					angular.extend(stats, item.PercentCritDamageMod)
+				}
+				if (item.FlatBlockMod) {
+					angular.extend(stats, item.FlatBlockMod)
+				}
+				if (item.PercentBlockMod) {
+					angular.extend(stats, item.PercentBlockMod)
+				}
+				if (item.FlatSpellBlockMod) {
+					angular.extend(stats, item.FlatSpellBlockMod)
+				}
+				if (item.rFlatSpellBlockModPerLevel) {
+					angular.extend(stats, item.rFlatSpellBlockModPerLevel)
+				}
+				if (item.PercentSpellBlockMod) {
+					angular.extend(stats, item.PercentSpellBlockMod)
+				}
+				if (item.FlatEXPBonus) {
+					angular.extend(stats, item.FlatEXPBonus)
+				}
+				if (item.PercentEXPBonus) {
+					angular.extend(stats, item.PercentEXPBonus)
+				}
+				if (item.rPercentCooldownMod) {
+					angular.extend(stats, item.rPercentCooldownMod)
+				}
+				if (item.rPercentCooldownModPerLevel) {
+					angular.extend(stats, item.rPercentCooldownModPerLevel)
+				}
+				if (item.rFlatTimeDeadMod) {
+					angular.extend(stats, item.rFlatTimeDeadMod)
+				}
+				if (item.rFlatTimeDeadModPerLevel) {
+					angular.extend(stats, item.rFlatTimeDeadModPerLevel)
+				}
+				if (item.rPercentTimeDeadMod) {
+					angular.extend(stats, item.rPercentTimeDeadMod)
+				}
+				if (item.rPercentTimeDeadModPerLevel) {
+					angular.extend(stats, item.rPercentTimeDeadModPerLevel)
+				}
+				if (item.rFlatGoldPer10Mod) {
+					angular.extend(stats, item.rFlatGoldPer10Mod)
+				}
+				if (item.rFlatMagicPenetrationMod) {
+					angular.extend(stats, item.rFlatMagicPenetrationMod)
+				}
+				if (item.rFlatMagicPenetrationModPerLevel) {
+					angular.extend(stats, item.rFlatMagicPenetrationModPerLevel)
+				}
+				if (item.rPercentMagicPenetrationMod) {
+					angular.extend(stats, item.rPercentMagicPenetrationMod)
+				}
+				if (item.rPercentMagicPenetrationModPerLevel) {
+					angular.extend(stats, item.rPercentMagicPenetrationModPerLevel)
+				}
+				if (item.FlatEnergyRegenMod) {
+					angular.extend(stats, item.FlatEnergyRegenMod)
+				}
+				if (item.rFlatEnergyRegenModPerLevel) {
+					angular.extend(stats, item.rFlatEnergyRegenModPerLevel)
+				}
+				if (item.FlatEnergyPoolMod) {
+					angular.extend(stats, item.FlatEnergyPoolMod)
+				}
+				if (item.rFlatEnergyModPerLevel) {
+					angular.extend(stats, item.rFlatEnergyModPerLevel)
+				}
+				if (item.PercentLifeStealMod) {
+					angular.extend(stats, item.PercentLifeStealMod)
+				}
+				if (item.PercentSpellVampMod) {
+					angular.extend(stats, item.PercentSpellVampMod)
+				}
+    	}
+    	return stats;
+    }
 	})
 ;

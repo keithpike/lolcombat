@@ -49,14 +49,18 @@ li.ng-leave{
 }
 
 .threeQuarterOpacity {
-	background-color: rgba(0,0,0,.75);
-	opacity: .75;
+	background-color: rgba(0,0,0,.5);
+	opacity: .5;
 }
 
 .selected {
 	outline-style: groove;
 	outline-color: coral;
 	outline-width: medium;
+}
+
+.comparisonsContainer{
+	height: 400px;
 }
 
 .*{

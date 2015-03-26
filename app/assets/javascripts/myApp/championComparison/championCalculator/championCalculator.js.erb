@@ -71,7 +71,10 @@ angular.module('championCalculator', [
 		itemSelectorController.getName = ItemsModel.getItemName;
 		itemSelectorController.getDescription = ItemsModel.getItemDescription;
 		itemSelectorController.getSpriteStyle = ItemsModel.getItemSpriteStyle;
-		itemSelectorController.selectItem = ChampionComparisonModel.selectItem;
+		itemSelectorController.selectItem = function(item) {
+			ItemsModel.getItem(ItemsModel.getItemName(item));
+			ChampionComparisonModel.selectItem(item);
+		}
 	}])
 
 	.controller('RuneSelectorController', function runeSelectorController(){
@@ -92,7 +95,7 @@ angular.module('championCalculator', [
 
 		championSelectorController.championsData = champions;
 		championSelectorController.checkSelected = ChampionComparisonModel.checkSelected;
-		championSelectorController.getComparisonOneItems = ChampionComparisonModel.getComparisonItems(0);
+		//championSelectorController.getComparisonOneItems = ChampionComparisonModel.getComparisonItems(0);
 		championSelectorController.getImage = ChampionsModel.getChampionImage;
 		championSelectorController.getName = ChampionsModel.getChampionName;
 		championSelectorController.getTitle = ChampionsModel.getChampionTitle;

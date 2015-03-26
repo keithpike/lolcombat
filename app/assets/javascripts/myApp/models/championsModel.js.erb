@@ -4,7 +4,7 @@
 * Description
 */
 angular.module('models.champions', [])
-	.service('ChampionsModel', function($http, $q){
+	.service('ChampionsModel', ['$http', '$q', function($http, $q){
 		var model = this,
 				URLS = {
 					GET: "/v1/champions",
@@ -207,25 +207,25 @@ angular.module('models.champions', [])
     model.getChampionStats = function(champion) {
     	return { 
 	       'hp': 											champion.hp,
-	       'hp per level': 						champion.hp_per_level,
+	       'hp_per_level': 						champion.hp_per_level,
 	       'mp': 											champion.mp,
-	       'mp per level': 						champion.mp_per_level,
+	       'mp_per_level': 						champion.mp_per_level,
 	       'movespeed': 							champion.movespeed,
 	       'armor': 									champion.armor,
-	       'armor per level': 				champion.armor_per_level,
+	       'armor_per_level': 				champion.armor_per_level,
 	       'spellblock': 							champion.spellblock,
-	       'spellblock per level': 		champion.spellblock_per_level,
+	       'spellblock_per_level': 		champion.spellblock_per_level,
 	       'attackrange': 						champion.attackrange,
 	       'hpregen': 								champion.hpregen,
-	       'hpregen per level': 			champion.hpregen_per_level,
+	       'hpregen_per_level': 			champion.hpregen_per_level,
 	       'mpregen': 								champion.mpregen,
-	       'mpregen per level': 			champion.mpregen_per_level,
+	       'mpregen_per_level': 			champion.mpregen_per_level,
 	       'crit': 										champion.crit,
-	       'crit per level': 					champion.crit_per_level,
+	       'crit_per_level': 					champion.crit_per_level,
 	       'attackdamage': 						champion.attackdamage,
-	       'attackdamage per level': 	champion.attackdamage_per_level,
+	       'attackdamage_per_level': 	champion.attackdamage_per_level,
 	       'attackspeedoffset': 			champion.attackspeedoffset,
-	       'attackspeed per level': 	champion.attackspeed_per_level
+	       'attackspeed_per_level': 	champion.attackspeed_per_level
     	};
     };
 
@@ -237,5 +237,5 @@ angular.module('models.champions', [])
     		'height': champion.image.h + 'px'
     	};
     };
-	})
+	}])
 ;
