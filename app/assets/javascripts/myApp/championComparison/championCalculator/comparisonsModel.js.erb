@@ -19,6 +19,7 @@ angular.module('models.championComparisons', ['services.championDpsCalculator'])
 					}],
 					selectedComparison,
 					timeframe;
+
 		model.getComparisonChampionByIndex = function(idx) {
 			if (typeof(idx) != 'undefined' && idx >=0 && idx <= 1) {
 				return comparisons[idx].champion;

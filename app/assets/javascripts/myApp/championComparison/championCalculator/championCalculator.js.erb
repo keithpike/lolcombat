@@ -8,7 +8,8 @@ angular.module('championCalculator', [
 	'models.items',
 	'models.champions',
 	'models.championComparisons',
-	'ngOrderObjectBy'
+	'ngOrderObjectBy',
+	'services.championDpsCalculator'
 ])
 	.config(function($stateProvider){
 		$stateProvider
@@ -41,14 +42,35 @@ angular.module('championCalculator', [
 			});
 	})
 	.directive('hulChampionComparison', function() {
-		return function(){
+		// console.log("woohoo a directive!");
+		//return function(){
+			return {
+				scope: {
+					comparisonIndex: '@',
+					getComparisonBackgroundStyle: '&',
+					getComparisonItems: '&',
+					getComparisonItemClass: '&',
+					getSpriteStyle: '&',
+					removeItem: '&',
+					selectComparison: '&',
+					test: '&'
+				},
+				restrict: 'AE',
+				templateUrl: "<%= asset_path('myApp/championComparison/championCalculator/championCalculatorForm.html') %>",
+				// transclude: true
+			};
 			// put form template here
-			console.log("woohoo a directive!");
-		};
+
+		//};
 	})
 
-	.controller('ChampionComparisonController', ['ChampionComparisonModel', 'ItemsModel', 'ChampionsModel', function championComparisonController(ChampionComparisonModel, ItemsModel, ChampionsModel){
+	.controller('ChampionComparisonController', ['ChampionComparisonModel', 'ItemsModel', 'ChampionsModel', 'ChampionDpsCalculator', function championComparisonController(ChampionComparisonModel, ItemsModel, ChampionsModel, ChampionDpsCalculator){
 		var championComparisonController = this;
+
+		championComparisonController.alert = function(someText) {
+			alert(someText);
+		}		
+		championComparisonController.test = ChampionDpsCalculator.test;
 
 		championComparisonController.comparisonFilled = ChampionComparisonModel.comparisonFilled;
 		championComparisonController.selectComparison = ChampionComparisonModel.setSelectedComparison;
@@ -62,6 +84,7 @@ angular.module('championCalculator', [
 		championComparisonController.getComparisonBackgroundStyle = ChampionComparisonModel.getComparisonBackgroundStyle;
 		championComparisonController.getChampionSplash = ChampionsModel.getChampionSplash;
 		championComparisonController.checkComparisonSelected = ChampionComparisonModel.checkComparisonSelected;
+		championComparisonController.calculateDps = ChampionComparisonModel.calculateDpsInfo;
 	}])
 
 	.controller('ItemSelectorController', ['items', 'ItemsModel', 'ChampionComparisonModel', function itemSelectorController(items, ItemsModel, ChampionComparisonModel){
@@ -72,7 +95,7 @@ angular.module('championCalculator', [
 		itemSelectorController.getDescription = ItemsModel.getItemDescription;
 		itemSelectorController.getSpriteStyle = ItemsModel.getItemSpriteStyle;
 		itemSelectorController.selectItem = function(item) {
-			ItemsModel.getItem(ItemsModel.getItemName(item));
+			ItemsModel.getItem(ItemsModel.getItemId(item));
 			ChampionComparisonModel.selectItem(item);
 		}
 	}])

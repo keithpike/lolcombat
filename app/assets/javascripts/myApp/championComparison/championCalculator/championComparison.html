@@ -1,52 +1,41 @@
 <div class='row championComparisonsWrapper'>
 	<div class='comparisonsContainer col-md-8 col-md-offset-2'>
+		
 		<div
 			class='championComparisonWrapper'
 			ng-class='{threeQuarterOpacity: !championComparisonController.checkComparisonSelected(0)}'>
-				<div 
+				<div hul-champion-comparison
+					comparison-index='0'
+					select-comparison='championComparisonController.selectComparison(comparisonIndex)'
+					get-comparison-background-style='championComparisonController.getComparisonBackgroundStyle(																					championComparisonController.getChampionSplash(																											championComparisonController.getComparisonChampionByIndex(comparisonIndex)))'
+					get-comparison-items='championComparisonController.getComparisonItems(comparisonIndex)'
+					get-comparison-item-class='championComparisonController.getComparisonItemClass(itemIndex, item)'
+					remove-item='championComparisonController.removeItem(itemIndex, comparisonIndex)'
+					get-sprite-style='championComparisonController.getSpriteStyle(item)'
+					test='championComparisonController.test()'
 					class='championComparisonLeft col-md-6'
-					ng-click='championComparisonController.selectComparison(0)'
-					ng-style='championComparisonController.getComparisonBackgroundStyle(
-										championComparisonController.getChampionSplash(
-										championComparisonController.getComparisonChampionByIndex(0)))'
-					ng-if='championComparisonController.comparisonFilled(0)'>
-					
-					<div class='comparisonItemWrapper col-md-6'>
-						<div 
-							ng-repeat='item in championComparisonController.getComparisonItems(0) track by $index'
-							ng-class='championComparisonController.getComparisonItemClass($index, item)'
-							ng-click='championComparisonController.removeItem($index, 0)'
-							unselectable='on'
-							class='unselectable' 
-							ng-style='championComparisonController.getSpriteStyle(item)'>
-						</div>
-					</div>
+					ng-if='championComparisonController.comparisonFilled(0)'>			
 				</div>
 		</div>
 
 		<div
 			class='championComparisonWrapper'
 			ng-class='{threeQuarterOpacity: !championComparisonController.checkComparisonSelected(1)}'>
-				<div 
-					class='championComparisonRight col-md-6'			
-					ng-click='championComparisonController.selectComparison(1)'
-					ng-style='championComparisonController.getComparisonBackgroundStyle(
-										championComparisonController.getChampionSplash(
-										championComparisonController.getComparisonChampionByIndex(1)))'
-					ng-if='championComparisonController.comparisonFilled(1)'>
-					
-					<div class='comparisonItemWrapper col-md-6'>
-						<div 
-							ng-repeat='item in championComparisonController.getComparisonItems(1) track by $index'
-							ng-class='championComparisonController.getComparisonItemClass($index, item)'
-							ng-click='championComparisonController.removeItem($index, 1)'
-							unselectable='on'
-							class='unselectable' 
-							ng-style='championComparisonController.getSpriteStyle(item)'>
-						</div>
-					</div>
+				<div hul-champion-comparison
+					comparison-index='1'
+					select-comparison='championComparisonController.selectComparison(comparisonIndex)'
+					get-comparison-background-style='championComparisonController.getComparisonBackgroundStyle(																					championComparisonController.getChampionSplash(																											championComparisonController.getComparisonChampionByIndex(comparisonIndex)))'
+					get-comparison-items='championComparisonController.getComparisonItems(comparisonIndex)'
+					get-comparison-item-class='championComparisonController.getComparisonItemClass(itemIndex, item)'
+					remove-item='championComparisonController.removeItem(itemIndex, comparisonIndex)'
+					get-sprite-style='championComparisonController.getSpriteStyle(item)'
+					test='championComparisonController.test()'
+					class='championComparisonRight col-md-6'
+					ng-if='championComparisonController.comparisonFilled(1)'>			
 				</div>
 		</div>
-
+	</div>
+	<div>
+		<input type='button' value='calculate' ng-click='championComparisonController.calculateDps(10)'>
 	</div>
 </div>

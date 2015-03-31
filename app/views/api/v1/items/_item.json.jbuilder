@@ -1,29 +1,31 @@
-	json.item_id    													item.item_id
-	json.name																	item.name
-	json.description 													item.description
-	json.sanitizedDescription 								item.sanitizedDescription
-	json.tags    															item.tags
-	json.requiredChampion											item.requiredChampion unless item.requiredChampion.nil?
-	json.total_gold    												item.total_gold
-	json.group    														item.group unless item.group.nil?
-	json.FlatArmorMod													item.FlatArmorMod unless item.FlatArmorMod.nil?
-	json.FlatAttackSpeedMod										item.FlatAttackSpeedMod unless item.FlatAttackSpeedMod.nil?
+json.item_id    													item.item_id
+json.name																	item.name
+json.description 													item.description
+json.sanitizedDescription 								item.sanitizedDescription
+json.tags    															item.tags
+json.requiredChampion											item.requiredChampion unless item.requiredChampion.nil?
+json.total_gold    												item.total_gold
+json.group    														item.group unless item.group.nil?
+
+json.stats do	
+	json.bonusArmor														item.FlatArmorMod unless item.FlatArmorMod.nil?
+	json.bonusAttackspeed											item.FlatAttackSpeedMod unless item.FlatAttackSpeedMod.nil?
 	json.FlatBlockMod													item.FlatBlockMod unless item.FlatBlockMod.nil?
-	json.FlatCritChanceMod										item.FlatCritChanceMod unless item.FlatCritChanceMod.nil?
-	json.FlatCritDamageMod										item.FlatCritDamageMod unless item.FlatCritDamageMod.nil?
+	json.bonusCrit														item.FlatCritChanceMod unless item.FlatCritChanceMod.nil?
+	json.bonusCritdamage											item.FlatCritDamageMod unless item.FlatCritDamageMod.nil?
 	json.FlatEXPBonus													item.FlatEXPBonus unless item.FlatEXPBonus.nil?
 	json.FlatEnergyPoolMod										item.FlatEnergyPoolMod unless item.FlatEnergyPoolMod.nil?
 	json.FlatEnergyRegenMod										item.FlatEnergyRegenMod unless item.FlatEnergyRegenMod.nil?
-	json.FlatHPPoolMod												item.FlatHPPoolMod unless item.FlatHPPoolMod.nil?
-	json.FlatHPRegenMod												item.FlatHPRegenMod unless item.FlatHPRegenMod.nil?
-	json.FlatMPPoolMod												item.FlatMPPoolMod unless item.FlatMPPoolMod.nil?
-	json.FlatMPRegenMod												item.FlatMPRegenMod unless item.FlatMPRegenMod.nil?
-	json.FlatMagicDamageMod										item.FlatMagicDamageMod unless item.FlatMagicDamageMod.nil?
-	json.FlatMovementSpeedMod									item.FlatMovementSpeedMod unless item.FlatMovementSpeedMod.nil?
-	json.FlatPhysicalDamageMod								item.FlatPhysicalDamageMod unless item.FlatPhysicalDamageMod.nil?
-	json.FlatSpellBlockMod										item.FlatSpellBlockMod unless item.FlatSpellBlockMod.nil?
+	json.bonusHp															item.FlatHPPoolMod unless item.FlatHPPoolMod.nil?
+	json.bonusHpregen													item.FlatHPRegenMod unless item.FlatHPRegenMod.nil?
+	json.bonusMp															item.FlatMPPoolMod unless item.FlatMPPoolMod.nil?
+	json.bonusMpregen													item.FlatMPRegenMod unless item.FlatMPRegenMod.nil?
+	json.bonusAbilitypower										item.FlatMagicDamageMod unless item.FlatMagicDamageMod.nil?
+	json.bonusMovementspeed										item.FlatMovementSpeedMod unless item.FlatMovementSpeedMod.nil?
+	json.bonusAttackdamage										item.FlatPhysicalDamageMod unless item.FlatPhysicalDamageMod.nil?
+	json.bonusSpellblock											item.FlatSpellBlockMod unless item.FlatSpellBlockMod.nil?
 	json.PercentArmorMod											item.PercentArmorMod unless item.PercentArmorMod.nil?
-	json.PercentAttackSpeedMod								item.PercentAttackSpeedMod unless item.PercentAttackSpeedMod.nil?
+	json.bonusAttackspeed											item.PercentAttackSpeedMod unless item.PercentAttackSpeedMod.nil?
 	json.PercentBlockMod											item.PercentBlockMod unless item.PercentBlockMod.nil?
 	json.PercentCritChanceMod									item.PercentCritChanceMod unless item.PercentCritChanceMod.nil?
 	json.PercentCritDamageMod									item.PercentCritDamageMod unless item.PercentCritDamageMod.nil?
@@ -31,14 +33,14 @@
 	json.PercentEXPBonus											item.PercentEXPBonus unless item.PercentEXPBonus.nil?
 	json.PercentHPPoolMod											item.PercentHPPoolMod unless item.PercentHPPoolMod.nil?
 	json.PercentHPRegenMod										item.PercentHPRegenMod unless item.PercentHPRegenMod.nil?
-	json.PercentLifeStealMod									item.PercentLifeStealMod unless item.PercentLifeStealMod.nil?
+	json.bonusLifesteal												item.PercentLifeStealMod unless item.PercentLifeStealMod.nil?
 	json.PercentMPPoolMod											item.PercentMPPoolMod unless item.PercentMPPoolMod.nil?
 	json.PercentMPRegenMod										item.PercentMPRegenMod unless item.PercentMPRegenMod.nil?
 	json.PercentMagicDamageMod								item.PercentMagicDamageMod unless item.PercentMagicDamageMod.nil?
-	json.PercentMovementSpeedMod							item.PercentMovementSpeedMod unless item.PercentMovementSpeedMod.nil?
+	json.bonusPercentmovespeed								item.PercentMovementSpeedMod unless item.PercentMovementSpeedMod.nil?
 	json.PercentPhysicalDamageMod							item.PercentPhysicalDamageMod unless item.PercentPhysicalDamageMod.nil?
 	json.PercentSpellBlockMod									item.PercentSpellBlockMod unless item.PercentSpellBlockMod.nil?
-	json.PercentSpellVampMod									item.PercentSpellVampMod unless item.PercentSpellVampMod.nil?
+	json.bonusSpellvamp												item.PercentSpellVampMod unless item.PercentSpellVampMod.nil?
 	json.rFlatArmorModPerLevel								item.rFlatArmorModPerLevel unless item.rFlatArmorModPerLevel.nil?
 	json.rFlatArmorPenetrationMod							item.rFlatArmorPenetrationMod unless item.rFlatArmorPenetrationMod.nil?
 	json.rFlatArmorPenetrationModPerLevel			item.rFlatArmorPenetrationModPerLevel unless item.rFlatArmorPenetrationModPerLevel.nil?
@@ -71,8 +73,8 @@
 	json.rPercentMovementSpeedModPerLevel			item.rPercentMovementSpeedModPerLevel unless item.rPercentMovementSpeedModPerLevel.nil?
 	json.rPercentTimeDeadMod									item.rPercentTimeDeadMod unless item.rPercentTimeDeadMod.nil?
 	json.rPercentTimeDeadModPerLevel					item.rPercentTimeDeadModPerLevel unless item.rPercentTimeDeadModPerLevel.nil?
+end
 
-	
-  json.set! :image do
-  	json.partial!('api/v1/images/image', image: item.image) unless item.image.nil?
-	end
+ json.set! :image do
+ 	json.partial!('api/v1/images/image', image: item.image) unless item.image.nil?
+end

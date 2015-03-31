@@ -34,12 +34,13 @@ img.resize{
 // 	border-style: solid;
 // 	border-width: medium;
 // }
+
 .championComparisonWrapper{
-  -webkit-transition: opacity 1s ease-in-out;
-  -moz-transition: opacity 1s ease-in-out;
-  -ms-transition: opacity 1s ease-in-out;
-  -o-transition: opacity 1s ease-in-out;
-  transition: opacity 1s ease-in-out;
+  -webkit-transition: opacity .5s ease-in-out;
+  -moz-transition: opacity .5s ease-in-out;
+  -ms-transition: opacity .5s ease-in-out;
+  -o-transition: opacity .5s ease-in-out;
+  transition: opacity .5s ease-in-out;
 }
 .championSmallPictureContainer{
 	display: inline-block;
@@ -58,10 +59,20 @@ img.resize{
 }
 
 .championComparisonRight{
+	padding: 0 0 0 0;
 	position: absolute;
 	right: 0px;
 	height: 400px;
 }
+
+.championComparisonForm {
+	height: inherit;
+	-webkit-animation: 	inherit;
+	-moz-animation: 		inherit;
+	-o-animation:		 		inherit;
+	animation: 					inherit;
+}
+
 .championComparisonsWrapper{
 	overflow-x: hidden;
 }
@@ -91,6 +102,7 @@ img.resize{
 
 .championComparisonLeft{
 	height: 400px;
+	padding: 0;
 }
 
 .championComparisonLeft.ng-leave{
