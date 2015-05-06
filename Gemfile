@@ -46,6 +46,8 @@ end
 
 
 group :development, :test do
+  gem 'guard'
+  gem 'guard-jasmine', "~>2.0"
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug'
 	gem 'pry-rails'

@@ -2,40 +2,42 @@
 	<div class='comparisonsContainer col-md-8 col-md-offset-2'>
 		
 		<div
-			class='championComparisonWrapper'
-			ng-class='{threeQuarterOpacity: !championComparisonController.checkComparisonSelected(0)}'>
+			class='championComparisonWrapper col-md-6'>
 				<div hul-champion-comparison
+					class='championComparisonLeft'
 					comparison-index='0'
 					select-comparison='championComparisonController.selectComparison(comparisonIndex)'
-					get-comparison-background-style='championComparisonController.getComparisonBackgroundStyle(																					championComparisonController.getChampionSplash(																											championComparisonController.getComparisonChampionByIndex(comparisonIndex)))'
+					get-comparison-background-style='championComparisonController.getComparisonBackgroundStyle(																					championComparisonController.getChampionSplash(																																championComparisonController.getComparisonChampionByIndex(comparisonIndex)))'
 					get-comparison-items='championComparisonController.getComparisonItems(comparisonIndex)'
 					get-comparison-item-class='championComparisonController.getComparisonItemClass(itemIndex, item)'
+					remove-comparison='championComparisonController.deselectChampion(comparisonIndex)'
 					remove-item='championComparisonController.removeItem(itemIndex, comparisonIndex)'
 					get-sprite-style='championComparisonController.getSpriteStyle(item)'
 					test='championComparisonController.test()'
-					class='championComparisonLeft col-md-6'
+					ng-class='{halfOpacity: championComparisonController.checkComparisonSelected(0)}'
 					ng-if='championComparisonController.comparisonFilled(0)'>			
 				</div>
 		</div>
 
 		<div
-			class='championComparisonWrapper'
-			ng-class='{threeQuarterOpacity: !championComparisonController.checkComparisonSelected(1)}'>
+			class='championComparisonWrapper col-md-6'>
 				<div hul-champion-comparison
+					class='championComparisonRight'
 					comparison-index='1'
 					select-comparison='championComparisonController.selectComparison(comparisonIndex)'
 					get-comparison-background-style='championComparisonController.getComparisonBackgroundStyle(																					championComparisonController.getChampionSplash(																											championComparisonController.getComparisonChampionByIndex(comparisonIndex)))'
 					get-comparison-items='championComparisonController.getComparisonItems(comparisonIndex)'
 					get-comparison-item-class='championComparisonController.getComparisonItemClass(itemIndex, item)'
 					remove-item='championComparisonController.removeItem(itemIndex, comparisonIndex)'
+					remove-comparison='championComparisonController.deselectChampion(comparisonIndex)'
 					get-sprite-style='championComparisonController.getSpriteStyle(item)'
 					test='championComparisonController.test()'
-					class='championComparisonRight col-md-6'
+					ng-class='{halfOpacity: championComparisonController.checkComparisonSelected(1)}'
 					ng-if='championComparisonController.comparisonFilled(1)'>			
 				</div>
 		</div>
 	</div>
-	<div>
+<!-- 	<div style='float:right'>
 		<input type='button' value='calculate' ng-click='championComparisonController.calculateDps(10)'>
-	</div>
+	</div> -->
 </div>

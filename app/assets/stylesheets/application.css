@@ -48,20 +48,41 @@ li.ng-leave{
    user-select: none;
 }
 
-.threeQuarterOpacity {
+.halfOpacity {
 	background-color: rgba(0,0,0,.5);
 	opacity: .5;
 }
 
 .selected {
-	outline-style: groove;
 	outline-color: coral;
+	outline-style: groove;
 	outline-width: medium;
 }
 
 .comparisonsContainer{
 	height: 400px;
 }
+
+.closeButton {
+  color: dimgrey;
+	cursor: default;
+  font-size: 2em;
+  float: right;
+  margin-left: 10px;
+  margin-right: 10px;
+  opacity: .5;
+}
+
+.closeButton:hover {
+		color: grey;
+    opacity: .9;
+}
+
+.closeButton:active {
+	color: lightgrey;
+}
+
+
 
 .*{
 	-moz-box-sizing: border-box;

@@ -1,17 +1,22 @@
 <form 
-	class='championComparisonForm'
+	class='championComparisonForm unselectable'
 	ng-click='selectComparison({ comparisonIndex: comparisonIndex })'
 	ng-style='getComparisonBackgroundStyle({ comparisonIndex: comparisonIndex })'>
+	<span 
+		class='closeButton unselectable'
+		ng-click='removeComparison({ comparisonIndex : comparisonIndex })'
+	>
+		X
+	</span>
 		<div class='comparisonItemWrapper col-md-6'>
 			<div 
 				ng-repeat='item in getComparisonItems({ comparisonIndex: comparisonIndex }) track by $index'
 				ng-class='getComparisonItemClass({itemIndex: $index, item: item })'
-				ng-click='removeItem({itemIndex: $index, comparisonIndex : comparisonIndex })'
+				ng-click='removeItem({ itemIndex: $index, comparisonIndex : comparisonIndex })'
 				unselectable='on'
 				class='unselectable'
 				ng-style='getSpriteStyle({ item: item })'>
 			</div>
 		</div>
-	<input type='button' ng-click=''>
 </form>
 

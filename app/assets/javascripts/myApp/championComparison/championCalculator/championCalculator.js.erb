@@ -41,7 +41,7 @@ angular.module('championCalculator', [
 		 		}
 			});
 	})
-	.directive('hulChampionComparison', function() {
+	.directive('hulChampionComparison', [function() {
 		// console.log("woohoo a directive!");
 		//return function(){
 			return {
@@ -52,17 +52,20 @@ angular.module('championCalculator', [
 					getComparisonItemClass: '&',
 					getSpriteStyle: '&',
 					removeItem: '&',
+					removeComparison: '&',
 					selectComparison: '&',
 					test: '&'
+				},
+				link: function(scope, element, attr) {
+					//
 				},
 				restrict: 'AE',
 				templateUrl: "<%= asset_path('myApp/championComparison/championCalculator/championCalculatorForm.html') %>",
 				// transclude: true
 			};
-			// put form template here
 
 		//};
-	})
+	}])
 
 	.controller('ChampionComparisonController', ['ChampionComparisonModel', 'ItemsModel', 'ChampionsModel', 'ChampionDpsCalculator', function championComparisonController(ChampionComparisonModel, ItemsModel, ChampionsModel, ChampionDpsCalculator){
 		var championComparisonController = this;
@@ -73,7 +76,7 @@ angular.module('championCalculator', [
 		championComparisonController.test = ChampionDpsCalculator.test;
 
 		championComparisonController.comparisonFilled = ChampionComparisonModel.comparisonFilled;
-		championComparisonController.selectComparison = ChampionComparisonModel.setSelectedComparison;
+		championComparisonController.selectComparison = ChampionComparisonModel.selectComparison;
 		championComparisonController.getComparisonItems = ChampionComparisonModel.getComparisonItems;
 		championComparisonController.getComparisonItemClass = ChampionComparisonModel.getComparisonItemClass;
 		championComparisonController.removeItem = ChampionComparisonModel.removeItem;
@@ -83,8 +86,9 @@ angular.module('championCalculator', [
 		championComparisonController.getComparisonChampionByIndex = ChampionComparisonModel.getComparisonChampionByIndex;
 		championComparisonController.getComparisonBackgroundStyle = ChampionComparisonModel.getComparisonBackgroundStyle;
 		championComparisonController.getChampionSplash = ChampionsModel.getChampionSplash;
-		championComparisonController.checkComparisonSelected = ChampionComparisonModel.checkComparisonSelected;
+		championComparisonController.checkComparisonSelected = ChampionComparisonModel.shouldBeDimmed;
 		championComparisonController.calculateDps = ChampionComparisonModel.calculateDpsInfo;
+		championComparisonController.deselectChampion = ChampionComparisonModel.resetChampionComparison;
 	}])
 
 	.controller('ItemSelectorController', ['items', 'ItemsModel', 'ChampionComparisonModel', function itemSelectorController(items, ItemsModel, ChampionComparisonModel){
@@ -100,13 +104,13 @@ angular.module('championCalculator', [
 		}
 	}])
 
-	.controller('RuneSelectorController', function runeSelectorController(){
+	.controller('RuneSelectorController', [function runeSelectorController(){
 		var runeSelectorController = this;
-	})
+	}])
 
-	.controller('MasterySelectorController', function masterySelectorController(){
+	.controller('MasterySelectorController', [function masterySelectorController(){
 		var masterySelectorController = this;
-	})
+	}])
 
 	.controller('ChampionSelectorController', ['champions', 'ChampionsModel', 'ChampionComparisonModel', function championSelectorController(champions, ChampionsModel, ChampionComparisonModel){
 		var championSelectorController = this;

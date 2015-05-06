@@ -34,6 +34,7 @@ angular.module('services.championDpsCalculator', ['models.items', 'models.champi
 
 		// TODO: calculate placement within eventsByTime based on time when it
 		// effects the target
+		// event driven battle simulation, no movement considerations currently
 		function simulateSimpleDps(firstChampion, secondChampion, timeframe) {
 			//calculates trades over a timeframe using greedy algorithm
 			var eventsByTime = [],
@@ -52,22 +53,99 @@ angular.module('services.championDpsCalculator', ['models.items', 'models.champi
 					ability = findBestAvailableAbility(secondChampion);
 					// eventsByTime.push(useAbility(ability, secondChampion, firstChampion));
 				} else {
-					// handleEvent(eventsByTime)
+					// handleEvent(eventsByTime);
 				}
 				currentTime = 100;
 			}
-
 		}
+
+		function createEvent(type, ability, user, target) {
+			switch(type) {
+				case "application":
+					createApplicationEvent(ability, user, target);
+					break;
+				case "fallOff":
+					createFalloffEvent(ability, target);
+					break;
+				case "activationReset":
+					createActivationResetEvent(target);
+					break;
+			}
+		}
+
+		function createApplicationEvent(ability, user, target) {
+			return {
+				'activationTime': currentTime + ability.animationLockout,
+				'type': 'application',
+				'target': target,
+				'effects': {
+					'name': ability.name,
+					'initialDamage': ability.initialDamage,
+					'tickDamage': ability.tickDamage,
+					'tickDuration': ability.tickDuration,
+					'tickRate': ability.tickRate,
+					'stunDuration': ability.stunDuration,
+					'debuffs': ability.debuffs
+				}
+			}
+		}
+
+		function createFalloffEvent(ability, target, timeOffset) {
+			return {
+				'activationTime': currentTime + timeOffset,
+				'type': 'application',
+				'target': target,
+				'effects': {
+					'name': ability.name,
+					'initialDamage': ability.initialDamage,
+					'tickDamage': ability.tickDamage,
+					'tickDuration': ability.tickDuration,
+					'tickRate': ability.tickRate,
+					'stunDuration': ability.stunDuration,
+					'debuffs': ability.debuffs
+				}
+			}
+		}
+
 
 		function useAbility(ability, user, target) {
-			var events = [];
-			events.push(updateChampionAvailability(user, ability));
-			events.push()
+			var events = [],
+					action;
+			
+			updateChampionAvailability(user, ability);
+			action = createEvent("application", ability, user, target);
+			bInsertEvent(action, events, sortLowToHigh);
 		}
 
+		// action = {
+		// 	'activationTime': 0,
+		// 	'type': '', // 'application', 'fallOff', 'activationReset'
+		// 	'target': '',
+		// 	'effects': {
+		// 		// application
+		// 			// target
+		// 			// update attributes of target
+		// 			// 'name': '',
+		// 			// 'initialDamage': 0,
+		// 			// 'tickDamage': 0,
+		// 			// 'tickDuration': 0,
+		// 			// 'tickRate': 0,
+		// 			// 'stunDuration': 0,
+		// 			// 'debuffs': [],
+		// 			// 'buffs':[],
+		// 		// fallOff
+		// 			// target
+		// 			// 'debuff'
+		// 			// 'buff'
+		// 			// update attributes of target
+		// 		// activationReset (essentially just moves time forward)
+		// 			// target (for informational purposes)
+		// 	}
+
+		// }
+
 		function updateChampionAvailability(champion, ability) {
-			champion.nextAvailable = nextAvailable(ability.animationLockout) > champion.nextAvailable ? nextAvailable(ability.animationLockout) : champion.nextAvailable;
-			ability.animationLockout;
+			champion.nextAvailable = (nextAvailable(ability.animationLockout) > champion.nextAvailable) ? nextAvailable(ability.animationLockout) : champion.nextAvailable;
 		}
 
 		function nextAvailable(lockout) {
@@ -77,6 +155,35 @@ angular.module('services.championDpsCalculator', ['models.items', 'models.champi
 		function checkChampionAvailable(champion) {
 			return champion.nextAvailable <= currentTime;
 		}
+
+    function bInsertEvent(value, arr, comparer, start, end) {
+			count = count + 1;	
+      start = start || 0;
+      end = typeof end == 'undefined' ? arr.length - 1 : end;
+			var mid = (start + end) >> 1;
+			var result = comparer(value, arr[mid]);
+      if (end - start <= 0) {
+				if (result < 0) {
+				  arr.splice(mid, 0, value);
+				} else {
+					arr.splice(mid + 1, 0, value);
+				}
+        return;
+			} 
+			if (result < 0) {
+				return bInsertEvent(value, arr, comparer, start, mid - 1);
+			} else if (result > 0) {
+				return bInsertEvent(value, arr, comparer, mid + 1, end);
+			} else {
+				arr.splice(mid, 0 , value);
+			}
+		}
+		
+		// deals with floating points, perhaps I should modify this for consistancy
+		function sortLowToHigh(a, b) {
+			if (typeof a == 'undefined' || typeof b == 'undefined') { return 0;}
+		 	return a.activationTime - b.activationTime;
+		};
 
 		// TODO calculate for tickDamage as well as initial damage
 		// add damage types for abilities, buffs, and ticks
@@ -162,58 +269,80 @@ angular.module('services.championDpsCalculator', ['models.items', 'models.champi
 								'bonusLifesteal': 0,
 								'bonusSpellvamp': 0,
 								'bonusPercentmovespeed': 0,
+								'currentHp': 0,
+								'currentMp': 0,
 							},
 							'actions': {
 								'autoAttack': {
-									'name': 'autoAttack',
+									'name': '',
 									'initialDamage': 0,
+									'crittable': false,
 									'tickDamage': 0,
-									'duration': 0,
+									'tickDuration': 0,
+									'tickRate': 0,
 									'animationLockout': 0,
+									'lastCast': 0,
 									'nextAvailable': 0,
 									'abilityLockout': 0,
 									'stunDuration': 0,
+									'debuffs': []
 								},
 								'ability1': {
 									'name': '',
 									'initialDamage': 0,
+									'crittable': false,
 									'tickDamage': 0,
-									'duration': 0,
+									'tickDuration': 0,
+									'tickRate': 0,
 									'animationLockout': 0,
+									'lastCast': 0,
 									'nextAvailable': 0,
 									'abilityLockout': 0,
-									'stunDuration': 0
+									'stunDuration': 0,
+									'debuffs': []
 								},
 								'ability2': {
 									'name': '',
 									'initialDamage': 0,
+									'crittable': false,
 									'tickDamage': 0,
-									'duration': 0,
+									'tickDuration': 0,
+									'tickRate': 0,
 									'animationLockout': 0,
+									'lastCast': 0,
 									'nextAvailable': 0,
 									'abilityLockout': 0,
-									'stunDuration': 0
+									'stunDuration': 0,
+									'debuffs': []
 								},
 								'ability3': {
 									'name': '',
 									'initialDamage': 0,
+									'crittable': false,
 									'tickDamage': 0,
-									'duration': 0,
+									'tickDuration': 0,
+									'tickRate': 0,
 									'animationLockout': 0,
+									'lastCast': 0,
 									'nextAvailable': 0,
 									'abilityLockout': 0,
-									'stunDuration': 0
+									'stunDuration': 0,
+									'debuffs': []
 								},
 								'ability4': {
 									'name': '',
 									'initialDamage': 0,
+									'crittable': false,
 									'tickDamage': 0,
-									'duration': 0,
+									'tickDuration': 0,
+									'tickRate': 0,
 									'animationLockout': 0,
+									'lastCast': 0,
 									'nextAvailable': 0,
 									'abilityLockout': 0,
-									'stunDuration': 0
-								},
+									'stunDuration': 0,
+									'debuffs': []
+								},		
 							},
 			}
 		}
@@ -246,13 +375,13 @@ angular.module('services.championDpsCalculator', ['models.items', 'models.champi
 			var animationLockout = calculateAnimationLockout(champion, ability);
 			var stunDuration = 0;
 			
-			// calculateAnimationLockout(getAnimationTime(champion, 'autoAttack'))
 			return {'autoAttack': {
 														 'name': 'autoAttack',
 														 'crittable': true,
 														 'initialDamage': damage,
 														 'tickDamage': 0,
 														 'tickDuration': 0,
+														 'tickRate': 0,
 														 'animationLockout': animationLockout,
 														 'lastCast': lastCast,
 														 'nextAvailable': nextAvailable,
@@ -282,7 +411,7 @@ angular.module('services.championDpsCalculator', ['models.items', 'models.champi
 		// TODO: Setup to use function to find delay based on ability
 		// CURRENTLY ONLY SETS A DELAY FOR AUTO ATTACKS
 		function calculateAbilityAvailability(stats, ability) {
-			var delay = 1.0 / stats.attackspeed
+			var delay = 1.0 / stats.attackspeed;
 			return delay;
 		}
 
@@ -291,18 +420,9 @@ angular.module('services.championDpsCalculator', ['models.items', 'models.champi
 			return remaining <= 0 ? 0 : remaining; 
 		}
 
-		function calculateAbilityNextAvailability(ability, newLockout) {
+		function calculateAbilityNextAvailable(ability, newLockout) {
 			return currentTime + newLockout * calculatePercentDelayRemaining(ability);
 		}
-
-
-		// TODO //
-		function createAction(name) {
-			// damage, animationLockout, abilityLockout, stunDuration, nextAvailable
-			return { name: '' };
-		}
-
-
 
 		function addChampionStats(champion, base, level) {
 			angular.extend(champion.stats, getChampionStats(base, level));
@@ -468,5 +588,59 @@ angular.module('services.championDpsCalculator', ['models.items', 'models.champi
 			});
 			return (baseAttackSpeed * (1 + bonusAttackSpeed)) * debuffedAttackSpeed;
 		}
+
+		// to be deleted before distribution
+		var __testOnly__ = this;
+		__testOnly__.setupChampion = setupChampion;
+		__testOnly__.simulateSimpleDps = simulateSimpleDps;
+		__testOnly__.createEvent = createEvent;
+		__testOnly__.createApplicationEvent = createApplicationEvent;
+		__testOnly__.createFalloffEvent = createFalloffEvent;
+		__testOnly__.useAbility = useAbility;
+		__testOnly__.updateChampionAvailability = updateChampionAvailability;
+		__testOnly__.nextAvailable = nextAvailable;
+		__testOnly__.checkChampionAvailable = checkChampionAvailable;
+		__testOnly__.bInsertEvent = bInsertEvent;
+		__testOnly__.sortLowToHigh = sortLowToHigh;
+		__testOnly__.findBestAvailableAbility = findBestAvailableAbility;
+		__testOnly__.calculateEffectiveDamage = calculateEffectiveDamage;
+		__testOnly__.calculateDamage = calculateDamage;
+		__testOnly__.checkAbilityAvailability = checkAbilityAvailability;
+		__testOnly__.championDefaultValues = championDefaultValues;
+		__testOnly__.addActions = addActions;
+		__testOnly__.createActionList = createActionList;
+		__testOnly__.getAbilityAttributes = getAbilityAttributes;
+		__testOnly__.calculateAnimationLockout = calculateAnimationLockout;
+		__testOnly__.calculateAbilityDamage = calculateAbilityDamage;
+		__testOnly__.calculateAbilityAvailability = calculateAbilityAvailability;
+		__testOnly__.calculatePercentDelayRemaining = calculatePercentDelayRemaining;
+		__testOnly__.calculateAbilityNextAvailable = calculateAbilityNextAvailable;
+		__testOnly__.addChampionStats = addChampionStats;
+		__testOnly__.getChampionStats = getChampionStats;
+		__testOnly__.addItemStats = addItemStats;
+		__testOnly__.updateChampionAttackSpeed = updateChampionAttackSpeed;
+		__testOnly__.addStatsToChampion = addStatsToChampion;
+		__testOnly__.getItemStats = getItemStats;
+		__testOnly__.calculateEffectiveResist = calculateEffectiveResist;
+		__testOnly__.getEffectiveSpellblock = getEffectiveSpellblock;
+		__testOnly__.getHp = getHp;
+		__testOnly__.getMp = getMp;
+		__testOnly__.getMovespeed = getMovespeed;
+		__testOnly__.getArmor = getArmor;
+		__testOnly__.getSpellblock = getSpellblock;
+		__testOnly__.getAttackrange = getAttackrange;
+		__testOnly__.getHpregen = getHpregen;
+		__testOnly__.getMpregen = getMpregen;
+		__testOnly__.getCrit = getCrit;
+		__testOnly__.getCritdamage = getCritdamage;
+		__testOnly__.getAttackdamage = getAttackdamage;
+		__testOnly__.getBonusAttackspeed = getBonusAttackspeed;
+		__testOnly__.getAttackspeed = getAttackspeed;
+		__testOnly__.getStatAfterGrowth = getStatAfterGrowth;
+		__testOnly__.getPerLevelChange = getPerLevelChange;
+		__testOnly__.getBaseAttackspeed = getBaseAttackspeed;
+		__testOnly__.getModifiedAttackSpeed = getModifiedAttackSpeed;
+
+
 
 	}]);

@@ -34,13 +34,21 @@ angular.module('models.championComparisons', ['services.championDpsCalculator'])
 			}
 		};
 
-		model.checkComparisonSelected = function(idx) {
+		function checkComparisonSelected(idx) {
 			if (typeof(idx) != 'undefined' && selectedComparison) {
-				return comparisons[idx] == selectedComparison ? true : false;
+				return comparisons[idx] == selectedComparison;
 			} else {
 				return false;
 			}
 		}
+
+		model.shouldBeDimmed = function(idx) {
+			if (checkComparisonSelected(idx)) {
+				return false;
+			} else {
+				return model.comparisonFilled(idx);
+			}
+		};
 
 		model.championSelected = function(champion) {
 			if (champion) {
@@ -49,23 +57,23 @@ angular.module('models.championComparisons', ['services.championDpsCalculator'])
 				if (typeof(championComparisonIdx) == 'undefined' &&
 						typeof(openComparisonIdx) != 'undefined' ) {
 					setComparisonChampion(openComparisonIdx, champion);
-					model.setSelectedComparison(openComparisonIdx);
+					setSelectedComparison(openComparisonIdx);
 				
 				} else if (typeof(championComparisonIdx) != 'undefined') {
-					resetChampionComparison(championComparisonIdx);
+					model.resetChampionComparison(championComparisonIdx);
 				}
 			}
 		};
 
-		function resetChampionComparison(idx) {
+		model.resetChampionComparison = function(idx) {
 
 			comparisons[idx] = {
 						'champion': {'name': 'none'},
 						'items': [undefined, undefined, undefined, undefined, undefined, undefined],
 						'level': 1,
 					};
-			model.setSelectedComparison(findFilledComparison());
-		}
+			setSelectedComparison(findFilledComparison());
+		};
 
 		function findFilledComparison(){
 			if (model.comparisonFilled(0)) {
@@ -81,7 +89,15 @@ angular.module('models.championComparisons', ['services.championDpsCalculator'])
 			comparisons[idx].champion = champion;
 		}
 
-		model.setSelectedComparison = function(idx) {
+		model.selectComparison = function(idx) {
+			if (typeof(idx) != 'undefined' && idx < 2 && idx >= 0 && comparisons[idx].champion.name != 'none') {
+				setSelectedComparison(idx);
+			} else {
+				setSelectedComparison(findFilledComparison());
+			}
+		};
+
+		function setSelectedComparison(idx) {
 			if (typeof(idx) != 'undefined' && idx < 2 && idx >= 0) {
 				console.log("comparison set to " + idx);
 				selectedComparison = comparisons[idx];
@@ -89,7 +105,7 @@ angular.module('models.championComparisons', ['services.championDpsCalculator'])
 				// console.log("comparison set to nothing!");
 				selectedComparison = undefined;
 			}
-		};
+		}
 
 		model.checkSelected = function(champion){
 			if (champion) {
@@ -119,6 +135,10 @@ angular.module('models.championComparisons', ['services.championDpsCalculator'])
 
 		model.selectItem = function(item){
 			if (item && selectedComparison) {
+				//test selection is a valid selection
+				// checkItemAddable(item)
+
+				//add item to comparison
 				model.addItem(item);
 			}
 		};

@@ -36,11 +36,8 @@ img.resize{
 // }
 
 .championComparisonWrapper{
-  -webkit-transition: opacity .5s ease-in-out;
-  -moz-transition: opacity .5s ease-in-out;
-  -ms-transition: opacity .5s ease-in-out;
-  -o-transition: opacity .5s ease-in-out;
-  transition: opacity .5s ease-in-out;
+	padding: 0 0 0 0;
+  height: 400px;
 }
 .championSmallPictureContainer{
 	display: inline-block;
@@ -51,26 +48,28 @@ img.resize{
 
 .comparisonsContainer{
 	overflow-x: visible;
+	max-width: 1000px;
 }
 
 .championSelectorContainer{
 	height: 160px;
+	max-width: 1000px;
 	overflow-y: scroll;
 }
 
 .championComparisonRight{
+  -webkit-transition: opacity .5s ease-in-out;
+  -moz-transition: opacity .5s ease-in-out;
+  -ms-transition: opacity .5s ease-in-out;
+  -o-transition: opacity .5s ease-in-out;
+  transition: opacity .5s ease-in-out;
 	padding: 0 0 0 0;
-	position: absolute;
 	right: 0px;
 	height: 400px;
 }
 
 .championComparisonForm {
 	height: inherit;
-	-webkit-animation: 	inherit;
-	-moz-animation: 		inherit;
-	-o-animation:		 		inherit;
-	animation: 					inherit;
 }
 
 .championComparisonsWrapper{
@@ -101,6 +100,11 @@ img.resize{
 }
 
 .championComparisonLeft{
+  -webkit-transition: opacity .5s ease-in-out;
+  -moz-transition: opacity .5s ease-in-out;
+  -ms-transition: opacity .5s ease-in-out;
+  -o-transition: opacity .5s ease-in-out;
+  transition: opacity .5s ease-in-out;
 	height: 400px;
 	padding: 0;
 }
@@ -117,7 +121,7 @@ img.resize{
 						 					
 }
 
-.championComparisonLeft.ng-enter{
+.championComparisonLeft.ng-enter {
 	-webkit-animation: 	slideInLeft 1.5s,
 										 	fadeIn 1.5s;
 	-moz-animation: 		slideInLeft 1.5s,
@@ -126,5 +130,9 @@ img.resize{
 											fadeIn 1.5s;
 	animation: 					slideInLeft 1.5s,
 						 					fadeIn 1.5s;
+}
+
+.statsData {
+	width: 200px;
 }
 
