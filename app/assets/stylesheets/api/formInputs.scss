@@ -1,0 +1,60 @@
+input.timeFrameSlider {
+	clear: left;
+	display: inline-block;
+	float: left;
+	height: 26px;
+	width: auto;
+}
+
+.championComparisonInputLabel {
+	float: left;
+	font-weight: normal;
+	color: red;
+	display: inline-block;
+	margin-bottom: 0px;
+}
+
+.championComparisonOutputText {
+	color: red;
+	display: inline-block;
+	float: left;
+	margin-left: 10px;
+}
+
+.halfComparisonWrapper {
+	display: inline-block;
+	float: left;
+	height: 100%;
+	width: 50%;
+}
+
+.formInitialMargin {
+		margin-top: 59px;
+}
+
+input.rawCheck {
+	margin: 0 auto;
+	display: block;
+}
+
+.checkboxWrapper {
+	float: left;
+	margin-left: 10px;
+	margin-top: 3px;
+}
+
+.labelWrapper {
+	color: red;
+	float: left;
+}
+
+.checkboxLabel {
+	color: red;
+	font-weight: normal;
+	margin: 0 auto;
+	display: block;
+}
+
+.clear {
+	clear: both;
+}

@@ -19,4 +19,6 @@
 //= require angular-sanitize/angular-sanitize.min
 //= require angular-order-object-by/ng-order-object-by
 //= require underscore/underscore-min
+//= require highcharts/adapters/standalone-framework
+//= require highcharts/highcharts
 //= require static_pages

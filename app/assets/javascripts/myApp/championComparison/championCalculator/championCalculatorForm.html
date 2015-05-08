@@ -2,12 +2,29 @@
 	class='championComparisonForm unselectable'
 	ng-click='selectComparison({ comparisonIndex: comparisonIndex })'
 	ng-style='getComparisonBackgroundStyle({ comparisonIndex: comparisonIndex })'>
-	<span 
-		class='closeButton unselectable'
-		ng-click='removeComparison({ comparisonIndex : comparisonIndex })'
-	>
-		X
-	</span>
+	<div class='halfComparisonWrapper'>
+		<label class='championComparisonInputLabel formInitialMargin clear' for=TimeFrame>TimeFrame (seconds)</label> 
+		<input class='timeFrameSlider' type='range' value='0' step='1' min='0' max='60' name='TimeFrame' oninput="this.form.TimeFrameValue.value = this.value">
+		<output class='championComparisonOutputText' name="TimeFrameValue">0</output>
+		<label class='championComparisonInputLabel clear' for=ChampionLevel>Champion Level</label> 
+		<input class='timeFrameSlider' type='range' value='1' step='1' min='1' max='18' name='ChampionLevel' oninput="this.form.ChampionLevelValue.value = this.value">
+		<output class='championComparisonOutputText' name="ChampionLevelValue">1</output>
+		<div class='labelWrapper clear text-center'>
+			<span class='championComparisonInputLabel'>Damage/sec</span><br/>
+			<span class='clear' name='ChampionDPSValue'>500</output>
+		</div>
+		<div class='checkboxWrapper'>
+			<label class='checkboxLabel' for=RawDPS>Raw</label> 
+			<input class='rawCheck clear' type="checkbox" name="RawDPS" value="car">
+		</div>
+	</div>
+	<div class='halfComparisonWrapper'>
+		<span 
+			class='closeButton unselectable'
+			ng-click='removeComparison({ comparisonIndex : comparisonIndex })'
+		>
+			X
+		</span>
 		<div class='comparisonItemWrapper col-md-6'>
 			<div 
 				ng-repeat='item in getComparisonItems({ comparisonIndex: comparisonIndex }) track by $index'
@@ -18,5 +35,10 @@
 				ng-style='getSpriteStyle({ item: item })'>
 			</div>
 		</div>
+		<div class='championChartWrapper'>
+			<div id='champion{{comparisonIndex}}Chart' class='championChart'>
+			</div>
+		</div>
+	</div>
 </form>
 

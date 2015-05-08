@@ -19,6 +19,61 @@ angular.module('models.championComparisons', ['services.championDpsCalculator'])
 					}],
 					selectedComparison,
 					timeframe;
+		setHighchartDefaults();
+
+		function setHighchartDefaults(){
+			Highcharts.setOptions({
+			    chart: {
+			        style: {
+			            fontFamily: 'monospace',
+			            color: "#f00"
+			        }
+
+			    },
+			    title: {
+			      style: {
+			         color: '#F00',
+			         font: 'bold 16px "Trebuchet MS", Verdana, sans-serif'
+			      }
+			   },
+			    xAxis: {
+			      tickColor: '#000',
+			      labels: {
+			         style: {
+			            color: '#F00',
+			            font: '11px Trebuchet MS, Verdana, sans-serif'
+			         }
+			      },
+			      title: {
+			         style: {
+			            color: '#FFF',
+			            fontWeight: 'bold',
+			            fontSize: '12px',
+			            fontFamily: 'Trebuchet MS, Verdana, sans-serif'
+
+			         }            
+			      }
+			   },
+			   yAxis: {
+			      tickColor: '#000',
+			      labels: {
+			         style: {
+			            color: '#F00',
+			            font: '11px Trebuchet MS, Verdana, sans-serif'
+			         }
+			      },
+			      title: {
+			         style: {
+			            color: '#FFF',
+			            fontWeight: 'bold',
+			            fontSize: '12px',
+			            fontFamily: 'Trebuchet MS, Verdana, sans-serif'
+			         }            
+			      }
+			   },
+			});
+		}
+
 
 		model.getComparisonChampionByIndex = function(idx) {
 			if (typeof(idx) != 'undefined' && idx >=0 && idx <= 1) {
@@ -175,12 +230,80 @@ angular.module('models.championComparisons', ['services.championDpsCalculator'])
 		}
 
 		model.calculateDpsInfo = function(timeframe) {
-			var dpsInfo = championDpsCalculator.getDpsInfo(
-												[comparisons[0].champion, comparisons[1].champion],
-												[comparisons[0].items, comparisons[1].items],
-												[comparisons[0].level, comparisons[1].level],
-												timeframe
-										);
+			// var dpsInfo = championDpsCalculator.getDpsInfo(
+			// 									[comparisons[0].champion, comparisons[1].champion],
+			// 									[comparisons[0].items, comparisons[1].items],
+			// 									[comparisons[0].level, comparisons[1].level],
+			// 									timeframe
+			// 							);
+			makeGraph('champion0Chart', []);
+			makeGraph('champion1Chart', []);
 		};
+
+		function makeGraph(containerName, data) {
+			var chart = new Highcharts.Chart({
+		    chart: {
+		        renderTo: containerName,
+		        height: 200,
+		        backgroundColor:'rgba(0, 0, 0, .5)'
+		    },
+
+		    credits: {
+		    	enabled: false
+		    },
+
+		    series: [{
+		      data: [
+		      {
+		      	y: 2000,
+		      	x: 2,
+		    	  image: 'https://s3-us-west-1.amazonaws.com/lolcomparitor/Images/spell/AutoAttack.png',
+		        name: 'AutoAttack'
+		      },
+		      {
+		      	y: 2000,
+		      	x: 1.5,
+		    	  image: 'https://s3-us-west-1.amazonaws.com/lolcomparitor/Images/spell/AutoAttack.png',
+		        name: 'AutoAttack'
+		      },
+		      {
+		      	y: 2000,
+		      	x: .5,
+		    	  image: 'https://s3-us-west-1.amazonaws.com/lolcomparitor/Images/spell/AutoAttack.png',
+		        name: 'AutoAttack'
+		      }],
+		      showInLegend: false
+		    }],
+
+		    tooltip: {
+            useHTML: true,
+		        formatter: function () {
+		            return '<img class="graphAbilityIcon" src="' + 
+		            this.point.image + 
+		            '"></img><span class="graphAbilityName">' + 
+		            this.point.name + 
+		            '</span><br/><span class="graphAbilityDamage">Damage: ' + 
+		            this.point.y + 
+		            '</span>';
+		        }
+		    },
+
+		    title: {
+		    	text: 'Champion Damage Events'
+		    },
+
+		    xAxis: {
+		    	title: {
+		    		text: 'Time'
+		    	}
+		    },
+
+		    yAxis: {
+		    	title: {
+		    		text: 'Damage'
+		    	}
+		    }
+			});
+		}
 
 	}]);

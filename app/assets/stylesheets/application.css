@@ -81,7 +81,9 @@ li.ng-leave{
 .closeButton:active {
 	color: lightgrey;
 }
-
+.text-center {
+	text-align: center;
+}
 
 
 .*{
