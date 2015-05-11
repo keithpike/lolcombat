@@ -11,20 +11,12 @@
 		<output class='championComparisonOutputText' name="ChampionLevelValue">1</output>
 		<div class='labelWrapper clear text-center'>
 			<span class='championComparisonInputLabel'>Damage/sec</span><br/>
-			<span class='clear' name='ChampionDPSValue'>500</output>
+			<span class='clear outputColor' name='ChampionDPSValue'>500</output>
 		</div>
 		<div class='checkboxWrapper'>
 			<label class='checkboxLabel' for=RawDPS>Raw</label> 
 			<input class='rawCheck clear' type="checkbox" name="RawDPS" value="car">
 		</div>
-	</div>
-	<div class='halfComparisonWrapper'>
-		<span 
-			class='closeButton unselectable'
-			ng-click='removeComparison({ comparisonIndex : comparisonIndex })'
-		>
-			X
-		</span>
 		<div class='comparisonItemWrapper col-md-6'>
 			<div 
 				ng-repeat='item in getComparisonItems({ comparisonIndex: comparisonIndex }) track by $index'
@@ -35,6 +27,14 @@
 				ng-style='getSpriteStyle({ item: item })'>
 			</div>
 		</div>
+	</div>
+	<div class='halfComparisonWrapper'>
+		<span 
+			class='closeButton unselectable'
+			ng-click='removeComparison({ comparisonIndex : comparisonIndex })'
+		>
+			X
+		</span>
 		<div class='championChartWrapper'>
 			<div id='champion{{comparisonIndex}}Chart' class='championChart'>
 			</div>

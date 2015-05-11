@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html ng-app="myApp">
 <head>
+	<%= stylesheet_link_tag    'vendor', media: 'all', :debug => false %>
   <%= stylesheet_link_tag    'application', media: 'all' %>
   <%= csrf_meta_tags %>
 
@@ -12,5 +13,6 @@
 
 
 </body>
-  	<%= javascript_include_tag 'application' %>
+	<%= javascript_include_tag 'vendor', :debug => false %>
+ 	<%= javascript_include_tag 'application' %>
 </html>

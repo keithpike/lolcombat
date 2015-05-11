@@ -10,15 +10,4 @@
 // Read Sprockets README (https://github.com/sstephenson/sprockets#sprockets-directives) for details
 // about supported directives.
 //
-//= require angular/angular
-//= require angular-ui-router/angular-ui-router
-//= require angular-resource/angular-resource.min
-//= require angular-animate/angular-animate
-//= require angular-strap/angular-strap.min
-//= require angular-strap/angular-strap-tpl.min
-//= require angular-sanitize/angular-sanitize.min
-//= require angular-order-object-by/ng-order-object-by
-//= require underscore/underscore-min
-//= require highcharts/adapters/standalone-framework
-//= require highcharts/highcharts
 //= require static_pages

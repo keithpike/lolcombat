@@ -66,6 +66,22 @@ angular.module('championCalculator', [
 
 		//};
 	}])
+	.directive('onLastRepeat', function() {
+
+    return function(scope, element, attrs) {
+      if (scope.$last) setTimeout(function(){
+	      var wrapper = element.parent()[0];
+				// var wrapper = document.getElementById('championSelectorContainer');
+				myScroll = new IScroll(wrapper, {
+					scrollX: true,
+					scrollY: false,
+					mouseWheel: true,
+					scrollbars: true
+				});
+				console.log('i was called');
+      }, 5);
+    };
+  })
 
 	.controller('ChampionComparisonController', ['ChampionComparisonModel', 'ItemsModel', 'ChampionsModel', 'ChampionDpsCalculator', function championComparisonController(ChampionComparisonModel, ItemsModel, ChampionsModel, ChampionDpsCalculator){
 		var championComparisonController = this;
@@ -112,7 +128,7 @@ angular.module('championCalculator', [
 		var masterySelectorController = this;
 	}])
 
-	.controller('ChampionSelectorController', ['champions', 'ChampionsModel', 'ChampionComparisonModel', function championSelectorController(champions, ChampionsModel, ChampionComparisonModel){
+	.controller('ChampionSelectorController', ['champions', 'ChampionsModel', 'ChampionComparisonModel', '$scope', function championSelectorController(champions, ChampionsModel, ChampionComparisonModel, $scope){
 		var championSelectorController = this;
 		// championSelectorController.handleClick = ChampionComparisonModel.testAddItem;//function(champion){
 		// 	debugger
@@ -131,6 +147,20 @@ angular.module('championCalculator', [
 			ChampionsModel.getChampion(ChampionsModel.getChampionName(champion));
 			ChampionComparisonModel.championSelected(champion);
 		};
+		// var init = function (scope, element, attrs) {
+		// 	// var wrapper = element.parent()[0];
+		// 	debugger
+		// 	// var wrapper = document.getElementById('championSelectorContainer');
+		// 	myScroll = new IScroll('#championSelectorContainer', {
+		// 		scrollX: true,
+		// 		scrollY: false,
+		// 		mouseWheel: true,
+		// 		scrollbars: true
+		// 	});
+		// 	console.log('im called');
+		// };
+		// // init();
+		// $scope.$on('onRepeatLast', init);
 	}])
 ;
 

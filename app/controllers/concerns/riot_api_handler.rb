@@ -314,5 +314,40 @@ class RiotApiHandler
 		
 	end
 
+	def parse_champion_abilities(path)
+		seed_data = {}
+		counter = 0
+		seed_data['champions'] = get_resources_from_api_test(path + '/champions.json', false)
+		cost = Hash.new
+		seed_data['champions'].each do |champion|
+			# puts champion['name']
+			champion['spells'].each do |spell|
+				# if champion['name'] == 'Aatrox'
+					
+					cost[spell['costType'].upcase] =  cost[spell['costType'].upcase] ? cost[spell['costType'].upcase] + "," + spell['name'] : spell['name']
+					spell.each do |key, value|
+						# puts key + ": " + value.inspect if champion['name'] == 'Taric'
+						puts key + ": " + value.inspect if spell['name'] == 'Shatter'
+					end
+					counter += 1
+				end
+			# end
+		end
+		# counter = 1
+		cost.each do |key, value|
+			# puts "costType: " + key
+			# puts "  " + value
+			# puts
+			# counter += 1
+		end
+	end
+
+
+	def parse_damage_element(text) 
+
+	end
 
 end
+RiotApiHandler.new().parse_champion_abilities("/Users/keith/Documents/Programming/Ruby/Workspace/lolwebsite/app/riot_api_responses")
+
+

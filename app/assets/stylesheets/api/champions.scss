@@ -24,7 +24,8 @@ img.resize{
 }
 
 .championSmallWrapper{
-	float: left;
+	// float: left;
+	display: inline-block;
 	height: 48px;
 	margin: 5px 5px 0 0;
 	width: 48px;
@@ -40,21 +41,28 @@ img.resize{
   height: 400px;
 }
 .championSmallPictureContainer{
-	display: inline-block;
-	float: none;
 	width: 48px;
 	height: 48px;
 }
 
 .comparisonsContainer{
 	overflow-x: visible;
+	padding: 0 0 0 0;
 	max-width: 1000px;
 }
 
+#championSelectorContainer {
+	overflow: hidden;
+	position: relative;
+}
+
 .championSelectorContainer{
-	height: 160px;
+	height: 60px;
 	max-width: 1000px;
-	overflow-y: scroll;
+	overflow-x: hidden;
+	overflow-y: hidden;
+	white-space: nowrap;
+	padding: 0 0 0 0;
 }
 
 .championComparisonRight{
