@@ -13,8 +13,8 @@ angular.module('services.championDpsCalculator', ['models.items', 'models.champi
 			var firstChampion = setupChampion(champions[0], items[0], levels[0]);
 			var secondChampion = setupChampion(champions[1], items[1], levels[1]);
 			currentTime = 0;
-			debugger
-			simulateSimpleDps(firstChampion, secondChampion, timeframe);
+			return simulateSimpleDps(firstChampion, secondChampion, timeframe);
+
 
 		};
 
@@ -32,50 +32,76 @@ angular.module('services.championDpsCalculator', ['models.items', 'models.champi
 			return newChampion;
 		}
 
-		// TODO: calculate placement within eventsByTime based on time when it
-		// effects the target
 		// event driven battle simulation, no movement considerations currently
+		// Considering events take a target no consideration is taken for multiple enemies
 		function simulateSimpleDps(firstChampion, secondChampion, timeframe) {
 			//calculates trades over a timeframe using greedy algorithm
 			var eventsByTime = [],
+					currentEventIndex = 0,
 					activeChampion = firstChampion,
 					receivingChampion = secondChampion,
+					eventCounter = 1,
+					timeframe = timeframe * 10,
 					ability,
-					abilityUsageEvents;
-
+					abilityUsageEvents,
+					results;
+			debugger
 			while (currentTime < timeframe) {
 				if (checkChampionAvailable(firstChampion)) {
 					ability = findBestAvailableAbility(firstChampion, secondChampion);
+					abilityUsageEvents = useAbility(ability, firstChampion, secondChampion, eventCounter);
+					eventCounter += abilityUsageEvents.length;
+					angular.forEach(abilityUsageEvents, function(event) {
+						bInsertEvent(event, eventsByTime, sortLowToHigh);
+					});
 					debugger
-					abilityUsageEvents = useAbility(ability, firstChampion, secondChampion);
-					// eventsByTime.push();
 				}	else if (checkChampionAvailable(secondChampion)) {
-					ability = findBestAvailableAbility(secondChampion);
-					// eventsByTime.push(useAbility(ability, secondChampion, firstChampion));
+					ability = findBestAvailableAbility(secondChampion, firstChampion);
+					abilityUsageEvents = useAbility(ability, secondChampion, firstChampion, eventCounter);
+					eventCounter += abilityUsageEvents.length;
+					angular.forEach(abilityUsageEvents, function(event) {
+						bInsertEvent(event, eventsByTime, sortLowToHigh);
+					});
 				} else {
-					// handleEvent(eventsByTime);
+					handleEvent(eventsByTime, currentEventIndex);
+					currentTime = eventsByTime[currentEventIndex].activationTime;
+					currentEventIndex += 1;
+					debugger
 				}
-				currentTime = 100;
 			}
+			return results;
 		}
 
-		function createEvent(type, ability, user, target) {
+		function handleEvent(events, currentEvent) {
+
+		}
+
+		function updateTime() {
+
+		}
+
+		function createEvent(type, ability, user, target, eventCounter) {
 			switch(type) {
-				case "application":
-					createApplicationEvent(ability, user, target);
+				case 'application':
+					return createApplicationEvent(ability, user, target, eventCounter);
 					break;
-				case "fallOff":
-					createFalloffEvent(ability, target);
+				case 'castAnimationEnd':
+					return createCastAnimationEndEvent();
 					break;
-				case "activationReset":
-					createActivationResetEvent(target);
+				case 'fallOff':
+					return createFalloffEvent(ability, target, eventCounter);
+					break;
+				case 'activationReset':
+					return createActivationResetEvent(target, eventCounter);
 					break;
 			}
 		}
 
-		function createApplicationEvent(ability, user, target) {
+		function createApplicationEvent(ability, user, target, eventCounter) {
 			return {
 				'activationTime': currentTime + ability.animationLockout,
+				'id': eventCounter,
+				'actionCauseId': 0,
 				'type': 'application',
 				'target': target,
 				'effects': {
@@ -90,35 +116,31 @@ angular.module('services.championDpsCalculator', ['models.items', 'models.champi
 			}
 		}
 
-		function createFalloffEvent(ability, target, timeOffset) {
+		// TODO WRITE IT!
+		function createFalloffEvent(ability, target, timeOffset, eventCounter) {
 			return {
 				'activationTime': currentTime + timeOffset,
-				'type': 'application',
+				'id': eventCounter,
+				'type': 'fallOff',
 				'target': target,
-				'effects': {
-					'name': ability.name,
-					'initialDamage': ability.initialDamage,
-					'tickDamage': ability.tickDamage,
-					'tickDuration': ability.tickDuration,
-					'tickRate': ability.tickRate,
-					'stunDuration': ability.stunDuration,
-					'debuffs': ability.debuffs
-				}
 			}
 		}
 
 
-		function useAbility(ability, user, target) {
+		function useAbility(ability, user, target, eventCounter) {
 			var events = [],
 					action;
-			
 			updateChampionAvailability(user, ability);
-			action = createEvent("application", ability, user, target);
+			action = createEvent("application", ability, user, target, eventCounter);
 			bInsertEvent(action, events, sortLowToHigh);
+			debugger
+			return events;
 		}
 
 		// action = {
 		// 	'activationTime': 0,
+		//	'id': 1
+		//  'actionCauseId: 0 || id of action that caused this'
 		// 	'type': '', // 'application', 'fallOff', 'activationReset'
 		// 	'target': '',
 		// 	'effects': {
@@ -157,7 +179,7 @@ angular.module('services.championDpsCalculator', ['models.items', 'models.champi
 		}
 
     function bInsertEvent(value, arr, comparer, start, end) {
-			count = count + 1;	
+			// count = count + 1;	
       start = start || 0;
       end = typeof end == 'undefined' ? arr.length - 1 : end;
 			var mid = (start + end) >> 1;
@@ -188,7 +210,6 @@ angular.module('services.championDpsCalculator', ['models.items', 'models.champi
 		// TODO calculate for tickDamage as well as initial damage
 		// add damage types for abilities, buffs, and ticks
 		function findBestAvailableAbility(user, target) {
-			debugger
 			var bestAbility,
 					bestDamage = 0;
 
@@ -198,7 +219,6 @@ angular.module('services.championDpsCalculator', ['models.items', 'models.champi
 					bestAbility = ability;
 				} 
 			});
-			debugger
 			return bestAbility;
 		}
 
@@ -394,7 +414,7 @@ angular.module('services.championDpsCalculator', ['models.items', 'models.champi
 		// TODO: get information on specific abilities and champions for accurate
 		// animation lockout times (assumed to scale based on attack speed for autoAttacks)
 		function calculateAnimationLockout(champion, ability) {
-			return .2;
+			return 2;
 		}
 
 		// TODO: add check for effect bonuses and champion passive bonuses
@@ -403,7 +423,7 @@ angular.module('services.championDpsCalculator', ['models.items', 'models.champi
 		function calculateAbilityDamage(stats, ability) {
 			// TODO: add 
 			var baseDamage = stats.baseAttackdamage + stats.bonusAttackdamage;
-			var critDamage = (stats.baseAttackdamage + stats.bonusAttackdamage) * (stats.Critdamage + stats.bonusCritdamage);
+			var critDamage = (stats.baseAttackdamage + stats.bonusAttackdamage) * (stats.baseCritdamage + stats.bonusCritdamage);
 			var critChance = stats.crit + stats.bonusCrit;
 			return ability.crittable ? baseDamage + critDamage * critChance : baseDamage;
 		}

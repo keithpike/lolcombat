@@ -2,41 +2,47 @@
 	class='championComparisonForm unselectable'
 	ng-click='selectComparison({ comparisonIndex: comparisonIndex })'
 	ng-style='getComparisonBackgroundStyle({ comparisonIndex: comparisonIndex })'>
-	<div class='halfComparisonWrapper'>
-		<label class='championComparisonInputLabel formInitialMargin clear' for=TimeFrame>TimeFrame (seconds)</label> 
-		<input class='timeFrameSlider' type='range' value='0' step='1' min='0' max='60' name='TimeFrame' oninput="this.form.TimeFrameValue.value = this.value">
-		<output class='championComparisonOutputText' name="TimeFrameValue">0</output>
-		<label class='championComparisonInputLabel clear' for=ChampionLevel>Champion Level</label> 
-		<input class='timeFrameSlider' type='range' value='1' step='1' min='1' max='18' name='ChampionLevel' oninput="this.form.ChampionLevelValue.value = this.value">
-		<output class='championComparisonOutputText' name="ChampionLevelValue">1</output>
-		<div class='labelWrapper clear text-center'>
-			<span class='championComparisonInputLabel'>Damage/sec</span><br/>
-			<span class='clear outputColor' name='ChampionDPSValue'>500</output>
-		</div>
-		<div class='checkboxWrapper'>
-			<label class='checkboxLabel' for=RawDPS>Raw</label> 
-			<input class='rawCheck clear' type="checkbox" name="RawDPS" value="car">
-		</div>
-		<div class='comparisonItemWrapper col-md-6'>
-			<div 
-				ng-repeat='item in getComparisonItems({ comparisonIndex: comparisonIndex }) track by $index'
-				ng-class='getComparisonItemClass({itemIndex: $index, item: item })'
-				ng-click='removeItem({ itemIndex: $index, comparisonIndex : comparisonIndex })'
-				unselectable='on'
-				class='unselectable'
-				ng-style='getSpriteStyle({ item: item })'>
+	<div class='comparisonsWrapper'>
+		<div class='halfComparisonWrapper topHalfComparisonWrapper'>
+			<div class='championChartWrapper'>
+				<div id='champion{{comparisonIndex}}Chart' class='championChart'>
+				</div>
+			</div>
+			<span 
+					class='closeButton unselectable'
+					ng-click='removeComparison({ comparisonIndex : comparisonIndex })'
+				>
+					X
+			</span>
+			<div class='outputsWrapper'>
+				<div class='labelWrapper clear text-center'>
+					<span class='championComparisonInputLabel'>Damage/sec</span><br/>
+					<span class='clear outputColor' name='ChampionDPSValue'>500</output>
+				</div>
 			</div>
 		</div>
-	</div>
-	<div class='halfComparisonWrapper'>
-		<span 
-			class='closeButton unselectable'
-			ng-click='removeComparison({ comparisonIndex : comparisonIndex })'
-		>
-			X
-		</span>
-		<div class='championChartWrapper'>
-			<div id='champion{{comparisonIndex}}Chart' class='championChart'>
+		<div class='halfComparisonWrapper bottomHalfComparisonWrapper'>
+			<div class='inputsWrapper'>
+				<label class='championComparisonInputLabel clear' for=TimeFrame>TimeFrame (seconds)</label> 
+				<input class='timeFrameSlider' type='range' value='0' step='1' min='0' max='60' name='TimeFrame' oninput="this.form.TimeFrameValue.value = this.value">
+				<output class='championComparisonOutputText' name="TimeFrameValue">0</output>
+				<label class='championComparisonInputLabel clear' for=ChampionLevel>Champion Level</label> 
+				<input class='timeFrameSlider' type='range' value='1' step='1' min='1' max='18' name='ChampionLevel' oninput="this.form.ChampionLevelValue.value = this.value">
+				<output class='championComparisonOutputText' name="ChampionLevelValue">1</output>
+				<div class='checkboxWrapper'>
+					<label class='checkboxLabel' for=RawDPS>Raw</label> 
+					<input class='rawCheck clear' type="checkbox" name="RawDPS" value="car">
+				</div>
+			</div>
+			<div class='comparisonItemWrapper col-md-6'>
+				<div 
+					ng-repeat='item in getComparisonItems({ comparisonIndex: comparisonIndex }) track by $index'
+					ng-class='getComparisonItemClass({itemIndex: $index, item: item })'
+					ng-click='removeItem({ itemIndex: $index, comparisonIndex : comparisonIndex })'
+					unselectable='on'
+					class='unselectable'
+					ng-style='getSpriteStyle({ item: item })'>
+				</div>
 			</div>
 		</div>
 	</div>

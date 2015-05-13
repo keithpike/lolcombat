@@ -9,4 +9,3 @@
 //= require underscore/underscore-min
 //= require highcharts/adapters/standalone-framework
 //= require highcharts/highcharts
-//= require iscroll/build/iscroll

@@ -43,6 +43,7 @@ li.ng-leave{
    -webkit-user-select: none;
    -ms-user-select: none;
    user-select: none;
+   cursor: default;
 }
 
 .halfOpacity {
@@ -51,20 +52,14 @@ li.ng-leave{
 }
 
 .selected {
-	outline-color: coral;
-	outline-style: groove;
-	outline-width: medium;
-}
-
-.comparisonsContainer{
-	height: 400px;
+	border: 2px solid coral;
 }
 
 .closeButton {
   color: dimgrey;
 	cursor: default;
+	float: right;
   font-size: 2em;
-  float: right;
   margin-left: 10px;
   margin-right: 10px;
   opacity: .5;
@@ -80,6 +75,10 @@ li.ng-leave{
 }
 .text-center {
 	text-align: center;
+}
+
+.align48PxVerticalCenter {
+	line-height: 48px;
 }
 
 

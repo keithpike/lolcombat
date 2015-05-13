@@ -152,6 +152,10 @@ angular.module('models.championComparisons', ['services.championDpsCalculator'])
 			}
 		};
 
+		model.removeCurrentSelectedComparison = function(){
+			model.resetChampionComparison(findComparison(selectedComparison.champion));
+		}
+
 		function setSelectedComparison(idx) {
 			if (typeof(idx) != 'undefined' && idx < 2 && idx >= 0) {
 				console.log("comparison set to " + idx);
@@ -236,8 +240,16 @@ angular.module('models.championComparisons', ['services.championDpsCalculator'])
 			// 									[comparisons[0].level, comparisons[1].level],
 			// 									timeframe
 			// 							);
-			makeGraph('champion0Chart', []);
-			makeGraph('champion1Chart', []);
+
+			// TODO move this logic into directive, or use ng-highcharts
+			if (document.getElementById('champion0Chart')) {
+				makeGraph('champion0Chart', []);
+			}
+
+			if (document.getElementById('champion1Chart')) {
+				makeGraph('champion1Chart', []);
+			}
+
 		};
 
 		function makeGraph(containerName, data) {
@@ -252,11 +264,16 @@ angular.module('models.championComparisons', ['services.championDpsCalculator'])
 		    	enabled: false
 		    },
 
+		    events: {
+		    	click: function(){},
+		    	selection: function(){}
+		    },
+
 		    series: [{
 		      data: [
 		      {
 		      	y: 2000,
-		      	x: 2,
+		      	x: .5,
 		    	  image: 'https://s3-us-west-1.amazonaws.com/lolcomparitor/Images/spell/AutoAttack.png',
 		        name: 'AutoAttack'
 		      },
@@ -268,7 +285,7 @@ angular.module('models.championComparisons', ['services.championDpsCalculator'])
 		      },
 		      {
 		      	y: 2000,
-		      	x: .5,
+		      	x: 2,
 		    	  image: 'https://s3-us-west-1.amazonaws.com/lolcomparitor/Images/spell/AutoAttack.png',
 		        name: 'AutoAttack'
 		      }],
@@ -289,7 +306,7 @@ angular.module('models.championComparisons', ['services.championDpsCalculator'])
 		    },
 
 		    title: {
-		    	text: 'Champion Damage Events'
+		    	text: 'Events'
 		    },
 
 		    xAxis: {

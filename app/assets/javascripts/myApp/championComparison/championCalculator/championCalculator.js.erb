@@ -66,22 +66,6 @@ angular.module('championCalculator', [
 
 		//};
 	}])
-	.directive('onLastRepeat', function() {
-
-    return function(scope, element, attrs) {
-      if (scope.$last) setTimeout(function(){
-	      var wrapper = element.parent()[0];
-				// var wrapper = document.getElementById('championSelectorContainer');
-				myScroll = new IScroll(wrapper, {
-					scrollX: true,
-					scrollY: false,
-					mouseWheel: true,
-					scrollbars: true
-				});
-				console.log('i was called');
-      }, 5);
-    };
-  })
 
 	.controller('ChampionComparisonController', ['ChampionComparisonModel', 'ItemsModel', 'ChampionsModel', 'ChampionDpsCalculator', function championComparisonController(ChampionComparisonModel, ItemsModel, ChampionsModel, ChampionDpsCalculator){
 		var championComparisonController = this;
@@ -129,14 +113,10 @@ angular.module('championCalculator', [
 	}])
 
 	.controller('ChampionSelectorController', ['champions', 'ChampionsModel', 'ChampionComparisonModel', '$scope', function championSelectorController(champions, ChampionsModel, ChampionComparisonModel, $scope){
-		var championSelectorController = this;
-		// championSelectorController.handleClick = ChampionComparisonModel.testAddItem;//function(champion){
-		// 	debugger
-		// 	console.log(champion.name + " has been clicked");
-		// };
-		// ChampionSelectorController.comparisonOneItems
-
+		var championSelectorController = this; 
 		championSelectorController.championsData = champions;
+
+		//TODO: consider moving these connections to a service and include the service in controller
 		championSelectorController.checkSelected = ChampionComparisonModel.checkSelected;
 		//championSelectorController.getComparisonOneItems = ChampionComparisonModel.getComparisonItems(0);
 		championSelectorController.getImage = ChampionsModel.getChampionImage;
@@ -145,22 +125,75 @@ angular.module('championCalculator', [
 		championSelectorController.getSpriteStyle = ChampionsModel.getChampionSpriteStyle;
 		championSelectorController.selectChampion = function(champion) {
 			ChampionsModel.getChampion(ChampionsModel.getChampionName(champion));
+
+			// if (ChampionComparisonModel.comparisonFilled(0) && ChampionComparisonModel.comparisonFilled(1)) {
+			// 	ChampionComparisonModel.removeCurrentSelectedComparison();	
+			// }
+
 			ChampionComparisonModel.championSelected(champion);
+			
+			
 		};
-		// var init = function (scope, element, attrs) {
-		// 	// var wrapper = element.parent()[0];
-		// 	debugger
-		// 	// var wrapper = document.getElementById('championSelectorContainer');
-		// 	myScroll = new IScroll('#championSelectorContainer', {
-		// 		scrollX: true,
-		// 		scrollY: false,
-		// 		mouseWheel: true,
-		// 		scrollbars: true
-		// 	});
-		// 	console.log('im called');
-		// };
-		// // init();
-		// $scope.$on('onRepeatLast', init);
+
+		// TODO: Move this code to a directive no reason to be in a controller!!
+		var init = function() {
+			var scrollRepeater = 0;
+	    function mouseScrollHorizontally(e) {
+        e = window.event || e;
+        var delta = Math.max(-1, Math.min(1, (e.wheelDelta || -e.detail)));
+        scrollHorizontally(delta * 60);
+        e.preventDefault();
+	    }
+
+	    function hoverScrollHorizontally(e) {
+	    	e = window.event || e;
+	    	var delta = parseInt(e.currentTarget.dataset.scrollModifier);
+	    	var counter = 0;
+	    	var rate = 50;
+	    	scrollRepeater = setInterval( function() {
+	    		counter += 1;
+	    		if (counter > 275) {
+	    			rate = 150;
+	    		} else if (counter > 75) {
+		    		rate += .5;
+	    		} 
+	    		var scrollAmount = delta * (rate / 100)
+	    		scrollHorizontally(scrollAmount * 10);
+	    	}, 10);
+	    }
+
+      function stopScrolling() {
+        clearInterval(scrollRepeater);
+	    }
+
+	    function scrollHorizontally(step) {
+	    	document.getElementById('championSelectorContainer').scrollLeft -= step;
+	    }
+
+	    // TODO: use event delegation instead of adding event handlers individually
+	    if (document.getElementById('championSelectorContainer').addEventListener) {
+        // IE9, Chrome, Safari, Opera
+        document.getElementById('championSelectorContainer').addEventListener("mousewheel", mouseScrollHorizontally, false);
+        document.getElementById('championScrollLeft').addEventListener('mouseenter', hoverScrollHorizontally, false);
+        document.getElementById('championScrollLeft').addEventListener('mouseleave', stopScrolling, false);
+        document.getElementById('championScrollRight').addEventListener('mouseenter', hoverScrollHorizontally, false);
+        document.getElementById('championScrollRight').addEventListener('mouseleave', stopScrolling, false);
+        // Firefox
+        document.getElementById('championSelectorContainer').addEventListener("DOMMouseScroll", mouseScrollHorizontally, false);
+	    } else {
+        // IE 6/7/8
+        document.getElementById('championSelectorContainer').attachEvent("onmousewheel", mouseScrollHorizontally);
+	    }
+			$scope.$on("$destroy", function(){
+	        cleanup();
+	    });
+			
+			function cleanup() {
+		    stopScrolling();
+			}
+		};
+
+		init();
 	}])
 ;
 
