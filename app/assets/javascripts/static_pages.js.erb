@@ -12,7 +12,7 @@ angular.module('myApp', [
 	'championInfo',
 	'itemInfo'
 ])
-	.config(function($locationProvider, $stateProvider, $urlRouterProvider){
+	.config(['$locationProvider', '$stateProvider', '$urlRouterProvider', function($locationProvider, $stateProvider, $urlRouterProvider){
 
 		$locationProvider.html5Mode({
 			enabled: true,
@@ -76,4 +76,4 @@ angular.module('myApp', [
 		// 			}
 		// 		}
 		// });
-	});
+	}]);

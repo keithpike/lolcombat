@@ -4,7 +4,7 @@
 * Description
 */
 angular.module('championComparison', ['championCalculator'])
-	.config(function($stateProvider){
+	.config(['$stateProvider', function($stateProvider){
 		$stateProvider
 			.state('appStart.comparison', {
 				abstract: true,
@@ -15,4 +15,4 @@ angular.module('championComparison', ['championCalculator'])
 				 	}
 				}
 			});
-	})
+	}])

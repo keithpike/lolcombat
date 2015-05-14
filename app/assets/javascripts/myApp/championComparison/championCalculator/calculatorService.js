@@ -6,20 +6,20 @@
 angular.module('services.championDpsCalculator', ['models.items', 'models.champions'])
 	.service('ChampionDpsCalculator', ['ItemsModel', 'ChampionsModel', function(itemsModel, championsModel){
 		var model = this,
-				currentTime;
+				currentTime,
+				firstChampion,
+				secondChampion;
 
 		model.getDpsInfo = function(champions, items, levels, timeframe) {
 			var dpsInfo = {};
-			var firstChampion = setupChampion(champions[0], items[0], levels[0]);
-			var secondChampion = setupChampion(champions[1], items[1], levels[1]);
 			currentTime = 0;
+			firstChampion = setupChampion(champions[0], items[0], levels[0]);
+			secondChampion = setupChampion(champions[1], items[1], levels[1]);
 			return simulateSimpleDps(firstChampion, secondChampion, timeframe);
-
-
 		};
 
 		model.test = function(champions, items, levels) {
-			model.getDpsInfo(champions, items, levels, 10.0);
+			model.getDpsInfo(champions, items, levels, 2);
 			console.log(calculateAfterResistDamageMultiplier(150, 26, .2, 25, .2));
 		};
 
@@ -29,6 +29,10 @@ angular.module('services.championDpsCalculator', ['models.items', 'models.champi
 			addChampionStats(newChampion, champion, level);
 			addItemStats(newChampion, items);
 			addActions(newChampion, champion);
+			newChampion.stats.currentHp = newChampion.stats.baseHp;
+			newChampion.stats.currentMp = newChampion.stats.baseMp;
+			newChampion.resourceType = champion.resource_type;
+			newChampion.lastResourceChange = currentTime;
 			return newChampion;
 		}
 
@@ -44,8 +48,9 @@ angular.module('services.championDpsCalculator', ['models.items', 'models.champi
 					timeframe = timeframe * 10,
 					ability,
 					abilityUsageEvents,
-					results;
-			debugger
+					results,
+					timeChange;
+			// debugger
 			while (currentTime < timeframe) {
 				if (checkChampionAvailable(firstChampion)) {
 					ability = findBestAvailableAbility(firstChampion, secondChampion);
@@ -54,7 +59,7 @@ angular.module('services.championDpsCalculator', ['models.items', 'models.champi
 					angular.forEach(abilityUsageEvents, function(event) {
 						bInsertEvent(event, eventsByTime, sortLowToHigh);
 					});
-					debugger
+					// debugger
 				}	else if (checkChampionAvailable(secondChampion)) {
 					ability = findBestAvailableAbility(secondChampion, firstChampion);
 					abilityUsageEvents = useAbility(ability, secondChampion, firstChampion, eventCounter);
@@ -63,8 +68,11 @@ angular.module('services.championDpsCalculator', ['models.items', 'models.champi
 						bInsertEvent(event, eventsByTime, sortLowToHigh);
 					});
 				} else {
-					handleEvent(eventsByTime, currentEventIndex);
-					currentTime = eventsByTime[currentEventIndex].activationTime;
+					timeChange = moveForwardInTime(eventsByTime[currentEventIndex].activationTime)
+					var createdEvents = handleEvent(eventsByTime[currentEventIndex]);
+					angular.forEach(createdEvents, function(event){
+						bInsertEvent(event, eventsByTime, sortLowToHigh);
+					});
 					currentEventIndex += 1;
 					debugger
 				}
@@ -72,12 +80,36 @@ angular.module('services.championDpsCalculator', ['models.items', 'models.champi
 			return results;
 		}
 
-		function handleEvent(events, currentEvent) {
+		function handleEvent(event) {
+			switch(event.type) {
+				case 'application':
+					return handleApplicationEvent(ability, user, target, eventCounter);
+					break;
+				case 'castAnimationEnd':
+					return handleCastAnimationEndEvent();
+					break;
+				case 'fallOff':
+					return handleFalloffEvent(ability, target, eventCounter);
+					break;
+				case 'activationReset':
+					return handleActivationResetEvent(target, eventCounter);
+					break;
+			}
+		}
+
+		function handleApplicationEvent(ability, user, target, eventCounter) {
 
 		}
 
-		function updateTime() {
+		function moveForwardInTime(time) {
+			var timeChange = updateTime(time);
+			handleChampionsRegen(timeChange);
+		}
 
+		function updateTime(time) {
+			var diff = time - currentTime;
+			currentTime = time;
+			return diff;
 		}
 
 		function createEvent(type, ability, user, target, eventCounter) {
@@ -133,7 +165,6 @@ angular.module('services.championDpsCalculator', ['models.items', 'models.champi
 			updateChampionAvailability(user, ability);
 			action = createEvent("application", ability, user, target, eventCounter);
 			bInsertEvent(action, events, sortLowToHigh);
-			debugger
 			return events;
 		}
 
@@ -165,6 +196,65 @@ angular.module('services.championDpsCalculator', ['models.items', 'models.champi
 		// 	}
 
 		// }
+
+		function handleChampionsRegen(timeChange) {
+
+			// TODO: Set constant for regen tick timing currently .5
+			var tickAmount = calculateNumberOfTicks(timeChange, 5);
+			handleChampionRegen(firstChampion, tickAmount);
+			handleChampionRegen(secondChampion, tickAmount);
+		}
+
+		// perhaps add an offset so ticks don't always start at 0?
+		function calculateNumberOfTicks(change, tickTiming) {
+			return Math.floor((change + (currentTime - change) % tickTiming) / tickTiming);
+		}
+
+		function handleChampionRegen(champion, tickAmount) {
+			debugger
+			var healthChange = calculateChampionHealthRegen(champion) * tickAmount;
+			updateChampionHealth(champion, healthChange);
+			var resourceChange = calculateChampionResourceChange(champion) * tickAmount;
+			updateChampionResource(champion, resourceChange);
+		}
+
+		function calculateChampionHealthRegen(champion) {
+			// TODO: add debuff handling
+			return (champion.stats.baseHpregen / 5 ) * (calculateHealingDebuffs(champion.debuffs))
+		}
+
+		function calculateHealingDebuffs(debuffs) {
+			var debuffedHealing = 1;
+			angular.forEach(debuffs, function(debuff) {
+				if (debuff.type == 'healing') {
+					debuffedHealing = debuffedHealing * (((1 * 100) - (debuff.amount * 100)) / 100 );
+				} 
+			});
+			return debuffedHealing;
+		}
+
+
+
+		function updateChampionHealth(champion, change) {
+			champion.stats.currentHp = Math.min(calculateMaxHp(champion), champion.stats.currentHp + change);
+		}
+
+		function calculateChampionResourceChange(champion) {
+			switch(champion.resourceType) {
+				case 'mana':
+				case 'energy':
+			}
+			return 0;
+		}
+
+		function updateChampionResource(champion, change) {
+
+		}
+
+
+		function calculateMaxHp(champion) {
+			return champion.stats.baseHp + champion.stats.bonusHp;
+		}
 
 		function updateChampionAvailability(champion, ability) {
 			champion.nextAvailable = (nextAvailable(ability.animationLockout) > champion.nextAvailable) ? nextAvailable(ability.animationLockout) : champion.nextAvailable;

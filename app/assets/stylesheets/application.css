@@ -10,6 +10,9 @@
  * defined in the other CSS/SCSS files in this directory. It is generally better to create a new
  * file per style scope.
  *
+ *= require normalize
+ *= require animate
+ *= require _bootstrap
  *= require_tree .
  *= require_self
  */
@@ -82,7 +85,7 @@ li.ng-leave{
 }
 
 
-.*{
+* {
 	-moz-box-sizing: border-box;
 	box-sizing: border-box;
 }

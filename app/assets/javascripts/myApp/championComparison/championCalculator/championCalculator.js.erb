@@ -11,7 +11,7 @@ angular.module('championCalculator', [
 	'ngOrderObjectBy',
 	'services.championDpsCalculator'
 ])
-	.config(function($stateProvider){
+	.config(['$stateProvider', function($stateProvider){
 		$stateProvider
 			.state('appStart.comparison.calculator', {
 				url: '/calculator',
@@ -40,7 +40,7 @@ angular.module('championCalculator', [
 		 			}
 		 		}
 			});
-	})
+	}])
 	.directive('hulChampionComparison', [function() {
 		// console.log("woohoo a directive!");
 		//return function(){

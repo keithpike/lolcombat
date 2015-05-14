@@ -4,7 +4,7 @@
 * Description
 */
 angular.module('models.items', [])
-	.service('ItemsModel', function($http, $q){
+	.service('ItemsModel', ['$http', '$q', function($http, $q){
 		var model = this,
 				URLS = {
 					GET: "/v1/items"
@@ -146,5 +146,5 @@ angular.module('models.items', [])
     model.getItemStats = function(item) {
   		return item ? item.stats : {};
     }
-	})
+	}])
 ;

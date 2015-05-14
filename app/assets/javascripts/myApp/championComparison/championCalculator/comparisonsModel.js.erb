@@ -19,6 +19,7 @@ angular.module('models.championComparisons', ['services.championDpsCalculator'])
 					}],
 					selectedComparison,
 					timeframe;
+					
 		setHighchartDefaults();
 
 		function setHighchartDefaults(){
@@ -234,22 +235,29 @@ angular.module('models.championComparisons', ['services.championDpsCalculator'])
 		}
 
 		model.calculateDpsInfo = function(timeframe) {
-			// var dpsInfo = championDpsCalculator.getDpsInfo(
-			// 									[comparisons[0].champion, comparisons[1].champion],
-			// 									[comparisons[0].items, comparisons[1].items],
-			// 									[comparisons[0].level, comparisons[1].level],
-			// 									timeframe
-			// 							);
+			var dpsInfo = championDpsCalculator.getDpsInfo(
+												[comparisons[0].champion, comparisons[1].champion],
+												[comparisons[0].items, comparisons[1].items],
+												[comparisons[0].level, comparisons[1].level],
+												timeframe
+										);
+		
 
-			// TODO move this logic into directive, or use ng-highcharts
+			// TODO use ng-highcharts
+			// CAUSE OF A TYPEERROR BUG:
+			//   when user clicks graph that has been added to view throws 
+			//   Uncaught TypeError: a.target.className.indexOf is not a function
+
+			// probably caused by the incorrect DOM manipulation within Angular
+			// presume replacement of highchartsjs with ng-highcharts will resolve
+			// the issue
 			if (document.getElementById('champion0Chart')) {
 				makeGraph('champion0Chart', []);
-			}
+	    };
 
 			if (document.getElementById('champion1Chart')) {
 				makeGraph('champion1Chart', []);
 			}
-
 		};
 
 		function makeGraph(containerName, data) {
@@ -262,11 +270,6 @@ angular.module('models.championComparisons', ['services.championDpsCalculator'])
 
 		    credits: {
 		    	enabled: false
-		    },
-
-		    events: {
-		    	click: function(){},
-		    	selection: function(){}
 		    },
 
 		    series: [{
@@ -321,6 +324,10 @@ angular.module('models.championComparisons', ['services.championDpsCalculator'])
 		    	}
 		    }
 			});
+
+			// allows the ng-click functionality of container to execute
+			chart.container.onclick = null;
+			chart.container.onmousedown = null;
 		}
 
 	}]);

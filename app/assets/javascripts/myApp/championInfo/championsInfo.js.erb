@@ -10,7 +10,7 @@ angular.module('championInfo', [
 	'ngOrderObjectBy'
 ])
 
-	.config(function($stateProvider){
+	.config(['$stateProvider', function($stateProvider){
 		$stateProvider
 			.state('appStart.champions', {
 				url: '/champions',
@@ -70,7 +70,7 @@ angular.module('championInfo', [
 
 				}
 			});
-	})
+	}])
 	// TODO: 	reference template so tooltips can read out template instead of inline
 	// 				Possibly add to gulp/grunt task?
 	// .run(function($templateCache) {
@@ -79,7 +79,7 @@ angular.module('championInfo', [
 	//   	);
 	// })
 
-	.controller('ChampionsController', function(ChampionsModel, $stateParams, championsData){
+	.controller('ChampionsController', ['ChampionsModel', '$stateParams', 'championsData', function(ChampionsModel, $stateParams, championsData){
 		var championsController = this;
 
 		championsController.championsData = championsData;
@@ -95,5 +95,5 @@ angular.module('championInfo', [
 		championsController.getSpriteStyle = ChampionsModel.getChampionSpriteStyle;
 		championsController.getStats = ChampionsModel.getChampionStatsHtml;
 		championsController.getTitle = ChampionsModel.getChampionTitle;
-	})
+	}])
 ;

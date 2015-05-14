@@ -10,7 +10,7 @@ angular.module('itemInfo', [
 	'ngOrderObjectBy'
 ])
 
-	.config(function($stateProvider){
+	.config(['$stateProvider', function($stateProvider){
 		$stateProvider
 			.state('appStart.items', {
 				url: '/items',
@@ -74,7 +74,7 @@ angular.module('itemInfo', [
 			});
 
 
-	})
+	}])
 	// TODO: reference template so tooltips can read out template instead of inline
 	// .run(function($templateCache) {
 	//   $templateCache.put('itemTooltip.html',
@@ -82,7 +82,7 @@ angular.module('itemInfo', [
 	//   	);
 	// })
 
-	.controller('ItemsController', function(ItemsModel, $stateParams, itemsData){
+	.controller('ItemsController', ['ItemsModel', '$stateParams', 'itemsData', function(ItemsModel, $stateParams, itemsData){
 		var itemsController = this;
 		itemsController.itemsData = itemsData;
 
@@ -93,9 +93,9 @@ angular.module('itemInfo', [
 		itemsController.getName = ItemsModel.getItemName;
 		itemsController.getDescription = ItemsModel.getItemDescription;
 		itemsController.getGoldCost = ItemsModel.getItemGoldCost;
-	})
+	}])
 
-	.controller('DetailedItemsController', function(ItemsModel, $stateParams, itemData){
+	.controller('DetailedItemsController', ['ItemsModel', '$stateParams', 'itemData', function(ItemsModel, $stateParams, itemData){
 		var itemsController = this;
 		itemsController.itemData = itemData;
 
@@ -108,5 +108,5 @@ angular.module('itemInfo', [
 		itemsController.getDescription = ItemsModel.getItemDescription;
 		itemsController.getGoldCost = ItemsModel.getItemGoldCost;
 	
-	});
+	}]);
 
