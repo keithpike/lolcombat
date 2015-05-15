@@ -27,15 +27,15 @@ angular.module('championInfo', [
 					}
 				},
 				resolve: {
-					championsData: function(ChampionsModel) {
+					championsData: ['ChampionsModel', function(ChampionsModel) {
 						return ChampionsModel.getChampions()
 							.then(function(result) {
 								return result;
 							});
-					},
-					currentChampion: function($stateParams, ChampionsModel) {
+					}],
+					currentChampion: ['$stateParams', 'ChampionsModel', function($stateParams, ChampionsModel) {
 						return ChampionsModel.resetCurrentChampion();
-					}
+					}]
 				}
 			})
 

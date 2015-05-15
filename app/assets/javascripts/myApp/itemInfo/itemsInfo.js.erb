@@ -27,15 +27,15 @@ angular.module('itemInfo', [
 					}
 				},
 				resolve: {
-					itemsData: function(ItemsModel) {
+					itemsData: ['ItemsModel', function(ItemsModel) {
 						return ItemsModel.getItems()
 							.then(function(result) {
 								return result;
 							});
-					},
-					currentItem: function($stateParams, ItemsModel) {
+					}],
+					currentItem: ['$stateParams', 'ItemsModel', function($stateParams, ItemsModel) {
 						return ItemsModel.resetCurrentItem();
-					}
+					}]
 				}
 
 			})

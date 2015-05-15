@@ -32,12 +32,12 @@ angular.module('championCalculator', [
 				 	}
 				},
 		 		resolve: {
-		 			items: function(ItemsModel) {
+		 			items: ['ItemsModel', function(ItemsModel) {
 		 				return ItemsModel.getItems();
-		 			},
-		 			champions: function(ChampionsModel) {
+		 			}],
+		 			champions: ['ChampionsModel', function(ChampionsModel) {
 		 				return ChampionsModel.getChampions();
-		 			}
+		 			}]
 		 		}
 			});
 	}])
