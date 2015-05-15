@@ -1,10 +1,45 @@
 class RiotApiHandler
-	require('json')
+	require 'json'
+	require 'net/http'
 
 	private
 
 	def deep_dup(o)
 		Marshal.load(Marshal.dump(o))
+	end
+
+	def handle_request(url)
+	  Net::HTTP.get_response(URI(url))
+	end
+
+	def create_search_url(url)
+	  url.sub(/challenge/, 'challenge.json')
+	end
+
+
+	# TODO: update to also require version as input
+	def get_search_url(region)
+			"https://#{region}.api.pvp.net/api/lol/#{region}/v4.1/game/ids"
+	end
+
+	def get_match_url(region, matchId)
+		"https://#{region}.api.pvp.net/api/lol/#{region}/v2.2/match/#{matchId}"
+	end
+
+	def get_champions_url(region)
+		"https://global.api.pvp.net/api/lol/static-data/#{region}/v1.2/champion"
+	end
+
+	def get_items_url(region)
+		"https://global.api.pvp.net/api/lol/static-data/#{region}/v1.2/item"
+	end
+
+	def add_params(params)
+		query_string = "?"
+		params.each do |key, value|
+			query_string = "#{query_string}#{key}=#{value}&"
+		end
+		query_string = "#{query_string}api_key=" + ENV['RIOT_API_KEY']
 	end
 
 	def load_as_json(file)
@@ -310,8 +345,25 @@ class RiotApiHandler
 
 	end
 
-	def seed_me_seymour_from_api(urls)
-		
+	def seed_me_seymour_from_api()
+		seed_data = {}
+		champion_data = handle_request("#{get_champions_url('na')}#{add_params({'champData' => 'all'})}")
+		debugger
+		seed_data['champions'] = get_resources_from_api(champion_data)
+		seed_data['champions'].each do |champion|
+			image = champion.delete("image")
+			champ = Champion.create(champion)
+			champ.create_image(image)
+			splash_path = "https://s3-us-west-1.amazonaws.com/lolcomparitor/Images/splash/#{get_clean_name(champ.name)}_0.png"  
+			Splash.create({"champion_id" => champ.id, "path" => splash_path})
+		end
+		item_data = handle_request("#{get_items_url('na')}#{add_params({'itemListData' => 'all'})}")
+		seed_data['items'] = get_resources_from_api(item_data)
+		seed_data['items'].each do |item|
+			image = item.delete("image")
+			a = Item.create(item)
+			a.create_image(image)
+		end
 	end
 
 	def parse_champion_abilities(path)
