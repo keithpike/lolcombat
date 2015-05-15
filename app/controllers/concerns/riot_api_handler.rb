@@ -327,7 +327,7 @@ class RiotApiHandler
 					cost[spell['costType'].upcase] =  cost[spell['costType'].upcase] ? cost[spell['costType'].upcase] + "," + spell['name'] : spell['name']
 					spell.each do |key, value|
 						# puts key + ": " + value.inspect if champion['name'] == 'Taric'
-						puts key + ": " + value.inspect if spell['name'] == 'Shatter'
+						# puts key + ": " + value.inspect if spell['name'] == 'Shatter'
 					end
 					counter += 1
 				end
@@ -348,6 +348,6 @@ class RiotApiHandler
 	end
 
 end
-RiotApiHandler.new().parse_champion_abilities("/Users/keith/Documents/Programming/Ruby/Workspace/lolwebsite/app/riot_api_responses")
+# RiotApiHandler.new().parse_champion_abilities("/Users/keith/Documents/Programming/Ruby/Workspace/lolwebsite/app/riot_api_responses")
 
 
