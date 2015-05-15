@@ -348,7 +348,6 @@ class RiotApiHandler
 	def seed_me_seymour_from_api()
 		seed_data = {}
 		champion_data = handle_request("#{get_champions_url('na')}#{add_params({'champData' => 'all'})}")
-		debugger
 		seed_data['champions'] = get_resources_from_api(champion_data)
 		seed_data['champions'].each do |champion|
 			image = champion.delete("image")
