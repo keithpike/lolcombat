@@ -57,16 +57,16 @@ angular.module('itemInfo', [
 				},
 				resolve: {
 
-					itemData: function($stateParams, ItemsModel){
+					itemData: ['$stateParams', 'ItemsModel', function($stateParams, ItemsModel){
 						return ItemsModel.getItem($stateParams.key)
 							.then(function(result){
 								return result;
 							});
-					},
+					}],
 
-					currentItem: function($stateParams, ItemsModel, itemData){
+					currentItem: ['$stateParams', 'ItemsModel', 'itemData', function($stateParams, ItemsModel, itemData){
 						return ItemsModel.setCurrentItem($stateParams.key);
-					}
+					}]
 
 
 				}
