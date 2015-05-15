@@ -286,7 +286,6 @@ class RiotApiHandler
 
 	def get_resources_from_api(api_data, should_modify = true)
 		results = []
-
 		begin
 			initial_key = 'data'
 			modifiers = should_modify ? get_modifiers_by_data_type(api_data['type']) : [[],[]]
@@ -348,7 +347,7 @@ class RiotApiHandler
 	def seed_me_seymour_from_api()
 		seed_data = {}
 		champion_data = handle_request("#{get_champions_url('na')}#{add_params({'champData' => 'all'})}")
-		seed_data['champions'] = get_resources_from_api(champion_data.body)
+		seed_data['champions'] = get_resources_from_api(JSON.parse(champion_data.body))
 		seed_data['champions'].each do |champion|
 			image = champion.delete("image")
 			champ = Champion.create(champion)
@@ -357,7 +356,7 @@ class RiotApiHandler
 			Splash.create({"champion_id" => champ.id, "path" => splash_path})
 		end
 		item_data = handle_request("#{get_items_url('na')}#{add_params({'itemListData' => 'all'})}")
-		seed_data['items'] = get_resources_from_api(item_data.body)
+		seed_data['items'] = get_resources_from_api(JSON.parse(item_data.body))
 		seed_data['items'].each do |item|
 			image = item.delete("image")
 			a = Item.create(item)
