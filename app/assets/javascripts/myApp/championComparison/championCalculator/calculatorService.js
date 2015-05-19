@@ -43,56 +43,60 @@ angular.module('services.championDpsCalculator', ['models.items', 'models.champi
 			var eventsByTime = [],
 					currentEventIndex = 0,
 					activeChampion = firstChampion,
-					receivingChampion = secondChampion,
+					targetChampion = secondChampion,
 					eventCounter = 1,
 					timeframe = timeframe * 10,
 					ability,
 					abilityUsageEvents,
 					results,
 					timeChange;
-			// debugger
 			while (currentTime < timeframe) {
 				if (checkChampionAvailable(firstChampion)) {
 					ability = findBestAvailableAbility(firstChampion, secondChampion);
 					abilityUsageEvents = useAbility(ability, firstChampion, secondChampion, eventCounter);
-					eventCounter += abilityUsageEvents.length;
+					eventCounter = updateByArrayLength(eventCounter, abilityUsageEvents);
 					angular.forEach(abilityUsageEvents, function(event) {
 						bInsertEvent(event, eventsByTime, sortLowToHigh);
 					});
-					// debugger
 				}	else if (checkChampionAvailable(secondChampion)) {
 					ability = findBestAvailableAbility(secondChampion, firstChampion);
 					abilityUsageEvents = useAbility(ability, secondChampion, firstChampion, eventCounter);
-					eventCounter += abilityUsageEvents.length;
+					eventCounter = updateByArrayLength(eventCounter, abilityUsageEvents);
+					
 					angular.forEach(abilityUsageEvents, function(event) {
 						bInsertEvent(event, eventsByTime, sortLowToHigh);
 					});
 				} else {
 					timeChange = moveForwardInTime(eventsByTime[currentEventIndex].activationTime)
-					var createdEvents = handleEvent(eventsByTime[currentEventIndex]);
+					var createdEvents = handleEvent(eventsByTime[currentEventIndex], eventCounter);
 					angular.forEach(createdEvents, function(event){
 						bInsertEvent(event, eventsByTime, sortLowToHigh);
 					});
+					eventCounter = updateByArrayLength(eventCounter, createdEvents);
 					currentEventIndex += 1;
-					debugger
 				}
 			}
 			return results;
 		}
 
-		function handleEvent(event) {
+		function updateByArrayLength(val, arr) {
+			return val + arr.length;
+		}
+
+		function handleEvent(event, eventCounter) {
+			debugger
 			switch(event.type) {
 				case 'application':
-					return handleApplicationEvent(ability, user, target, eventCounter);
+					return handleApplicationEvent(event.ability, event.user, event.target, eventCounter);
 					break;
 				case 'castAnimationEnd':
 					return handleCastAnimationEndEvent();
 					break;
 				case 'fallOff':
-					return handleFalloffEvent(ability, target, eventCounter);
+					return handleFalloffEvent(event.ability, event.target, eventCounter);
 					break;
 				case 'activationReset':
-					return handleActivationResetEvent(target, eventCounter);
+					return handleActivationResetEvent(event.ability, event.target, eventCounter);
 					break;
 			}
 		}
@@ -115,6 +119,12 @@ angular.module('services.championDpsCalculator', ['models.items', 'models.champi
 		function createEvent(type, ability, user, target, eventCounter) {
 			switch(type) {
 				case 'application':
+					updateAbility(	ability, 
+													{
+														'lastCast': currentTime,
+														'nextAvailable': calculateAbilityNextAvailablity(ability, ability.abilityLockout)
+													}
+												);
 					return createApplicationEvent(ability, user, target, eventCounter);
 					break;
 				case 'castAnimationEnd':
@@ -124,27 +134,45 @@ angular.module('services.championDpsCalculator', ['models.items', 'models.champi
 					return createFalloffEvent(ability, target, eventCounter);
 					break;
 				case 'activationReset':
-					return createActivationResetEvent(target, eventCounter);
+					return createActivationResetEvent(target, ability, eventCounter);
 					break;
 			}
 		}
 
+		function updateAbility(ability, params) {
+			debugger
+		}
+
 		function createApplicationEvent(ability, user, target, eventCounter) {
+			
 			return {
 				'activationTime': currentTime + ability.animationLockout,
 				'id': eventCounter,
 				'actionCauseId': 0,
 				'type': 'application',
 				'target': target,
-				'effects': {
-					'name': ability.name,
-					'initialDamage': ability.initialDamage,
-					'tickDamage': ability.tickDamage,
-					'tickDuration': ability.tickDuration,
-					'tickRate': ability.tickRate,
-					'stunDuration': ability.stunDuration,
-					'debuffs': ability.debuffs
-				}
+				'user': user,
+				'ability': ability
+				// 	{
+				// 	'name': ability.name,
+				// 	'initialDamage': ability.initialDamage,
+				// 	'tickDamage': ability.tickDamage,
+				// 	'tickDuration': ability.tickDuration,
+				// 	'tickRate': ability.tickRate,
+				// 	'stunDuration': ability.stunDuration,
+				// 	'debuffs': ability.debuffs
+				// }
+			}
+		}
+
+		function createActivationResetEvent(champion, eventCounter) {
+			return  {
+				'activationTime': currentTime, // + ,
+				'id': eventCounter,
+				'actionCauseId': 0,
+				'type': 'activationReset',
+				'target': champion,
+				'ability': ability
 			}
 		}
 
@@ -153,8 +181,10 @@ angular.module('services.championDpsCalculator', ['models.items', 'models.champi
 			return {
 				'activationTime': currentTime + timeOffset,
 				'id': eventCounter,
+				'actionCauseId': 0,
 				'type': 'fallOff',
 				'target': target,
+				'ability': ability
 			}
 		}
 
@@ -162,8 +192,13 @@ angular.module('services.championDpsCalculator', ['models.items', 'models.champi
 		function useAbility(ability, user, target, eventCounter) {
 			var events = [],
 					action;
+			debugger
 			updateChampionAvailability(user, ability);
 			action = createEvent("application", ability, user, target, eventCounter);
+			bInsertEvent(action, events, sortLowToHigh);
+			eventCounter += 1;
+
+			action = createEvent("activationReset", ability, eventCounter);
 			bInsertEvent(action, events, sortLowToHigh);
 			return events;
 		}
@@ -465,7 +500,6 @@ angular.module('services.championDpsCalculator', ['models.items', 'models.champi
 		function createActionList(champion, base) {
 				var actions = {};
 				angular.extend(actions, getAbilityAttributes(champion, champion.actions.autoAttack, true));
-
 				// angular.forEach(champion.actions, function(ability, idx) {
 				//	angular.extend(champion.actions)
 				// 	angular.extend(champions[idx], createAction(ability))
@@ -476,7 +510,7 @@ angular.module('services.championDpsCalculator', ['models.items', 'models.champi
 
 		function getAbilityAttributes(champion, ability, initialSetup) {
 			var damage = calculateAbilityDamage(champion.stats, ability);
-			var abilityLockout = calculateAbilityAvailability(champion.stats, ability);
+			var abilityLockout = calculateAbilityLockout(champion.stats, ability);
 
 			var lastCast = initialSetup ? 0 : ability.lastCast;
 			var nextAvailable = initialSetup ? 0 : calculateAbilityNextAvailablity(ability, abilityLockout);
@@ -485,6 +519,7 @@ angular.module('services.championDpsCalculator', ['models.items', 'models.champi
 			var animationLockout = calculateAnimationLockout(champion, ability);
 			var stunDuration = 0;
 			
+			// return ability
 			return {'autoAttack': {
 														 'name': 'autoAttack',
 														 'crittable': true,
@@ -499,6 +534,10 @@ angular.module('services.championDpsCalculator', ['models.items', 'models.champi
 														 'stunDuration': stunDuration,
 														 'debuffs': []
 														}};
+							}
+
+		function calculateAbilityNextAvailablity(ability, lockout) {
+			ability.nextAvailable = currentTime + lockout;
 		}
 
 		// TODO: get information on specific abilities and champions for accurate
@@ -520,7 +559,7 @@ angular.module('services.championDpsCalculator', ['models.items', 'models.champi
 
 		// TODO: Setup to use function to find delay based on ability
 		// CURRENTLY ONLY SETS A DELAY FOR AUTO ATTACKS
-		function calculateAbilityAvailability(stats, ability) {
+		function calculateAbilityLockout(stats, ability) {
 			var delay = 1.0 / stats.attackspeed;
 			return delay;
 		}
@@ -722,7 +761,7 @@ angular.module('services.championDpsCalculator', ['models.items', 'models.champi
 		__testOnly__.getAbilityAttributes = getAbilityAttributes;
 		__testOnly__.calculateAnimationLockout = calculateAnimationLockout;
 		__testOnly__.calculateAbilityDamage = calculateAbilityDamage;
-		__testOnly__.calculateAbilityAvailability = calculateAbilityAvailability;
+		__testOnly__.calculateAbilityLockout = calculateAbilityLockout;
 		__testOnly__.calculatePercentDelayRemaining = calculatePercentDelayRemaining;
 		__testOnly__.calculateAbilityNextAvailable = calculateAbilityNextAvailable;
 		__testOnly__.addChampionStats = addChampionStats;

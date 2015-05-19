@@ -350,9 +350,11 @@ class RiotApiHandler
 		seed_data['champions'] = get_resources_from_api(JSON.parse(champion_data.body))
 		seed_data['champions'].each do |champion|
 			image = champion.delete("image")
+			clean_name = get_clean_name(champion['name'])
+			champion.merge!({'clean_name' => clean_name})
 			champ = Champion.create(champion)
 			champ.create_image(image)
-			splash_path = "https://s3-us-west-1.amazonaws.com/lolcomparitor/Images/splash/#{get_clean_name(champ.name)}_0.png"  
+			splash_path = "https://s3-us-west-1.amazonaws.com/lolcomparitor/Images/splash/#{clean_name}_0.png"  
 			Splash.create({"champion_id" => champ.id, "path" => splash_path})
 		end
 		item_data = handle_request("#{get_items_url('na')}#{add_params({'itemListData' => 'all'})}")

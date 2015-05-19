@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150313044537) do
+ActiveRecord::Schema.define(version: 20150518173356) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -73,9 +73,11 @@ ActiveRecord::Schema.define(version: 20150313044537) do
     t.float    "attackspeed_per_level"
     t.datetime "created_at",                          null: false
     t.datetime "updated_at",                          null: false
+    t.string   "clean_name"
   end
 
   add_index "champions", ["champion_id"], name: "index_champions_on_champion_id", using: :btree
+  add_index "champions", ["clean_name"], name: "index_champions_on_clean_name", using: :btree
   add_index "champions", ["key"], name: "index_champions_on_key", using: :btree
   add_index "champions", ["name"], name: "index_champions_on_name", using: :btree
 

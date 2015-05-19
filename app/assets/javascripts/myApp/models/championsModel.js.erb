@@ -25,7 +25,7 @@ angular.module('models.champions', [])
 		}
 
 		model.getCleanLowerCaseName = function(dirtyName) {
-			var cleanName = dirtyName.replace(/'/, '')
+			var cleanName = dirtyName.replace(/'\./, '')
 			return cleanName[0].toUpperCase() + cleanName.substring(1).toLowerCase();
 		};
 
@@ -67,17 +67,21 @@ angular.module('models.champions', [])
 
     model.setCurrentChampion = function(championKey) {
     	championKey = capitalize(championKey);
-    	return model.asyncGetChampionByName(championKey).then(function(champion){
+    	return model.asyncGetChampionByCleanName(championKey).then(function(champion){
     		currentChampion = champion;
     	});
     }
 
-    model.resetCurrentChampion = function() {
-    	return currentChampion = undefined;
-    };
+    // no longer called, perhaps I'll have a use for it later
+    // Parent view resolve and child resolve race condition
+    // currently currentChampion only gets changed never removed
+    
+    // model.resetCurrentChampion = function() {
+    // 	return currentChampion = undefined;
+    // };
 
     function getChampionImage(championKey) {
-    	model.asyncGetChampionByName(championKey).then(function(champion) {
+    	model.asyncGetChampionByCleanName(championKey).then(function(champion) {
     		return champion.image.full;
     	});
     }
@@ -99,6 +103,7 @@ angular.module('models.champions', [])
 		// 	return (champions) ? $q.when(champions) : $http.get(URLS.GET + "/" + key).then(cacheChampions, showError);
 		}
 
+
 		model.asyncGetDetailedChampionByName = function(championName) {
 			return $q(function(resolve, reject){
 				setTimeout(function() {
@@ -116,7 +121,7 @@ angular.module('models.champions', [])
 			});
 		};
 
-		model.asyncGetChampionByName = function(championName) {
+		model.asyncGetChampionByCleanName = function(championName) {
 			return $q(function(resolve, reject){
 				setTimeout(function() {
 					function findChampion(name) {
@@ -163,6 +168,14 @@ angular.module('models.champions', [])
 
     model.getChampionName = function(champion) {
     	return champion ? champion.name : '';
+    };
+
+    model.getChampionCleanName = function(champion) {
+    	return champion ? champion.clean_name : '';
+    };
+
+    model.getChampionKey = function (champion) {
+    	return champion ? champion.champion_id : '';
     };
 
     model.getChampionTitle = function(champion) {

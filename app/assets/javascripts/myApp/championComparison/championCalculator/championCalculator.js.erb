@@ -124,7 +124,7 @@ angular.module('championCalculator', [
 		championSelectorController.getTitle = ChampionsModel.getChampionTitle;
 		championSelectorController.getSpriteStyle = ChampionsModel.getChampionSpriteStyle;
 		championSelectorController.selectChampion = function(champion) {
-			ChampionsModel.getChampion(ChampionsModel.getChampionName(champion));
+			ChampionsModel.getChampion(ChampionsModel.getChampionCleanName(champion));
 
 			// if (ChampionComparisonModel.comparisonFilled(0) && ChampionComparisonModel.comparisonFilled(1)) {
 			// 	ChampionComparisonModel.removeCurrentSelectedComparison();	

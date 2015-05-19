@@ -32,9 +32,6 @@ angular.module('championInfo', [
 							.then(function(result) {
 								return result;
 							});
-					}],
-					currentChampion: ['$stateParams', 'ChampionsModel', function($stateParams, ChampionsModel) {
-						return ChampionsModel.resetCurrentChampion();
 					}]
 				}
 			})
@@ -59,14 +56,10 @@ angular.module('championInfo', [
 					championData: ['$stateParams', 'ChampionsModel', function($stateParams, ChampionsModel){
 						return ChampionsModel.getChampion($stateParams.key)
 							.then(function(result){
+								ChampionsModel.setCurrentChampion(ChampionsModel.getChampionName(result))
 								return result;
 							});
-					}],
-
-					currentChampion: ['$stateParams', 'ChampionsModel', 'championData', function($stateParams, ChampionsModel, championData){
-						return ChampionsModel.setCurrentChampion($stateParams.key);
 					}]
-
 
 				}
 			});
@@ -90,6 +83,8 @@ angular.module('championInfo', [
 		championsController.getId = ChampionsModel.getChampionId;
 		championsController.getLore = ChampionsModel.getChampionLore;
 		championsController.getName = ChampionsModel.getChampionName;
+		championsController.getCleanName = ChampionsModel.getChampionCleanName;
+		championsController.getKey = ChampionsModel.getChampionKey;
 		championsController.getResourceType = ChampionsModel.getChampionResourceType;
 		championsController.getRoles = ChampionsModel.getChampionTags;
 		championsController.getSpriteStyle = ChampionsModel.getChampionSpriteStyle;

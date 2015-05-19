@@ -2,7 +2,7 @@
 	<div class='col-md-8 col-md-offset-2 picturesContainer'>
 		<div class='championWrapper'
 			ng-repeat='champion in championsController.championsData | orderObjectBy: "name"'>
-			<a ui-sref='appStart.champions.selected({key: championsController.getName(champion)})' class='championLink'>
+			<a ui-sref='appStart.champions.selected({key: championsController.getCleanName(champion)})' class='championLink'>
 				<div class='championPictureContainer'
 				data-placement='right-bottom'
 				data-trigger='hover'

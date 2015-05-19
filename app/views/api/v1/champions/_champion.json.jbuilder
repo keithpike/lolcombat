@@ -1,6 +1,7 @@
 json.champion_id 						champion.champion_id
 json.key 										champion.key
 json.name 									champion.name
+json.clean_name							champion.clean_name
 json.title 									champion.title
 json.lore 									champion.lore
 json.allytips 							champion.allytips

@@ -46,7 +46,7 @@ module Api::V1
 		private
 
     def set_resource(resource = nil)
-      resource ||= resource_class.find_by_name(params[:id])
+      resource ||= resource_class.find_by_clean_name(params[:id])
       instance_variable_set("@#{resource_name}", resource)
     end
 
@@ -55,6 +55,7 @@ module Api::V1
 				:champion_id,
 				:key,
 				:name,
+				:clean_name,
 				:title,
 				:lore,
 				:allytips,
@@ -79,7 +80,7 @@ module Api::V1
 				:attackdamage,
 				:attackdamage_per_level,
 				:attackspeedoffset,
-				:attaclspeed_per_level_float
+				:attackspeed_per_level
 			)
 		end
 
