@@ -19,7 +19,8 @@ angular.module('models.championComparisons', ['services.championDpsCalculator'])
 						'level': 1,
 						'chart': undefined
 					}],
-					selectedComparison;
+					selectedComparison,
+					calculateDpsTimer = undefined;
 					
 		setHighchartDefaults();
 
@@ -39,7 +40,11 @@ angular.module('models.championComparisons', ['services.championDpsCalculator'])
 			// console.log("comparisonIndex: " + comparisonIndex);
 			level = parseInt(level);
 			comparisonIndex = parseInt(comparisonIndex);
-			if(checkBounds(comparisonIndex, 0, 1) && checkBounds(level, 1, 18)) {
+			if(checkBounds(comparisonIndex, 0, 1) &&
+				checkBounds(level, 1, 18) && 
+				checkComparisonSelected(comparisonIndex)) 
+			{
+				level != selectedComparison.level ? inputsChanged() : null; // move to business logic
 				comparisons[comparisonIndex].level = level;
 			}
 		};
@@ -107,10 +112,18 @@ angular.module('models.championComparisons', ['services.championDpsCalculator'])
 		}
 
 		model.setTimeframe = function(seconds) {
-			// console.log("timeframe: " + seconds);
+			console.log("timeframe: " + seconds);
 			seconds = parseInt(seconds);
 			if (checkBounds(seconds, 1, 60)) {
+				model.timeframe != seconds ? inputsChanged() : null; // move to business logic
 				model.timeframe = seconds;
+			}
+		};
+
+		function inputsChanged() {
+			typeof calculateDpsTimer == 'number' ? window.clearTimeout(calculateDpsTimer) : null;
+			if ( model.comparisonFilled(0) && model.comparisonFilled(1) ) {
+				calculateDpsTimer = window.setTimeout(model.calculateDpsInfo, 500);
 			}
 		};
 
@@ -152,12 +165,21 @@ angular.module('models.championComparisons', ['services.championDpsCalculator'])
 						typeof(openComparisonIdx) != 'undefined' ) {
 					setComparisonChampion(openComparisonIdx, champion);
 					setSelectedComparison(openComparisonIdx);
+					model.comparisonFilled(0) && model.comparisonFilled(1) ? inputsChanged() : null;
 				
 				} else if (typeof(championComparisonIdx) != 'undefined') {
 					model.resetChampionComparison(championComparisonIdx);
 				}
 			}
 		};
+
+		function handleComparisonsEmpty() {
+			checkComparisonsEmpty() ? model.setTimeframe(1) : null;
+		}
+
+		function checkComparisonsEmpty() {
+			return !(model.comparisonFilled(0) || model.comparisonFilled(1));
+		}
 
 		model.resetChampionComparison = function(idx) {
 			comparisons[idx].champion = {'name': 'none'};
@@ -166,6 +188,7 @@ angular.module('models.championComparisons', ['services.championDpsCalculator'])
 			removeChart(idx);
 			comparisons[idx].chart = undefined;
 			setSelectedComparison(findFilledComparison());
+			handleComparisonsEmpty();
 		};
 
 		function findFilledComparison(){
@@ -237,6 +260,7 @@ angular.module('models.championComparisons', ['services.championDpsCalculator'])
 
 				//add item to comparison
 				model.addItem(item);
+				inputsChanged();
 			}
 		};
 
@@ -251,8 +275,12 @@ angular.module('models.championComparisons', ['services.championDpsCalculator'])
 		};
 
 		model.removeItem = function(itemIdx, comparisonIdx){
-			if (typeof(itemIdx) != 'undefined' && typeof(comparisonIdx) != 'undefined') {
+			if (typeof(itemIdx) != 'undefined' && 
+					typeof(comparisonIdx) != 'undefined' &&
+					checkComparisonSelected(comparisonIdx)) 
+			{
 				delete comparisons[comparisonIdx].items[itemIdx];
+				inputsChanged();
 			}
 		};
 

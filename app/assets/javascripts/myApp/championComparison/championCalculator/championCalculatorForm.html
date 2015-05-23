@@ -19,6 +19,10 @@
 					<span class='championComparisonInputLabel'>Damage/sec</span><br/>
 					<span class='clear outputColor' name='ChampionDPSValue'>500</output>
 				</div>
+				<div class='checkboxWrapper'>
+					<label class='checkboxLabel' for=RawDPS>Raw</label> 
+					<input class='rawCheck clear' type="checkbox" name="RawDPS" value="car">
+				</div>
 			</div>
 		</div>
 		<div class='halfComparisonWrapper bottomHalfComparisonWrapper'>
@@ -29,10 +33,6 @@
 				<label class='championComparisonInputLabel clear' for=ChampionLevel>Champion Level</label> 
 				<input ng-model='championLevel' class='timeFrameSlider' type='range' value='{{ championLevel }}' step='1' min='1' max='18' name='ChampionLevel' ng-change='{{ setChampionLevel({ comparisonIndex: comparisonIndex, level: championLevel }); championLevel = getChampionLevel({comparisonIndex: comparisonIndex}) }}'>
 				<output class='championComparisonOutputText' name="ChampionLevelValue">{{ championLevel }}</output>
-				<div class='checkboxWrapper'>
-					<label class='checkboxLabel' for=RawDPS>Raw</label> 
-					<input class='rawCheck clear' type="checkbox" name="RawDPS" value="car">
-				</div>
 			</div>
 			<div class='comparisonItemWrapper col-md-6'>
 				<div 
