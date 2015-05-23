@@ -20,14 +20,11 @@ describe('Service: championDpsCalculator', function(){
 
 	});
 
-	// TODO: inject mocks as dependencies instead of using real services
 	beforeEach(inject(function(_ChampionDpsCalculator_){
 		ChampionDpsCalculator = _ChampionDpsCalculator_;
 	}));
 
-	beforeEach(function(){
-		spyOn(ChampionDpsCalculator, 'getItemStats').and.callThrough();
-	});
+
 
 	it('expect ChampionDpsCalculator to be injected successfully', function(){
 		expect(ChampionDpsCalculator).toBeDefined();
@@ -35,7 +32,9 @@ describe('Service: championDpsCalculator', function(){
 	});
 
 	describe('Function: getItemStats', function(){
-
+		beforeEach(function(){
+			spyOn(ChampionDpsCalculator, 'getItemStats').and.callThrough();
+		});
 		it('should return the bonus stats if provided a valid item', function(){
 			var someItems = [{'stats': {"bonusArmor": 5}}];
 			expect(ChampionDpsCalculator.getItemStats(someItems)).toEqual({"bonusArmor": 5}); //return item ? item.stats : {};

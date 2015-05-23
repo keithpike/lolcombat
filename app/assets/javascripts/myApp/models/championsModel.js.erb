@@ -12,17 +12,17 @@ angular.module('models.champions', [])
 				champions = {},
 				currentChampion;
 
-		console.log('ChampionsModel has been called');
+		// console.log('ChampionsModel has been called');
 		
-		function capitalize(value) {
-			// TODO take this out to a helper function or completely
-			var words = value.split(" ");
-			words = angular.forEach(words, function(word, idx) {
-				words[idx] = word[0].toUpperCase() + word.substring(1);
-			});
+		// function capitalize(value) {
+		// 	// TODO take this out to a helper function or completely
+		// 	var words = value.split(" ");
+		// 	words = angular.forEach(words, function(word, idx) {
+		// 		words[idx] = word[0].toUpperCase() + word.substring(1);
+		// 	});
 
-			return words.join(" ");
-		}
+		// 	return words.join(" ");
+		// }
 
 		model.getCleanLowerCaseName = function(dirtyName) {
 			var cleanName = dirtyName.replace(/'\./, '')
@@ -66,7 +66,7 @@ angular.module('models.champions', [])
     }
 
     model.setCurrentChampion = function(championKey) {
-    	championKey = capitalize(championKey);
+    	// championKey = capitalize(championKey);
     	return model.asyncGetChampionByCleanName(championKey).then(function(champion){
     		currentChampion = champion;
     	});
@@ -98,7 +98,7 @@ angular.module('models.champions', [])
 		}
 
 		model.getChampion = function(key) {
-			key = capitalize(key);
+			// key = capitalize(key);
 			return $http.get((URLS.GET + "/" + key), {cache: true}).then(cacheDetailedChampion);
 		// 	return (champions) ? $q.when(champions) : $http.get(URLS.GET + "/" + key).then(cacheChampions, showError);
 		}

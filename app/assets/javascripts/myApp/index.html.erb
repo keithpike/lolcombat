@@ -6,7 +6,86 @@
 
 <div class='mainView' ui-view>
 	<div>
-		Hello and welcome to the champion DPS calculator!
+		<pre>
+		<h4>
+      Hello and welcome to the champion DPS calculator! If you're looking for the meat of the site go to the Calculator tab, it's ORANGE!
+		</h4>
+
+		Below is a giant todo list in regard to the website:
+		  
+		  - Get abilities working!
+		    - Parse Riot Api for ability effects
+		    - Parse Riot Api for ability resource costs (there are 25 types?!)
+		    - Parse Riot Api for ability coefficients
+		    - Write custom handling for abilities
+		    - Get information on animation timing / animation timing modifiers
+		  
+		  - Get items completely working!
+		    - Parse Riot Api for item effects (these sometimes include things I would imagine are stats...like hp regen)
+		    - Create custom logic for handling specific items
+
+		  - Get runes working!
+		    - Look into requirements for getting runes working
+
+		  - Get Masteries working!
+		    - Write custom logic for handling specific masteries
+
+		  - Implement ItemRuneMasteries selector
+		    - Have three tabs Items/Runes/Masteries
+		    - Animate view up over championComparison forms
+		    - On exit of view animate view down into tabs below
+			  - Implement ItemSelector view
+			    - Create item search functionality
+			    - Make view similar to Riot's in game item selection
+			      - Add championComparison form to right side of screen
+			      - Add itemSelector to left side of screen
+			  - Implement RuneSelector view
+			    - Make view similar to Riot's in game rune pages
+			      - 
+			    
+		  - Implement serializer / deserializer for championComparison setup
+		    - Add custom URL for specific comparison setups
+		    - Serialize on user request and display link
+		    - Deserialize on navigation to link
+
+
+		  - Implement DpsCalculation service features
+		    - Calculate raw(before resist) and modified damage
+		    - Handle abilities / item effects
+		    - Calculate critical strike ability statistics
+		      - Calculate average damage
+		      - Calculate minimum damage
+		      - Calculate maximum damage
+		      - Calculate +/- 1 standard deviation (for average range indicator)
+
+		  - Refactor DpsCalculation service
+		    - Change over to OO design (Current design is more work to maintain/modify)
+		    - Change events to include calculated damage at time of result instead of creating path then calculating
+		  
+		  - Add relevant data to output of DpsCalculator forms
+		    - Damage/sec
+		    - Highest damage ability (damage dealt)
+		    - Lowest damage ability (damage dealt)
+		    - Highest DPS interval (damage dealt and timeframe)
+		    - Raw damage calculation toggle for each relevant output
+		    - Largest possible critical strike (average critical strike)
+		    - General information about stats (ability power, armor, etc)
+		    - Add range indicator for crittable abilities
+
+		  - Implement selection of new champion without user explicitly removing existing selected champion
+		  
+		  - Implement tooltips for items in championComparison forms
+		  
+		  - Implement horizontal scrolling for touch screens
+		  
+		  - Implement update routine for patch changes
+		    - Update existing champions / items / runes / masteries / images with newer information
+		    - Add new champions / items / runes / masteries / images to database
+		    - Consider using AWS api to upload images depending on DataDragon's consistancy with images
+
+		  - Style style style!...profit?
+		</pre>
+
 	</div>
 </div>
 

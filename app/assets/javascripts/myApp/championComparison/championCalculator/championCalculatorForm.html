@@ -24,11 +24,11 @@
 		<div class='halfComparisonWrapper bottomHalfComparisonWrapper'>
 			<div class='inputsWrapper'>
 				<label class='championComparisonInputLabel clear' for=TimeFrame>TimeFrame (seconds)</label> 
-				<input class='timeFrameSlider' type='range' value='0' step='1' min='0' max='60' name='TimeFrame' oninput="this.form.TimeFrameValue.value = this.value">
-				<output class='championComparisonOutputText' name="TimeFrameValue">0</output>
+				<input ng-model='timeframe' class='timeFrameSlider' type='range' value='{{ timeframe }}' step='1' min='1' max='60' name='TimeFrame' ng-change='{{ setTimeframe({ seconds: timeframe }) }}'>
+				<output class='championComparisonOutputText' name="TimeFrameValue">{{ timeframe }}</output>
 				<label class='championComparisonInputLabel clear' for=ChampionLevel>Champion Level</label> 
-				<input class='timeFrameSlider' type='range' value='1' step='1' min='1' max='18' name='ChampionLevel' oninput="this.form.ChampionLevelValue.value = this.value">
-				<output class='championComparisonOutputText' name="ChampionLevelValue">1</output>
+				<input ng-model='championLevel' class='timeFrameSlider' type='range' value='{{ championLevel }}' step='1' min='1' max='18' name='ChampionLevel' ng-change='{{ setChampionLevel({ comparisonIndex: comparisonIndex, level: championLevel }); championLevel = getChampionLevel({comparisonIndex: comparisonIndex}) }}'>
+				<output class='championComparisonOutputText' name="ChampionLevelValue">{{ championLevel }}</output>
 				<div class='checkboxWrapper'>
 					<label class='checkboxLabel' for=RawDPS>Raw</label> 
 					<input class='rawCheck clear' type="checkbox" name="RawDPS" value="car">

@@ -13,19 +13,20 @@ angular.module('services.championDpsCalculator', ['models.items', 'models.champi
 		model.getDpsInfo = function(champions, items, levels, timeframe) {
 			var dpsInfo = {};
 			currentTime = 0;
-			firstChampion = setupChampion(champions[0], items[0], levels[0]);
-			secondChampion = setupChampion(champions[1], items[1], levels[1]);
+			firstChampion = setupChampion(champions[0], items[0], levels[0], 0);
+			secondChampion = setupChampion(champions[1], items[1], levels[1], 1);
 			return simulateSimpleDps(firstChampion, secondChampion, timeframe);
 		};
 
 		model.test = function(champions, items, levels) {
-			model.getDpsInfo(champions, items, levels, 2);
+			model.getDpsInfo(champions, items, levels, 10);
 			console.log(calculateAfterResistDamageMultiplier(150, 26, .2, 25, .2));
 		};
 
-		function setupChampion(champion, items, level) {
+		function setupChampion(champion, items, level, id) {
 			var newChampion = {};
 			angular.extend(newChampion, championDefaultValues());
+			addChampionId(newChampion, id);
 			addChampionStats(newChampion, champion, level);
 			addItemStats(newChampion, items);
 			addActions(newChampion, champion);
@@ -38,27 +39,30 @@ angular.module('services.championDpsCalculator', ['models.items', 'models.champi
 
 		// event driven battle simulation, no movement considerations currently
 		// Considering events take a target no consideration is taken for multiple enemies
+
+		// I should rewrite this to be object oriented, would make variable modification
+		// significantly easier
 		function simulateSimpleDps(firstChampion, secondChampion, timeframe) {
-			//calculates trades over a timeframe using greedy algorithm
+			//calculates trades over a timeframe using greedy algorithm (aka highest damage ability)
 			var eventsByTime = [],
 					currentEventIndex = 0,
-					activeChampion = firstChampion,
-					targetChampion = secondChampion,
 					eventCounter = 1,
 					timeframe = timeframe * 10,
 					ability,
 					abilityUsageEvents,
 					results,
-					timeChange;
+					timeChange,
+					createdEvents // a temporary events holder
+					;
 			while (currentTime < timeframe) {
-				if (checkChampionAvailable(firstChampion)) {
+				if (checkChampionAvailable(firstChampion) && checkAnyAbilityAvailable(firstChampion)) {
 					ability = findBestAvailableAbility(firstChampion, secondChampion);
 					abilityUsageEvents = useAbility(ability, firstChampion, secondChampion, eventCounter);
 					eventCounter = updateByArrayLength(eventCounter, abilityUsageEvents);
 					angular.forEach(abilityUsageEvents, function(event) {
 						bInsertEvent(event, eventsByTime, sortLowToHigh);
 					});
-				}	else if (checkChampionAvailable(secondChampion)) {
+				}	else if (checkChampionAvailable(secondChampion) && checkAnyAbilityAvailable(secondChampion)) {
 					ability = findBestAvailableAbility(secondChampion, firstChampion);
 					abilityUsageEvents = useAbility(ability, secondChampion, firstChampion, eventCounter);
 					eventCounter = updateByArrayLength(eventCounter, abilityUsageEvents);
@@ -68,15 +72,58 @@ angular.module('services.championDpsCalculator', ['models.items', 'models.champi
 					});
 				} else {
 					timeChange = moveForwardInTime(eventsByTime[currentEventIndex].activationTime)
-					var createdEvents = handleEvent(eventsByTime[currentEventIndex], eventCounter);
-					angular.forEach(createdEvents, function(event){
-						bInsertEvent(event, eventsByTime, sortLowToHigh);
-					});
-					eventCounter = updateByArrayLength(eventCounter, createdEvents);
-					currentEventIndex += 1;
-				}
+					if (currentTime < timeframe) {
+						createdEvents = handleEvent(eventsByTime[currentEventIndex], eventCounter);
+						angular.forEach(createdEvents, function(event){
+							bInsertEvent(event, eventsByTime, sortLowToHigh);
+						});
+						eventCounter = updateByArrayLength(eventCounter, createdEvents);
+						currentEventIndex += 1;	
+					}
+				}	
 			}
-			return results;
+			return parseEventsForOutput(eventsByTime);
+		}
+
+		// TODO: Remove this and bake the split of events
+		// 			 into the calculateDps function at handleEvent
+		//       function, this will give accurate dps numbers
+		//       including debuffs/buffs then
+		function parseEventsForOutput(events) {
+			var damageEvents = events.filter(function(event){
+				return event.type == 'application';
+			});
+			var firstChampionEvents = damageEvents.filter(function(event){
+				return event.chart == 0;
+			});
+
+			var secondChampionEvents = damageEvents.filter(function(event){
+				return event.chart == 1;
+			});
+
+			return {
+				'firstChampionEvents': formatOutputForGraph(firstChampionEvents), 
+				'secondChampionEvents': formatOutputForGraph(secondChampionEvents)
+			}
+			// 
+		}
+
+		function formatOutputForGraph(events) {
+			var data = [];
+			angular.forEach(events, function(event) {
+				data.push({
+					'y': Math.round(event.ability.initialDamage),
+					'x': (event.activationTime / 10),
+					'name': event.ability.name,
+					// placeholder ability name
+					'image': getImageOfAbility(event.ability.name)
+				});
+			});
+			return data;
+		}
+
+		function getImageOfAbility(name) {
+			return 'https://s3-us-west-1.amazonaws.com/lolcomparitor/Images/spell/AutoAttack.png';
 		}
 
 		function updateByArrayLength(val, arr) {
@@ -84,7 +131,6 @@ angular.module('services.championDpsCalculator', ['models.items', 'models.champi
 		}
 
 		function handleEvent(event, eventCounter) {
-			debugger
 			switch(event.type) {
 				case 'application':
 					return handleApplicationEvent(event.ability, event.user, event.target, eventCounter);
@@ -98,11 +144,24 @@ angular.module('services.championDpsCalculator', ['models.items', 'models.champi
 				case 'activationReset':
 					return handleActivationResetEvent(event.ability, event.target, eventCounter);
 					break;
+				case 'death':
+					return []; // TODO: implement
+					break;
+				default:
+					return [];
+					break;
 			}
 		}
 
 		function handleApplicationEvent(ability, user, target, eventCounter) {
+			// handle damage application
+			// handle debuff application
+			// handle creation of other events that may be caused (damage ticks not associated to debuffs)
+			return [];
+		}
 
+		function handleActivationResetEvent(ability, target, eventCounter) {
+			return [];
 		}
 
 		function moveForwardInTime(time) {
@@ -119,12 +178,12 @@ angular.module('services.championDpsCalculator', ['models.items', 'models.champi
 		function createEvent(type, ability, user, target, eventCounter) {
 			switch(type) {
 				case 'application':
-					updateAbility(	ability, 
-													{
-														'lastCast': currentTime,
-														'nextAvailable': calculateAbilityNextAvailablity(ability, ability.abilityLockout)
-													}
-												);
+					updateAbility(ability, getAbilityAttributes(user, ability, false));
+												// 	{
+												// 		'lastCast': currentTime,
+												// 		'nextAvailable': calculateAbilityNextAvailablity(ability, ability.abilityLockout)
+												// 	}
+												// );
 					return createApplicationEvent(ability, user, target, eventCounter);
 					break;
 				case 'castAnimationEnd':
@@ -140,14 +199,13 @@ angular.module('services.championDpsCalculator', ['models.items', 'models.champi
 		}
 
 		function updateAbility(ability, params) {
-			debugger
 		}
 
 		function createApplicationEvent(ability, user, target, eventCounter) {
-			
 			return {
 				'activationTime': currentTime + ability.animationLockout,
 				'id': eventCounter,
+				'chart': user.id,
 				'actionCauseId': 0,
 				'type': 'application',
 				'target': target,
@@ -165,9 +223,9 @@ angular.module('services.championDpsCalculator', ['models.items', 'models.champi
 			}
 		}
 
-		function createActivationResetEvent(champion, eventCounter) {
+		function createActivationResetEvent(champion, ability, eventCounter) {
 			return  {
-				'activationTime': currentTime, // + ,
+				'activationTime': ability.nextAvailable,
 				'id': eventCounter,
 				'actionCauseId': 0,
 				'type': 'activationReset',
@@ -192,13 +250,12 @@ angular.module('services.championDpsCalculator', ['models.items', 'models.champi
 		function useAbility(ability, user, target, eventCounter) {
 			var events = [],
 					action;
-			debugger
 			updateChampionAvailability(user, ability);
 			action = createEvent("application", ability, user, target, eventCounter);
 			bInsertEvent(action, events, sortLowToHigh);
 			eventCounter += 1;
 
-			action = createEvent("activationReset", ability, eventCounter);
+			action = createEvent("activationReset", ability, null, user, eventCounter);
 			bInsertEvent(action, events, sortLowToHigh);
 			return events;
 		}
@@ -246,7 +303,6 @@ angular.module('services.championDpsCalculator', ['models.items', 'models.champi
 		}
 
 		function handleChampionRegen(champion, tickAmount) {
-			debugger
 			var healthChange = calculateChampionHealthRegen(champion) * tickAmount;
 			updateChampionHealth(champion, healthChange);
 			var resourceChange = calculateChampionResourceChange(champion) * tickAmount;
@@ -303,6 +359,22 @@ angular.module('services.championDpsCalculator', ['models.items', 'models.champi
 			return champion.nextAvailable <= currentTime;
 		}
 
+		function checkAnyAbilityAvailable(champion) {
+			var flag = false;
+			angular.forEach(champion.actions, function(ability) {
+
+
+				//REMOVE THE AUTOATTACK IF WHEN ABILITIES ARE IMPLEMENTED
+
+				if(ability.name == 'autoAttack') {
+					if (checkAbilityAvailability(ability)) {
+						flag = true;
+					} 
+				}
+			});
+			return flag;
+		}
+
     function bInsertEvent(value, arr, comparer, start, end) {
 			// count = count + 1;	
       start = start || 0;
@@ -349,12 +421,13 @@ angular.module('services.championDpsCalculator', ['models.items', 'models.champi
 
 		function calculateEffectiveDamage(damage, user, target) {
 			var resist = target.stats.baseArmor + target.stats.bonusArmor,
-			//TODO: loop through debuffs and user.stats
-			//to get resist reduction, and percentResistReduction
+			// TODO: loop through debuffs and user.stats
+			// to get resist reduction, and percentResistReduction
+			// Handle more then just Armor
 					resistReduction = 0,
 					percentResistReduction = 0,
-					resistPenetration = user.stats.bonusArmorpenetration,
-					percentResistPenetration = user.stats.bonusPercentarmorpenetration;
+					resistPenetration = user.stats.bonusArmorpenetration, // genericafy
+					percentResistPenetration = user.stats.bonusPercentarmorpenetration; // genericafy
 			var effectiveResist = calculateEffectiveResist(	resist,
 																											resistReduction,
 																											percentResistReduction,
@@ -548,7 +621,8 @@ angular.module('services.championDpsCalculator', ['models.items', 'models.champi
 
 		// TODO: add check for effect bonuses and champion passive bonuses
 		// Setup to use functions for finding the stat and coefficient to use for base damage
-		// CURRENTLY ONLY CALCULATES AUTOATTACKS with no modifiers
+		// CURRENTLY ONLY CALCULATES AUTOATTACKS with no modifiers by always adding
+		// the crit damage based on % of crit chance
 		function calculateAbilityDamage(stats, ability) {
 			// TODO: add 
 			var baseDamage = stats.baseAttackdamage + stats.bonusAttackdamage;
@@ -561,7 +635,7 @@ angular.module('services.championDpsCalculator', ['models.items', 'models.champi
 		// CURRENTLY ONLY SETS A DELAY FOR AUTO ATTACKS
 		function calculateAbilityLockout(stats, ability) {
 			var delay = 1.0 / stats.attackspeed;
-			return delay;
+			return delay * 10;
 		}
 
 		function calculatePercentDelayRemaining(ability) {
@@ -575,6 +649,10 @@ angular.module('services.championDpsCalculator', ['models.items', 'models.champi
 
 		function addChampionStats(champion, base, level) {
 			angular.extend(champion.stats, getChampionStats(base, level));
+		}
+
+		function addChampionId(champion, id) {
+			angular.extend(champion, { 'id' : id });
 		}
 
 		function getChampionStats(champion, level) {
@@ -651,11 +729,11 @@ angular.module('services.championDpsCalculator', ['models.items', 'models.champi
 		}
 
 		function getEffectiveArmor(armor, armorReduction, percentArmorReduction, armorPenetration, percentArmorPenetration) {
-			return { 'effectiveArmor' : calculateAfterResistDamageMultiplier(armor, armorReduction, percentArmorReduction, armorPenetration, percentArmorPenetration) };
+			return { 'effectiveArmor' : calculateEffectiveResist(armor, armorReduction, percentArmorReduction, armorPenetration, percentArmorPenetration) };
 		}
 
 		function getEffectiveSpellblock(spellblock, spellblockReduction, percentSpellblockReduction, spellblockPenetration, percentSpellblockPenetration) {
-			return { 'effectiveSpellblock' : calculateAfterResistDamageMultiplier(spellblock, spellblockReduction, percentSpellblockReduction, spellblockPenetration, percentSpellblockPenetration) };
+			return { 'effectiveSpellblock' : calculateEffectiveResist(spellblock, spellblockReduction, percentSpellblockReduction, spellblockPenetration, percentSpellblockPenetration) };
 		}
 
 		function getHp(stats, level) {
@@ -719,11 +797,15 @@ angular.module('services.championDpsCalculator', ['models.items', 'models.champi
 			return base + getPerLevelChange(perLevelChange, level);
 		}
 
+		// formula calculated to get the stat change for a specific level. Wish riot released this info directly.
 		function getPerLevelChange(perLevelChange, level) {
 			return 0.65 * perLevelChange * (level - 1) + 0.035 * perLevelChange * (1.5 + (0.5 * level - 0.5)) * (level - 1);
 		}
 
 		// Calculate the base attack speed for champion in attacks/second
+		// .625 is base for all champions without offset, subject to Riot's will
+		// TODO: Add .625 to constant for ease of change and allowing for usage
+		// 			 at other parts of the code without worry
 		function getBaseAttackspeed(offset) {
 			return 0.625 / (1 + offset);
 		}
@@ -739,6 +821,8 @@ angular.module('services.championDpsCalculator', ['models.items', 'models.champi
 		}
 
 		// to be deleted before distribution
+		// for jasmine to test private functions
+		// TODO: make gulp tasks for deployment such as deleting this
 		var __testOnly__ = this;
 		__testOnly__.setupChampion = setupChampion;
 		__testOnly__.simulateSimpleDps = simulateSimpleDps;

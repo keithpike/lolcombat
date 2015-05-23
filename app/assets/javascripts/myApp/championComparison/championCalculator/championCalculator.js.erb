@@ -46,15 +46,21 @@ angular.module('championCalculator', [
 		//return function(){
 			return {
 				scope: {
+					championLevel: '&',
 					comparisonIndex: '@',
+					getChampionLevel: '&',
 					getComparisonBackgroundStyle: '&',
 					getComparisonItems: '&',
 					getComparisonItemClass: '&',
 					getSpriteStyle: '&',
+					getTimeframe: '&',
 					removeItem: '&',
 					removeComparison: '&',
 					selectComparison: '&',
-					test: '&'
+					setChampionLevel: '&',
+					setTimeframe: '&',
+					test: '&',
+					timeframe: '=',
 				},
 				link: function(scope, element, attr) {
 					//
@@ -69,12 +75,15 @@ angular.module('championCalculator', [
 
 	.controller('ChampionComparisonController', ['ChampionComparisonModel', 'ItemsModel', 'ChampionsModel', 'ChampionDpsCalculator', function championComparisonController(ChampionComparisonModel, ItemsModel, ChampionsModel, ChampionDpsCalculator){
 		var championComparisonController = this;
-
 		championComparisonController.alert = function(someText) {
 			alert(someText);
-		}		
+		}
+		championComparisonController.getChampionLevel = ChampionComparisonModel.getChampionLevel;
+		championComparisonController.setChampionLevel = ChampionComparisonModel.setChampionLevel;
+		championComparisonController.firstChampionLevel = ChampionComparisonModel.getChampionLevel;
+		championComparisonController.secondChampionLevel = ChampionComparisonModel.getChampionLevel;
+		championComparisonController.timeframe = ChampionComparisonModel.timeframe;
 		championComparisonController.test = ChampionDpsCalculator.test;
-
 		championComparisonController.comparisonFilled = ChampionComparisonModel.comparisonFilled;
 		championComparisonController.selectComparison = ChampionComparisonModel.selectComparison;
 		championComparisonController.getComparisonItems = ChampionComparisonModel.getComparisonItems;
@@ -87,6 +96,7 @@ angular.module('championCalculator', [
 		championComparisonController.getComparisonBackgroundStyle = ChampionComparisonModel.getComparisonBackgroundStyle;
 		championComparisonController.getChampionSplash = ChampionsModel.getChampionSplash;
 		championComparisonController.checkComparisonSelected = ChampionComparisonModel.shouldBeDimmed;
+		championComparisonController.setTimeframe = ChampionComparisonModel.setTimeframe;
 		championComparisonController.calculateDps = ChampionComparisonModel.calculateDpsInfo;
 		championComparisonController.deselectChampion = ChampionComparisonModel.resetChampionComparison;
 	}])
@@ -190,6 +200,19 @@ angular.module('championCalculator', [
 			
 			function cleanup() {
 		    stopScrolling();
+		    if (document.getElementById('championSelectorContainer').removeEventListener) {
+					document.getElementById('championSelectorContainer').removeEventListener("mousewheel", mouseScrollHorizontally);
+	        document.getElementById('championScrollLeft').removeEventListener('mouseenter', hoverScrollHorizontally);
+	        document.getElementById('championScrollLeft').removeEventListener('mouseleave', stopScrolling);
+	        document.getElementById('championScrollRight').removeEventListener('mouseenter', hoverScrollHorizontally);
+	        document.getElementById('championScrollRight').removeEventListener('mouseleave', stopScrolling);
+	        // Firefox
+	        document.getElementById('championSelectorContainer').removeEventListener("DOMMouseScroll", mouseScrollHorizontally);
+		    } else {
+		    	// IE 6/7/8
+	        document.getElementById('championSelectorContainer').detachEvent("onmousewheel", mouseScrollHorizontally);
+		    }
+       
 			}
 		};
 

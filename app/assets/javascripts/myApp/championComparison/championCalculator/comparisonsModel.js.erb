@@ -11,18 +11,49 @@ angular.module('models.championComparisons', ['services.championDpsCalculator'])
 						'champion': {'name': 'none'},
 						'items': [undefined, undefined, undefined, undefined, undefined, undefined],
 						'level': 1,
+						'chart': undefined
 					},
 					{
 						'champion': {'name': 'none'},
 						'items': [undefined, undefined, undefined, undefined, undefined, undefined],
 						'level': 1,
+						'chart': undefined
 					}],
-					selectedComparison,
-					timeframe;
+					selectedComparison;
 					
 		setHighchartDefaults();
 
-		function setHighchartDefaults(){
+		model.timeframe = 1;
+		model.championLevel = model.getChampionLevel;
+
+		model.getChampionLevel = function(idx) {
+			return comparisons[idx].level;
+		};
+
+		model.getTimeframe = function() {
+			return model.timeframe;
+		};
+
+		model.setChampionLevel = function(comparisonIndex, level) {
+			// console.log("level: " + level);
+			// console.log("comparisonIndex: " + comparisonIndex);
+			level = parseInt(level);
+			comparisonIndex = parseInt(comparisonIndex);
+			if(checkBounds(comparisonIndex, 0, 1) && checkBounds(level, 1, 18)) {
+				comparisons[comparisonIndex].level = level;
+			}
+		};
+
+		function checkBounds(input, min, max) {
+			if (typeof(input) == 'number') {
+				return (input <= max && input >= min);
+			}
+			return false;
+		}
+
+
+
+		function setHighchartDefaults() {
 			Highcharts.setOptions({
 			    chart: {
 			        style: {
@@ -75,6 +106,13 @@ angular.module('models.championComparisons', ['services.championDpsCalculator'])
 			});
 		}
 
+		model.setTimeframe = function(seconds) {
+			// console.log("timeframe: " + seconds);
+			seconds = parseInt(seconds);
+			if (checkBounds(seconds, 1, 60)) {
+				model.timeframe = seconds;
+			}
+		};
 
 		model.getComparisonChampionByIndex = function(idx) {
 			if (typeof(idx) != 'undefined' && idx >=0 && idx <= 1) {
@@ -122,12 +160,11 @@ angular.module('models.championComparisons', ['services.championDpsCalculator'])
 		};
 
 		model.resetChampionComparison = function(idx) {
-
-			comparisons[idx] = {
-						'champion': {'name': 'none'},
-						'items': [undefined, undefined, undefined, undefined, undefined, undefined],
-						'level': 1,
-					};
+			comparisons[idx].champion = {'name': 'none'};
+			comparisons[idx].items = [undefined, undefined, undefined, undefined, undefined, undefined];
+			model.setChampionLevel(idx, 1);
+			removeChart(idx);
+			comparisons[idx].chart = undefined;
 			setSelectedComparison(findFilledComparison());
 		};
 
@@ -159,7 +196,7 @@ angular.module('models.championComparisons', ['services.championDpsCalculator'])
 
 		function setSelectedComparison(idx) {
 			if (typeof(idx) != 'undefined' && idx < 2 && idx >= 0) {
-				console.log("comparison set to " + idx);
+				// console.log("comparison set to " + idx);
 				selectedComparison = comparisons[idx];
 			} else {
 				// console.log("comparison set to nothing!");
@@ -234,12 +271,12 @@ angular.module('models.championComparisons', ['services.championDpsCalculator'])
 			return (idx != -1) ? idx : undefined;
 		}
 
-		model.calculateDpsInfo = function(timeframe) {
+		model.calculateDpsInfo = function() {
 			var dpsInfo = championDpsCalculator.getDpsInfo(
 												[comparisons[0].champion, comparisons[1].champion],
 												[comparisons[0].items, comparisons[1].items],
 												[comparisons[0].level, comparisons[1].level],
-												timeframe
+												model.timeframe
 										);
 		
 
@@ -252,17 +289,21 @@ angular.module('models.championComparisons', ['services.championDpsCalculator'])
 			// presume replacement of highchartsjs with ng-highcharts will resolve
 			// the issue
 			if (document.getElementById('champion0Chart')) {
-				makeGraph('champion0Chart', []);
+				comparisons[0].chart = makeGraph('champion0Chart', dpsInfo.firstChampionEvents);
 	    } else {
-	    	debugger
 	    	// chart.series[0].setData(b);
-
 	    };
 
 			if (document.getElementById('champion1Chart')) {
-				makeGraph('champion1Chart', []);
+				comparisons[1].chart = makeGraph('champion1Chart', dpsInfo.secondChampionEvents);
 			}
 		};
+
+		function removeChart(idx) {
+			if (comparisons[idx].chart) {
+				comparisons[idx].chart.destroy();
+			}
+		}
 
 		function makeGraph(containerName, data) {
 			var chart = new Highcharts.Chart({
@@ -277,25 +318,7 @@ angular.module('models.championComparisons', ['services.championDpsCalculator'])
 		    },
 
 		    series: [{
-		      data: [
-		      {
-		      	y: 2000,
-		      	x: .5,
-		    	  image: 'https://s3-us-west-1.amazonaws.com/lolcomparitor/Images/spell/AutoAttack.png',
-		        name: 'AutoAttack'
-		      },
-		      {
-		      	y: 2000,
-		      	x: 1.5,
-		    	  image: 'https://s3-us-west-1.amazonaws.com/lolcomparitor/Images/spell/AutoAttack.png',
-		        name: 'AutoAttack'
-		      },
-		      {
-		      	y: 2000,
-		      	x: 2,
-		    	  image: 'https://s3-us-west-1.amazonaws.com/lolcomparitor/Images/spell/AutoAttack.png',
-		        name: 'AutoAttack'
-		      }],
+		      data: data,
 		      showInLegend: false
 		    }],
 
@@ -317,12 +340,14 @@ angular.module('models.championComparisons', ['services.championDpsCalculator'])
 		    },
 
 		    xAxis: {
+		    	tickPixelInterval: 50,
 		    	title: {
 		    		text: 'Time'
 		    	}
 		    },
 
 		    yAxis: {
+		    	tickPixelInterval: 50,
 		    	title: {
 		    		text: 'Damage'
 		    	}
@@ -332,6 +357,7 @@ angular.module('models.championComparisons', ['services.championDpsCalculator'])
 			// allows the ng-click functionality of container to execute
 			chart.container.onclick = null;
 			chart.container.onmousedown = null;
+			return chart;
 		}
 
 	}]);

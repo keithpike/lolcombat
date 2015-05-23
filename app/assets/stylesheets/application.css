@@ -84,6 +84,14 @@ li.ng-leave{
 	line-height: 48px;
 }
 
+.standout {
+	background-color: orangered;
+}
+
+.navbar-inverse .navbar-nav > li > a {
+  color: lightgrey;
+}
+
 
 * {
 	-moz-box-sizing: border-box;

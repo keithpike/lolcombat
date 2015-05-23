@@ -2,13 +2,13 @@ Rails.application.routes.draw do
   root 'static_pages#index'
   scope module: 'api', :defaults => {format: :json} do #, :path => "", :constraints => {:subdomain => "api"} do
     namespace :v1 do
-      resources :items, except: [:edit, :new]
-      resources :abilities, except: [:edit, :new]
-      resources :champions, except: [:edit, :new]
-      resources :summoners, except: [:edit, :new]
-      resources :runes, except: [:edit, :new]
-      resources :masteries, except: [:edit, :new]
-      resources :skins, except: [:edit, :new]
+      resources :items, only: [:index, :show]
+      resources :abilities, only: [:index, :show]
+      resources :champions, only: [:index, :show]
+      resources :summoners, only: [:index, :show]
+      resources :runes, only: [:index, :show]
+      resources :masteries, only: [:index, :show]
+      resources :skins, only: [:index, :show]
     end
   end
 
