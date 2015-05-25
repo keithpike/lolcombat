@@ -501,9 +501,9 @@ angular.module('services.championDpsCalculator', ['models.items', 'models.champi
 							},
 							'actions': {
 								'autoAttack': {
-									'name': '',
+									'name': 'autoAttack',
 									'initialDamage': 0,
-									'crittable': false,
+									'crittable': true,
 									'tickDamage': 0,
 									'tickDuration': 0,
 									'tickRate': 0,
@@ -603,8 +603,8 @@ angular.module('services.championDpsCalculator', ['models.items', 'models.champi
 			
 			// return ability
 			return {
-														 'name': 'autoAttack',
-														 'crittable': true,
+														 'name': ability.name,
+														 'crittable': ability.crittable,
 														 'initialDamage': damage,
 														 'tickDamage': 0,
 														 'tickDuration': 0,
