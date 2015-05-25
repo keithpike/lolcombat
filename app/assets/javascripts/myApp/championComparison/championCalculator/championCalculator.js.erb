@@ -75,9 +75,6 @@ angular.module('championCalculator', [
 
 	.controller('ChampionComparisonController', ['ChampionComparisonModel', 'ItemsModel', 'ChampionsModel', 'ChampionDpsCalculator', function championComparisonController(ChampionComparisonModel, ItemsModel, ChampionsModel, ChampionDpsCalculator){
 		var championComparisonController = this;
-		championComparisonController.alert = function(someText) {
-			alert(someText);
-		}
 		championComparisonController.getChampionLevel = ChampionComparisonModel.getChampionLevel;
 		championComparisonController.setChampionLevel = ChampionComparisonModel.setChampionLevel;
 		championComparisonController.firstChampionLevel = ChampionComparisonModel.getChampionLevel;
@@ -99,6 +96,7 @@ angular.module('championCalculator', [
 		championComparisonController.setTimeframe = ChampionComparisonModel.setTimeframe;
 		championComparisonController.calculateDps = ChampionComparisonModel.calculateDpsInfo;
 		championComparisonController.deselectChampion = ChampionComparisonModel.resetChampionComparison;
+		ChampionComparisonModel.makeSureGraphsFilled();
 	}])
 
 	.controller('ItemSelectorController', ['items', 'ItemsModel', 'ChampionComparisonModel', function itemSelectorController(items, ItemsModel, ChampionComparisonModel){
@@ -126,14 +124,18 @@ angular.module('championCalculator', [
 		var championSelectorController = this; 
 		championSelectorController.championsData = champions;
 
-		//TODO: consider moving these connections to a service and include the service in controller
+		//TODO: consider moving these connections to a service and include the service in controller (standard interface anyone?)
 		championSelectorController.checkSelected = ChampionComparisonModel.checkSelected;
 		//championSelectorController.getComparisonOneItems = ChampionComparisonModel.getComparisonItems(0);
 		championSelectorController.getImage = ChampionsModel.getChampionImage;
 		championSelectorController.getName = ChampionsModel.getChampionName;
 		championSelectorController.getTitle = ChampionsModel.getChampionTitle;
 		championSelectorController.getSpriteStyle = ChampionsModel.getChampionSpriteStyle;
+
+		// TODO: modify so selected champion is replaced without having to remove champion specifically
 		championSelectorController.selectChampion = function(champion) {
+
+		
 			ChampionsModel.getChampion(ChampionsModel.getChampionCleanName(champion));
 
 			// if (ChampionComparisonModel.comparisonFilled(0) && ChampionComparisonModel.comparisonFilled(1)) {

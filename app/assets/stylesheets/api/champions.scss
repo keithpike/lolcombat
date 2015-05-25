@@ -86,7 +86,7 @@ img.resize{
 .championComparisonsWrapper{
 	height: 600px;
 	overflow-x: hidden;
-	overflow-y: hidden;
+	overflow-y: auto;
 }
 
 .championComparisonRight.ng-leave{

@@ -1,5 +1,3 @@
-<!-- <div style='height: 300px;'>
-</div> -->
 <div ui-view='navbar'>
 	<span>placeholder navbar for index</span>
 </div>
@@ -7,8 +5,14 @@
 <div class='mainView' ui-view>
 	<div>
 		<pre>
-		<h4>
-      Hello and welcome to the champion DPS calculator! If you're looking for the meat of the site go to the Calculator tab, it's ORANGE!
+		<h4 class='wordWrap'>
+      Hello and welcome to the LOL champion combat simulator!
+      
+      As you can tell I'm a design freak(perhaps sarcasm on the internet is a bad idea), but don't let that deter you!
+      If you're looking for the meat of the site go to the Calculator tab, it's ORANGE!
+
+      Don't you fret about the current lack of statistics plenty more is up and coming...when I get to it.
+      If you're interested you can read the todo list below! Todo lists are exciting!
 		</h4>
 
 		Below is a giant todo list in regard to the website:
@@ -19,6 +23,7 @@
 		    - Parse Riot Api for ability coefficients
 		    - Write custom handling for abilities
 		    - Get information on animation timing / animation timing modifiers
+		    - Inject effect values into Riot Api Tooltip return for display 
 		  
 		  - Get items completely working!
 		    - Parse Riot Api for item effects (these sometimes include things I would imagine are stats...like hp regen)
@@ -43,44 +48,70 @@
 			    - Make view similar to Riot's in game rune pages
 			      - Create template
 			      - Create model
-			 	- Implement Masteries Selection View
-			 	  - Make view similar to Riot's in game mastery selector page
-			 	    - Create template
-			 	    - Create model
-			 	    - Implement custom logic for masteries
-			    
+			  - Implement Masteries Selection View
+			    - Make view similar to Riot's in game mastery selector page
+			      - Create template
+			      - Create model
+			      - Implement custom logic for masteries
+
 		  - Implement serializer / deserializer for championComparison setup
 		    - Add custom URL for specific comparison setups
 		    - Serialize on user request and display link
 		    - Deserialize on navigation to link
 
-
 		  - Implement DpsCalculation service features
-		    - Calculate raw(before resist) and modified damage
+		    - Calculate raw(before resist) on top of modified damage
 		    - Handle abilities / item effects
 		    - Calculate critical strike ability statistics
 		      - Calculate average damage
 		      - Calculate minimum damage
 		      - Calculate maximum damage
 		      - Calculate +/- 1 standard deviation (for average range indicator)
+		    - Implement Debuff application handler
+		    - Implement DropOff handler
+		    - Implement Death event
+		    - Implement Death handler
+		    - Implement Buff application handler
+		    - Implement endCast event (instead of assuming all cast animation is .2 seconds)
+		    - Implement endCast handler
+		    - Implement startCast handler
+		    - Implement ability resource usage
+		    - Implement Buff/Debuff Removal event
+		    - Implement Buff/Debuff Removal handler
+		    - Implement movement considerations (low priority, will require some design change)
+		    - Plenty of other things I'm not thinking of at the moment
 
 		  - Refactor DpsCalculation service
 		    - Change over to OO design (Current design is more work to maintain/modify)
 		    - Change events to include calculated damage at time of result instead of creating path then calculating (why work twice?)
-		  
-		  - Add relevant data to output of DpsCalculator forms
-		    - Damage/sec
-		    - Highest damage ability (damage dealt)
-		    - Lowest damage ability (damage dealt)
-		    - Highest DPS interval (damage dealt and timeframe)
-		    - Raw damage calculation toggle for each relevant output
-		    - Largest possible critical strike (average critical strike)
-		    - General information about stats (ability power, armor, etc)
-		    - Add range indicator for crittable abilities
+
+		  - Modify DpsCalculator Forms
+		    - Modify ChampionLevel data binding (provide direct value?)
+		    - Add relevant data to output of DpsCalculator forms
+		      - Damage/sec
+		      - Highest damage ability (damage dealt)
+		      - Lowest damage ability (damage dealt)
+		      - Highest DPS interval (damage dealt and timeframe)
+		      - Raw damage calculation toggle for each relevant output
+		      - Largest possible critical strike (average critical strike)
+		      - General information about stats (ability power, armor, etc)
+		      - Add range indicator for crittable abilities
+
+		  - Modify Controller connections (create standardized interfaces for models)
+		    - Move view/model function connections to service
+		    - Require model connection services in controllers
+		    - They say modularity is a good thing...
+
+		  - Reduce client side caching (currently setup for me being cheap)
+		    - set timeout for client side caching
+
+		  - Implement Redis caching for backend
 
 		  - Implement selection of new champion without user explicitly removing existing selected champion
 		  
 		  - Implement tooltips for items in championComparison forms
+
+		  - consider using some of the many helper angular modules
 		  
 		  - Implement horizontal scrolling for touch screens
 		  
@@ -88,6 +119,9 @@
 		    - Update existing champions / items / runes / masteries / images with newer information
 		    - Add new champions / items / runes / masteries / images to database
 		    - Consider using AWS api to upload images depending on DataDragon's consistancy with images
+		    - Invalidate Redis cache values on update (once Redis implemented)
+		    - Warm up cache after update
+		    - Consider using socketIO to push live update information to clients
 
 		  - Style style style!...profit?
 		</pre>

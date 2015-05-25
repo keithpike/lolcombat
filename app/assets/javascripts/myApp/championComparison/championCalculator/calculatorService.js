@@ -18,10 +18,10 @@ angular.module('services.championDpsCalculator', ['models.items', 'models.champi
 			return simulateSimpleDps(firstChampion, secondChampion, timeframe);
 		};
 
-		model.test = function(champions, items, levels) {
-			model.getDpsInfo(champions, items, levels, 10);
-			console.log(calculateAfterResistDamageMultiplier(150, 26, .2, 25, .2));
-		};
+		// model.test = function(champions, items, levels) {
+		// 	model.getDpsInfo(champions, items, levels, 10);
+		// 	console.log(calculateAfterResistDamageMultiplier(150, 26, .2, 25, .2));
+		// };
 
 		function setupChampion(champion, items, level, id) {
 			var newChampion = {};
@@ -30,8 +30,8 @@ angular.module('services.championDpsCalculator', ['models.items', 'models.champi
 			addChampionStats(newChampion, champion, level);
 			addItemStats(newChampion, items);
 			addActions(newChampion, champion);
-			newChampion.stats.currentHp = newChampion.stats.baseHp;
-			newChampion.stats.currentMp = newChampion.stats.baseMp;
+			newChampion.stats.currentHp = calculateMaxHp(newChampion);
+			newChampion.stats.currentMp = calculateMaxResource(newChampion);
 			newChampion.resourceType = champion.resource_type;
 			newChampion.lastResourceChange = currentTime;
 			return newChampion;
@@ -112,7 +112,7 @@ angular.module('services.championDpsCalculator', ['models.items', 'models.champi
 			var data = [];
 			angular.forEach(events, function(event) {
 				data.push({
-					'y': Math.round(event.ability.initialDamage),
+					'y': Math.round(calculateEffectiveDamage(event.ability.initialDamage, event.user, event.target)),
 					'x': (event.activationTime / 10),
 					'name': event.ability.name,
 					// placeholder ability name
@@ -178,7 +178,8 @@ angular.module('services.championDpsCalculator', ['models.items', 'models.champi
 		function createEvent(type, ability, user, target, eventCounter) {
 			switch(type) {
 				case 'application':
-					updateAbility(ability, getAbilityAttributes(user, ability, false));
+					// Modify once updateAbility is changed to actually just give back the ability without name
+					ability = updateAbility(ability, user); 
 												// 	{
 												// 		'lastCast': currentTime,
 												// 		'nextAvailable': calculateAbilityNextAvailablity(ability, ability.abilityLockout)
@@ -198,7 +199,9 @@ angular.module('services.championDpsCalculator', ['models.items', 'models.champi
 			}
 		}
 
-		function updateAbility(ability, params) {
+		// params are currently the user intend to split this into seperate params that need to be updated
+		function updateAbility(ability, user) {
+			return getAbilityAttributes(user, ability, false)
 		}
 
 		function createApplicationEvent(ability, user, target, eventCounter) {
@@ -330,6 +333,7 @@ angular.module('services.championDpsCalculator', ['models.items', 'models.champi
 			champion.stats.currentHp = Math.min(calculateMaxHp(champion), champion.stats.currentHp + change);
 		}
 
+		// needs logic to handle calculation of changes for different resource types
 		function calculateChampionResourceChange(champion) {
 			switch(champion.resourceType) {
 				case 'mana':
@@ -342,7 +346,12 @@ angular.module('services.championDpsCalculator', ['models.items', 'models.champi
 
 		}
 
+		// needs update to handle any champion that is not mana based
+		function calculateMaxResource(champion) {
+			return champion.stats.baseMp + champion.stats.bonusMp;
+		}
 
+		// needs update to handle certain items that have % bonusHp increases
 		function calculateMaxHp(champion) {
 			return champion.stats.baseHp + champion.stats.bonusHp;
 		}
@@ -571,8 +580,8 @@ angular.module('services.championDpsCalculator', ['models.items', 'models.champi
 
 		// TODO: add abilities and actionable items check
 		function createActionList(champion, base) {
-				var actions = {};
-				angular.extend(actions, getAbilityAttributes(champion, champion.actions.autoAttack, true));
+				var actions = champion.actions;
+				angular.extend(actions.autoAttack, getAbilityAttributes(champion, champion.actions.autoAttack, true));
 				// angular.forEach(champion.actions, function(ability, idx) {
 				//	angular.extend(champion.actions)
 				// 	angular.extend(champions[idx], createAction(ability))
@@ -593,7 +602,7 @@ angular.module('services.championDpsCalculator', ['models.items', 'models.champi
 			var stunDuration = 0;
 			
 			// return ability
-			return {'autoAttack': {
+			return {
 														 'name': 'autoAttack',
 														 'crittable': true,
 														 'initialDamage': damage,
@@ -606,8 +615,9 @@ angular.module('services.championDpsCalculator', ['models.items', 'models.champi
 														 'abilityLockout': abilityLockout,
 														 'stunDuration': stunDuration,
 														 'debuffs': []
-														}};
-							}
+							};
+		}
+							
 
 		function calculateAbilityNextAvailablity(ability, lockout) {
 			ability.nextAvailable = currentTime + lockout;
@@ -625,10 +635,14 @@ angular.module('services.championDpsCalculator', ['models.items', 'models.champi
 		// the crit damage based on % of crit chance
 		function calculateAbilityDamage(stats, ability) {
 			// TODO: add 
+			var roll = Math.floor(Math.random() * (101 - 1) + 1);
 			var baseDamage = stats.baseAttackdamage + stats.bonusAttackdamage;
 			var critDamage = (stats.baseAttackdamage + stats.bonusAttackdamage) * (stats.baseCritdamage + stats.bonusCritdamage);
-			var critChance = stats.crit + stats.bonusCrit;
-			return ability.crittable ? baseDamage + critDamage * critChance : baseDamage;
+			var critChance = stats.baseCrit + stats.bonusCrit;
+			if (roll > (critChance * 100)) {
+				critDamage = 0;
+			}
+			return ability.crittable ? baseDamage + critDamage : baseDamage;
 		}
 
 		// TODO: Setup to use function to find delay based on ability

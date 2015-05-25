@@ -92,6 +92,16 @@ li.ng-leave{
   color: lightgrey;
 }
 
+.navbar-nav {
+	margin-left: 0;
+	margin-right: 0;
+}
+
+.wordWrap {
+	white-space: pre-wrap;
+	word-break: break-word;
+}
+
 
 * {
 	-moz-box-sizing: border-box;

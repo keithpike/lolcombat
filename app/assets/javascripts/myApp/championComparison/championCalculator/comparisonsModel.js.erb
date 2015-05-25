@@ -112,12 +112,17 @@ angular.module('models.championComparisons', ['services.championDpsCalculator'])
 		}
 
 		model.setTimeframe = function(seconds) {
-			console.log("timeframe: " + seconds);
+			// console.log("timeframe: " + seconds);
 			seconds = parseInt(seconds);
 			if (checkBounds(seconds, 1, 60)) {
 				model.timeframe != seconds ? inputsChanged() : null; // move to business logic
 				model.timeframe = seconds;
 			}
+		};
+
+		// find better way to run necessary functions on page load
+		model.makeSureGraphsFilled = function() {
+			inputsChanged();
 		};
 
 		function inputsChanged() {
@@ -260,7 +265,6 @@ angular.module('models.championComparisons', ['services.championDpsCalculator'])
 
 				//add item to comparison
 				model.addItem(item);
-				inputsChanged();
 			}
 		};
 
@@ -270,6 +274,7 @@ angular.module('models.championComparisons', ['services.championDpsCalculator'])
 				var itemSlotToFill = itemsFillable(comparisons[comparisonIdx].items);
 				if (typeof(itemSlotToFill) != 'undefined') {
 					comparisons[comparisonIdx].items[itemSlotToFill] = item;
+					inputsChanged();
 				}
 			}
 		};

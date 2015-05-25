@@ -57,12 +57,14 @@
 
 .itemSelectorContainer{
 	height: 160px;
+	margin-top: 5px;
 	overflow-y: scroll;
 }
 
 .comparisonItemWrapper{
 	height: 96px;
 	float: right;
+	padding-left: 0px;
 	width: 144px;
 	box-sizing: content-box;
 
