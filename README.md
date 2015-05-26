@@ -14,8 +14,8 @@ Some interesting stat information is intended to be displayed but only after the
 
 Project built using:
 
-Ruby: 2.1
-Rails: 4.2.0
-Angular: 1.3.14
-Angular ui-router: 0.2.13
-Highcharts: 4.1.5
+Ruby: 2.1  
+Rails: 4.2.0  
+Angular: 1.3.14  
+Angular ui-router: 0.2.13  
+Highcharts: 4.1.5  
