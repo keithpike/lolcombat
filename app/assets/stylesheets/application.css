@@ -88,15 +88,6 @@ li.ng-leave{
 	background-color: orangered;
 }
 
-.navbar-inverse .navbar-nav > li > a {
-  color: lightgrey;
-}
-
-.navbar-nav {
-	margin-left: 0;
-	margin-right: 0;
-}
-
 .wordWrap {
 	white-space: pre-wrap;
 	word-break: break-word;
