@@ -35,7 +35,7 @@ class RiotApiHandler
 		params.each do |key, value|
 			query_string = "#{query_string}#{key}=#{value}&"
 		end
-		query_string = "#{query_string}api_key=#{ENV['RIOT_API_KEY']}"
+		query_string = "#{query_string}api_key=" + ENV['RIOT_API_KEY']
 	end
 
 	def load_as_json(file)
