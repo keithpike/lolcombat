@@ -11,7 +11,7 @@
       As you can tell I'm a design freak(perhaps sarcasm on the internet is a bad idea), but don't let that deter you!
       If you're looking for the meat of the site go to the Calculator tab, it's ORANGE!
 
-      Don't you fret about the current lack of statistics plenty more is up and coming...when I get to it.
+      Don't you fret about the current lack of statistics plenty more are up and coming...when I get to it.
       If you're interested you can read the todo list below! Todo lists are exciting!
 		</h4>
 
@@ -23,7 +23,7 @@
 		    - Parse Riot Api for ability coefficients
 		    - Write custom handling for abilities
 		    - Get information on animation timing / animation timing modifiers
-		    - Inject effect values into Riot Api Tooltip return for display 
+		    - Inject effect values into Riot Api Tooltip return for display
 		  
 		  - Get items completely working!
 		    - Parse Riot Api for item effects (these sometimes include things I would imagine are stats...like hp regen)
@@ -72,7 +72,7 @@
 		    - Implement Death event
 		    - Implement Death handler
 		    - Implement Buff application handler
-		    - Implement endCast event (instead of assuming all cast animation is .2 seconds)
+		    - Implement endCast event (instead of assuming all cast animations are .2 seconds)
 		    - Implement endCast handler
 		    - Implement startCast handler
 		    - Implement ability resource usage
@@ -84,8 +84,18 @@
 		  - Refactor DpsCalculation service
 		    - Change over to OO design (Current design is more work to maintain/modify)
 		    - Change events to include calculated damage at time of result instead of creating path then calculating (why work twice?)
+		    - Move stat calculation features to seperate module
 
 		  - Modify DpsCalculator Forms
+		    - Incorporate drilldown on charts
+		      - Switch to ngHighcharts
+		      - Allow for zooming functionality on highcharts
+		      - Add back to standard zoom button
+		      - Add Drilldown to include champion info at time of event
+		        - Spells / items with cooldown timer indicators
+		        - Buff / Debuff icons
+		        - Current HP / Resources
+		        - Character portrait
 		    - Modify ChampionLevel data binding (provide direct value?)
 		    - Add relevant data to output of DpsCalculator forms
 		      - Damage/sec
@@ -96,6 +106,8 @@
 		      - Largest possible critical strike (average critical strike)
 		      - General information about stats (ability power, armor, etc)
 		      - Add range indicator for crittable abilities
+		      - Add input for ability level order
+		      - Add checkbox to manually choose ability levels
 
 		  - Modify Controller connections (create standardized interfaces for models)
 		    - Move view/model function connections to service
@@ -111,7 +123,7 @@
 		  
 		  - Implement tooltips for items in championComparison forms
 
-		  - consider using some of the many helper angular modules
+		  - Consider using some of the many helper angular modules (i'm looking at you ngHighcharts)
 		  
 		  - Implement horizontal scrolling for touch screens
 		  
@@ -124,11 +136,34 @@
 		    - Consider using socketIO to push live update information to clients
 
 		  - Style style style!...profit?
+		    - Make style sheets more generic
+
+
+
+		Known Bugs:
+
+		  - Javascript
+
+		    - Clicking on a graph will cause an error
+
+		  - Chrome
+
+		    - If second champion form field is removed while first champion form field is in the middle of exit animation it leaves behind portion of image for the duration of first champion form animation
+		  
+		  - Safari
+
+		    - Transition on form creation only fades in but does not slide (form destruction functions as intended)
+
+		  - IE
+
+		    - Leaving space here for the certainty that it will need to be filled
+
+
 		</pre>
 
 	</div>
 </div>
 
-<div ui-view='footer'>
+<footer ui-view='footer' class='footer'>
 	placeholder footer for index
-</div>
+</footer>

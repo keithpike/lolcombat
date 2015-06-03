@@ -10,5 +10,5 @@ json.champions @champions do |champion|
 
 	json.set! :image do
 		json.partial!('api/v1/images/image', image: champion.image) unless champion.image.nil?
-	end		
+	end
 end

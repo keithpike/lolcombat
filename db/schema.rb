@@ -11,34 +11,40 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150518173356) do
+ActiveRecord::Schema.define(version: 20150602180642) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
   create_table "abilities", force: :cascade do |t|
-    t.text     "champion_key"
+    t.integer  "champion_id"
     t.text     "ability_id"
     t.text     "name"
     t.text     "description"
     t.text     "tooltip"
-    t.text     "leveltip_label",  default: [],              array: true
-    t.text     "leveltip_effect", default: [],              array: true
+    t.text     "leveltip_label",       default: [],              array: true
+    t.text     "leveltip_effect",      default: [],              array: true
     t.integer  "maxrank"
-    t.integer  "cooldown",        default: [],              array: true
+    t.float    "cooldown",             default: [],              array: true
     t.text     "cooldownBurn"
-    t.integer  "cost",            default: [],              array: true
+    t.integer  "cost",                 default: [],              array: true
     t.text     "costBurn"
-    t.integer  "effect"
-    t.text     "effectBurn",      default: [],              array: true
-    t.text     "costType"
-    t.integer  "range",           default: [],              array: true
+    t.float    "effect",               default: [],              array: true
+    t.text     "effectBurn",           default: [],              array: true
+    t.text     "costType",             default: [],              array: true
+    t.integer  "range",                default: [],              array: true
     t.text     "rangeBurn"
-    t.datetime "created_at",                   null: false
-    t.datetime "updated_at",                   null: false
+    t.text     "formulas",             default: [],              array: true
+    t.datetime "created_at",                        null: false
+    t.datetime "updated_at",                        null: false
+    t.text     "key"
+    t.text     "resource"
+    t.text     "sanitizedDescription"
+    t.text     "sanitizedTooltip"
+    t.text     "damageType"
   end
 
-  add_index "abilities", ["champion_key"], name: "index_abilities_on_champion_key", using: :btree
+  add_index "abilities", ["champion_id"], name: "index_abilities_on_champion_id", using: :btree
 
   create_table "champions", force: :cascade do |t|
     t.integer  "champion_id"
@@ -84,10 +90,10 @@ ActiveRecord::Schema.define(version: 20150518173356) do
   create_table "coefficients", force: :cascade do |t|
     t.text     "link"
     t.integer  "ability_id"
-    t.float    "coeff"
+    t.float    "coeff",      default: [],              array: true
     t.text     "key"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at",              null: false
+    t.datetime "updated_at",              null: false
   end
 
   add_index "coefficients", ["ability_id"], name: "index_coefficients_on_ability_id", using: :btree
@@ -191,25 +197,25 @@ ActiveRecord::Schema.define(version: 20150518173356) do
   add_index "items", ["name"], name: "index_items_on_name", using: :btree
 
   create_table "passives", force: :cascade do |t|
-    t.text     "champion_key"
+    t.integer  "champion_id"
     t.text     "name"
     t.text     "description"
-    t.datetime "created_at",   null: false
-    t.datetime "updated_at",   null: false
+    t.datetime "created_at",  null: false
+    t.datetime "updated_at",  null: false
   end
 
-  add_index "passives", ["champion_key"], name: "index_passives_on_champion_key", using: :btree
+  add_index "passives", ["champion_id"], name: "index_passives_on_champion_id", using: :btree
 
   create_table "skins", force: :cascade do |t|
-    t.text     "champion_key"
+    t.integer  "champion_id"
     t.integer  "skin_id"
     t.integer  "num"
     t.text     "name"
-    t.datetime "created_at",   null: false
-    t.datetime "updated_at",   null: false
+    t.datetime "created_at",  null: false
+    t.datetime "updated_at",  null: false
   end
 
-  add_index "skins", ["champion_key"], name: "index_skins_on_champion_key", using: :btree
+  add_index "skins", ["champion_id"], name: "index_skins_on_champion_id", using: :btree
 
   create_table "splashes", force: :cascade do |t|
     t.integer  "champion_id"

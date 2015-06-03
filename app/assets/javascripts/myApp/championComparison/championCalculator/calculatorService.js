@@ -357,6 +357,7 @@ angular.module('services.championDpsCalculator', ['models.items', 'models.champi
 		}
 
 		function updateChampionAvailability(champion, ability) {
+			// console.log(ability);
 			champion.nextAvailable = (nextAvailable(ability.animationLockout) > champion.nextAvailable) ? nextAvailable(ability.animationLockout) : champion.nextAvailable;
 		}
 

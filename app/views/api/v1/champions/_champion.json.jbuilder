@@ -36,3 +36,7 @@ end
 json.set! :splash do
 	json.partial!('api/v1/splashes/splash', splash: champion.splashes.first)
 end
+
+json.abilities @champion.abilities do |ability|
+	json.partial!('api/v1/abilities/ability', ability: ability) 
+end

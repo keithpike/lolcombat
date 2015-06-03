@@ -93,6 +93,28 @@ li.ng-leave{
 	word-break: break-word;
 }
 
+.popover {
+	background-color: #333333;
+	color: #FFFFFF;
+}
+
+body {
+	background-color: #1A1A1A;
+	min-height: 100%;
+}
+.pageWrapper {
+	min-height: 100%;
+	position: relative;
+}
+
+.mainView {
+	margin-bottom: 10px;
+	padding-bottom: 100px;
+}
+
+html, body {
+	height: 100%;
+}
 
 * {
 	-moz-box-sizing: border-box;

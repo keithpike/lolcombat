@@ -3,7 +3,7 @@ class CreateCoefficientsTable < ActiveRecord::Migration
     create_table :coefficients do |t|
       t.text :link
       t.integer :ability_id
-      t.float :coeff
+      t.float :coeff, array: true, default: []
       t.text :key
       t.timestamps null: false
     end

@@ -31,7 +31,7 @@
 				<input ng-model='timeframe' class='timeFrameSlider' type='range' value='{{ timeframe }}' step='1' min='1' max='60' name='TimeFrame' ng-change='{{ setTimeframe({ seconds: timeframe }) }}'>
 				<output class='championComparisonOutputText' name="TimeFrameValue">{{ timeframe }}</output>
 				<label class='championComparisonInputLabel clear' for=ChampionLevel>Champion Level</label> 
-				<input ng-model='championLevel' class='timeFrameSlider' type='range' value='{{ championLevel }}' step='1' min='1' max='18' name='ChampionLevel' ng-change='{{ setChampionLevel({ comparisonIndex: comparisonIndex, level: championLevel }); championLevel = getChampionLevel({comparisonIndex: comparisonIndex}) }}'>
+				<input ng-model='championLevel' class='timeFrameSlider' type='range' value='{{ championLevel }}' step='1' min='1' max='18' name='ChampionLevel' ng-change='{{ setChampionLevel({ comparisonIndex: comparisonIndex, level: championLevel }); championLevel = getChampionLevel({comparisonIndex: comparisonIndex}); }}'>
 				<output class='championComparisonOutputText' name="ChampionLevelValue">{{ championLevel }}</output>
 			</div>
 			<div class='comparisonItemWrapper col-md-6'>

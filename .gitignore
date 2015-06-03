@@ -10,6 +10,7 @@
 /bower_components
 /RiotAPI data
 /champion
+/riot_api_responses
 
 # Ignore static assets
 /app/assets/images/lol

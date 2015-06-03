@@ -126,10 +126,14 @@ angular.module('models.championComparisons', ['services.championDpsCalculator'])
 		};
 
 		function inputsChanged() {
-			typeof calculateDpsTimer == 'number' ? window.clearTimeout(calculateDpsTimer) : null;
+			typeof calculateDpsTimer == 'number' ? clearTimer(calculateDpsTimer) : null;
 			if ( model.comparisonFilled(0) && model.comparisonFilled(1) ) {
 				calculateDpsTimer = window.setTimeout(model.calculateDpsInfo, 500);
 			}
+		};
+
+		function clearTimer(timer) {
+			window.clearTimeout(timer);
 		};
 
 		model.getComparisonChampionByIndex = function(idx) {
@@ -194,6 +198,7 @@ angular.module('models.championComparisons', ['services.championDpsCalculator'])
 			comparisons[idx].chart = undefined;
 			setSelectedComparison(findFilledComparison());
 			handleComparisonsEmpty();
+			clearTimer(calculateDpsTimer);
 		};
 
 		function findFilledComparison(){
@@ -321,14 +326,17 @@ angular.module('models.championComparisons', ['services.championDpsCalculator'])
 			// probably caused by the incorrect DOM manipulation within Angular
 			// presume replacement of highchartsjs with ng-highcharts will resolve
 			// the issue
-			if (document.getElementById('champion0Chart')) {
+			if (document.getElementById('champion0Chart') && typeof comparisons[0].chart == 'undefined') {
 				comparisons[0].chart = makeGraph('champion0Chart', dpsInfo.firstChampionEvents);
 	    } else {
+	    	comparisons[0].chart.series[0].setData(dpsInfo.firstChampionEvents);
 	    	// chart.series[0].setData(b);
 	    };
 
-			if (document.getElementById('champion1Chart')) {
+			if (document.getElementById('champion1Chart') && typeof comparisons[1].chart == 'undefined') {
 				comparisons[1].chart = makeGraph('champion1Chart', dpsInfo.secondChampionEvents);
+			} else {
+				comparisons[1].chart.series[0].setData(dpsInfo.secondChampionEvents);
 			}
 		};
 
@@ -343,7 +351,9 @@ angular.module('models.championComparisons', ['services.championDpsCalculator'])
 		    chart: {
 		        renderTo: containerName,
 		        height: 200,
-		        backgroundColor:'rgba(0, 0, 0, .5)'
+		        backgroundColor:'rgba(0, 0, 0, .5)',
+		        zoomType: 'x'
+
 		    },
 
 		    credits: {

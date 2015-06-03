@@ -12,12 +12,8 @@ class RiotApiHandler
 	  Net::HTTP.get_response(URI(url))
 	end
 
-	def create_search_url(url)
-	  url.sub(/challenge/, 'challenge.json')
-	end
-
-
 	# TODO: update to also require version as input
+	# put URLS into some config file
 	def get_search_url(region)
 			"https://#{region}.api.pvp.net/api/lol/#{region}/v4.1/game/ids"
 	end
@@ -39,7 +35,7 @@ class RiotApiHandler
 		params.each do |key, value|
 			query_string = "#{query_string}#{key}=#{value}&"
 		end
-		query_string = "#{query_string}api_key=" + ENV['RIOT_API_KEY']
+		query_string = "#{query_string}api_key=#{ENV['RIOT_API_KEY']}"
 	end
 
 	def load_as_json(file)
@@ -85,6 +81,7 @@ class RiotApiHandler
 
 	def create_json_object(received_json, initial_key, initial_key2, base_hash_changes, other_hash_changes)
 		changes = []
+
 		other_hash_changes.each do |hash_changes|
 			hash_changes_type = hash_changes.pop
 			changes << json_modification(received_json[initial_key][initial_key2], hash_changes, hash_changes_type)
@@ -150,6 +147,8 @@ class RiotApiHandler
 				'https://s3-us-west-1.amazonaws.com/lolcomparitor/Images/mastery/'
 			when "sprite"
 				'https://s3-us-west-1.amazonaws.com/lolcomparitor/Images/sprite/'
+			when "ability"
+				'https://s3-us-west-1.amazonaws.com/lolcomparitor/Images/ability/'
 			else
 				[]
 			end
@@ -163,6 +162,8 @@ class RiotApiHandler
 				@item_modifications
 			when "rune"
 			when "mastery"
+			when "spell"
+				@ability_modifications
 			else
 				[]
 			end
@@ -190,7 +191,7 @@ class RiotApiHandler
 			["stats", ""],
 			["partype", "resource_type"],
 			["info", ""],
-			["spells", ""],
+			# ["spells", ""],
 			["passive", ""],
 			["recommended", ""],
 		]
@@ -208,6 +209,10 @@ class RiotApiHandler
 			["attackdamageperlevel", "attackdamage_per_level"],
 			["attackspeedperlevel", "attackspeed_per_level"],
 			"stats"
+		]
+
+		champion_ability_modifications = [
+			"spells"
 		]
 
 		json_modifications_for_item = [
@@ -249,14 +254,15 @@ class RiotApiHandler
 		json_modifications_for_image = []
 		json_modifications_for_passive = []
 		json_modifications_for_skin = []
-		json_modifications_for_ability = []
+		
 		json_modifications_for_coefficient = []
 		
 
 		@champion_modifications = [ 
 			json_modifications_for_champion,
 			[
-				champion_stat_modifications
+				champion_stat_modifications,
+				# champion_ability_modifications
 			]
 		]
 		@item_modifications = [
@@ -266,10 +272,7 @@ class RiotApiHandler
 				item_stat_modifications
 			]
 		]
-		@ability_modifications = [
-			json_modifications_for_ability,
-			[]
-		]
+		@ability_modifications = []
 	end
 
 	# def get_champion(path = nil, champ_name = nil)
@@ -298,6 +301,7 @@ class RiotApiHandler
 												modifiers.last)
 		rescue
 		end
+		# puts results
 		results
 	end
 
@@ -330,6 +334,7 @@ class RiotApiHandler
 		seed_data['champions'] = get_resources_from_api_test(path + '/champions.json')
 		seed_data['champions'].each do |champion|
 			image = champion.delete("image")
+
 			a = Champion.create(champion)
 			a.create_image(image)
 			splash_path = "https://s3-us-west-1.amazonaws.com/lolcomparitor/Images/splash/#{get_clean_name(a.name)}_0.png"  
@@ -350,12 +355,32 @@ class RiotApiHandler
 		seed_data['champions'] = get_resources_from_api(JSON.parse(champion_data.body))
 		seed_data['champions'].each do |champion|
 			image = champion.delete("image")
+			spells = champion.delete('spells')
 			clean_name = get_clean_name(champion['name'])
 			champion.merge!({'clean_name' => clean_name})
 			champ = Champion.create(champion)
 			champ.create_image(image)
 			splash_path = "https://s3-us-west-1.amazonaws.com/lolcomparitor/Images/splash/#{clean_name}_0.png"  
 			Splash.create({"champion_id" => champ.id, "path" => splash_path})
+			spells.each do |spell|
+				image = spell.delete('image')
+				image['full'] = "#{get_image_path_by_data_type('ability')}#{image['full']}"
+				image['sprite'] = "#{get_image_path_by_data_type('ability')}#{image['sprite']}"
+				spell = modify_spell(spell, champion['name'])
+				coefficients = spell.delete('coefficients')
+				spell.merge!({'champion_id' => champ.id})
+				puts spell
+				# spell.delete('effect')
+				ability = Ability.create(spell)
+				ability.create_image(image)
+				unless coefficients.nil?
+					coefficients.each do |coefficient| 
+						coefficient.merge!({'ability_id' => ability.id})
+						Coefficient.create(coefficient)
+					end
+				end
+			end
+
 		end
 		item_data = handle_request("#{get_items_url('na')}#{add_params({'itemListData' => 'all'})}")
 		seed_data['items'] = get_resources_from_api(JSON.parse(item_data.body))
@@ -366,40 +391,255 @@ class RiotApiHandler
 		end
 	end
 
-	def parse_champion_abilities(path)
-		seed_data = {}
-		counter = 0
-		seed_data['champions'] = get_resources_from_api_test(path + '/champions.json', false)
-		cost = Hash.new
-		seed_data['champions'].each do |champion|
-			# puts champion['name']
-			champion['spells'].each do |spell|
-				# if champion['name'] == 'Aatrox'
-					
-					cost[spell['costType'].upcase] =  cost[spell['costType'].upcase] ? cost[spell['costType'].upcase] + "," + spell['name'] : spell['name']
-					spell.each do |key, value|
-						# puts key + ": " + value.inspect if champion['name'] == 'Taric'
-						# puts key + ": " + value.inspect if spell['name'] == 'Shatter'
-					end
-					counter += 1
-				end
-			# end
+	def modify_spell(spell, champion_name)
+		formula_count = 0
+		formulas = []
+		spell.delete('altimages')
+		spell.delete('leveltip')
+		spell.delete('rangeBurn')
+		spell.delete('effectBurn')
+		spell.delete('image')
+		spell['resource'] = 'No Cost' if spell['resource'].nil? ||
+																		 spell['resource'] == 'Passive ' ||
+																		 spell['resource'] == 'Passive' ||
+																		 spell['resource'] == 'No Cost '
+
+		spell['damageType'] = parse_damage_type(spell["sanitizedTooltip"])
+		# cost[spell['costType'].downcase] = cost[spell['costType'].downcase] ? cost[spell['costType'].downcase] + "," + spell['name'] : spell['name']
+		sentences = get_sentences_with_elements(spell['sanitizedTooltip'])
+
+		sentences.each do |sentence|
+			formulas = rewrite_formulas(get_formulas(sentence[0]))
 		end
-		# counter = 1
-		cost.each do |key, value|
-			# puts "costType: " + key
-			# puts "  " + value
-			# puts
-			# counter += 1
+
+		rewrite_tooltip!(spell['tooltip'], formula_count)
+		rewrite_tooltip!(spell['sanitizedTooltip'], formula_count)
+		spell['range'] = modify_range(spell['range'])
+		formula_count += formulas.length
+		new_formulas = rewrite_formulas(get_formulas(spell['resource']))
+		spell['resource'] = rewrite_resource(spell['resource'], formula_count)	
+		new_formulas.each {|formula| formulas << formula}
+		spell['formulas'] = formulas # TODO: Look into change to seperate SQL table
+		spell['coefficients'] = modify_spell_variables(spell['vars'], champion_name)
+		spell.delete('vars')
+		spell['costType'] = spell['costType'].downcase.split(',')
+		spell['effect'] = modify_spell_effects(spell['effect'])
+		spell
+	end
+
+	def modify_spell_effects(effects)
+		max_length = 0
+		effects.each do |effect|
+			max_length = effect.length if !effect.nil? && effect.length > max_length
+		end
+		effects.map do |effect| 
+			effect = [nil] * max_length if effect.nil?
+			effect
 		end
 	end
 
+	def modify_spell_variables(vars, champion_name)
+		if vars
+			# puts vars.inspect
+			vars.each do |var|
+				var.keys.each do |key|
+					unless key == 'link' || key == 'coeff' || key == 'key'
+						var.delete(key)
+					end
+				end
+				var['link'] = handle_special_links(var['link'], champion_name.downcase)
+			end
+		end
+		vars
+	end
 
-	def parse_damage_element(text) 
+	def handle_special_links(link, champion)
+		special_cases = {
+			'@special.jaxrmr' => 'percentabilitypower',
+			'@special.jaxrarmor' => 'percentbonusattackdamage',
+			'@dynamic.abilitypower' => 'spelldamage',
+			'@special.dariusr3' => 'targetstacks',
+			'@special.jaycew' => 'text',
+			'@dynamic.attackdamage' => 'attackdamage',
+			'@special.viw' => 'attackdamagedivided',
+			'@special.BraumWArmor' => 'baseplusbonusarmor', 	# really hate this implementation
+			'@special.BraumWMR' => 'baseplusbonusspellblock', # really hate this implementation
+			'@special.nautilusq' => 'ignore',
+			'@text' => 'text',
+			'@cooldownchampion' => 'cooldownchampion',
+			'@stacks' => 'stacks',
+			'@text ' => 'text'
+		}
 
+		if champion == 'karma' && link == '@text'
+			return 'mantralevel'
+		end
+
+		return special_cases[link] unless special_cases[link].nil?
+		
+		return link
+	end
+
+# NOTES:
+
+#  @special.jaxrmr = 				percentabilitypower
+#  @special.jaxrarmor = 		percentbonusattackdamage
+#  @cooldownchampion = 			handles as: @text taking cooldown into effect(differently in each case! Need to test case 2 heimerdinger turrent health)
+#  @text =  								handles as: Whatever it says as a cooefficient.
+#  @text(for KARMA) = 			mantralevel (handles as: @text but linked to karma mantra level)
+#  @dynamic.abilitypower = 	spelldamage (handles as: now just the formula is no longer consistant, however it is a better initial setup if it were consistent)
+#  @special.nautilusq = 		@text (handles as: frankly it is handled by e3 so maybe just remove)
+#  @stacks = 								handles as: @text based on amount of stacks (every time it's different conditions for stack)
+#  @special.dariusr3 = 			targetstacks (handles as: only Darius! stacks of hemmorage applied to target)
+#  @special.jaycew = 				@text (handles as: current coefficient is 0 no need to keep AT ALL but it will be applied as @text)
+#  @dynamic.attackdamage = 	attackdamage (NOTE: Rengar will need custom handling as a value is in the flavor text)
+#  @special.viw = 					attackdamagedivided (handles as: attack damage divided by coefficient)
+#  @special.BraumWArmor = 	baseplusbonusarmor
+#  @special.BraumWMR = 			baseplusbonusspellblock
+
+# {
+#                "range": [600, 600, 600, 600, 600],
+#                "leveltip": {
+#                   "effect": [
+#                      "{{ e1 }} -> {{ e1NL }}",
+#                      "{{ cooldown }} -> {{ cooldownnNL }}"
+#                   ],
+#                   "label": [ "Damage", "Cooldown" ]
+#                },
+#                "resource": "{{ e3 }}% of current Health ",
+#                "maxrank": 5,
+#                "effectBurn": [ "", "70/115/160/205/250", "22/20/18/16/14", "10", "225", "1" ],
+#                "image": {
+#                   "w": 48,
+#                   "full": "AatroxQ.png",
+#                   "sprite": "spell0.png",
+#                   "group": "spell",
+#                   "h": 48,
+#                   "y": 48,
+#                   "x": 192
+#                },
+#                "cooldown": [ 16, 15, 14, 13, 12 ],
+#                "cost": [ 0, 0, 0, 0, 0 ],
+#                "vars": [{
+#                   "link": "bonusattackdamage",
+#                   "coeff": [0.6],
+#                   "key": "a1"
+#                }],
+#                "sanitizedDescription": "Aatrox takes flight and slams down at a targeted location, dealing damage and knocking up enemies at the center of impact.",
+#                "rangeBurn": "600",
+#                "costType": "pofcurrentHealth",
+#                "effect": [ 
+#										null,
+#                   [ 70, 115, 160, 205, 250 ],
+#                   [ 22, 20, 18, 16, 14 ],
+#                   [ 10, 10, 10, 10, 10 ],
+#                   [ 225, 225, 225, 225, 225 ],
+#                   [ 1, 1, 1, 1, 1 ]
+#                ],
+#                "cooldownBurn": "16/15/14/13/12",
+#                "description": "Aatrox takes flight and slams down at a targeted location, dealing damage and knocking up enemies at the center of impact.",
+#                "name": "Dark Flight",
+#                "sanitizedTooltip": "Aatrox takes flight and slams down at a targeted location, dealing {{ e1 }} (+{{ a1 }}) physical damage to all nearby enemies and knocking up targets at the center of impact for {{ e5 }} second.",
+#                "key": "AatroxQ",
+#                "costBurn": "0",
+#                "tooltip": "Aatrox takes flight and slams down at a targeted location, dealing {{ e1 }}<span class=\"colorF88017\"> (+{{ a1 }})<\/span> physical damage to all nearby enemies and knocking up targets at the center of impact for {{ e5 }} second."
+#             },
+
+	def parse_damage_type(text)
+		damage_type = nil
+		my_custom_regex = /\{\{\s[efa]\d\s\}\}.{0,30}([Bb]onus|)\s([Pp]hysical|[mM]agic|[mM]agical|[tT]rue)\s([dD]amage)/
+		matched_text = text.match(my_custom_regex)
+		unless matched_text.nil? 
+			damage_type =  matched_text.to_a[-2].downcase
+			damage_type = 'magic' if damage_type == 'magical'
+			# formula = parse_formula(matched_text[0])
+		end
+		damage_type
+	end
+
+	def get_sentences_with_elements(text)
+		my_custom_regex = /(([A-Z][^.?!]*?)?(?<!\\w)(?i)(\{\{\s[efa]\d\s\}\})((\%?[\s\-]?[\(]?[\+]?\{\{\s[efa]\d\s\}\})+)?(?!\\w)[^.?!]*?[.?!]{1,2}\"?)/
+		text_match = text.scan(my_custom_regex)
+		text_match
+	end
+
+	# TODO take a look at ruby source and see why scan/split won't work with this regex
+	def get_formulas(text)
+		elements = []
+		my_custom_regex = /(\(?\%?[\s\-]?\(?\+?\{\{\s[efa]\d\s\}\}\)?\%?)+/
+		matched_text = text.match(my_custom_regex)
+		until matched_text.nil?
+			elements << matched_text[0]
+			regex_start = text.index(matched_text[0])
+			regex_end = regex_start + matched_text[0].length
+			text = text[regex_end...text.length]
+			matched_text = text.match(my_custom_regex)	
+		end
+		elements
+	end
+
+	def rewrite_tooltip!(text, count)
+		elements = get_formulas(text)
+		elements.each do |element|
+			text.sub!(element, " (formula#{count})")
+			count += 1
+		end
+		text
+	end
+
+	def modify_range(unmodified_range)
+		#unmodified range is "self" or array of integers
+		range = unmodified_range
+		range = ['self'] if unmodified_range == 'self'
+		range
+	end
+
+	def rewrite_resource(text, count)
+		resources = text.split(/,|a+n+d+|\//)
+		resources.map! do |resource|
+			resource.downcase!
+			resource = resource.strip unless resource.strip.nil?
+			resource.sub!('no cost', 'nocost')
+			resource.sub!(/\{\{\scost\s\}\}/, 'resourcecost')
+			resource.sub!('% of current health', ' percentcurrenthealth')
+			resource.sub!('mana per second', 'mana')
+			resource.sub!('mana per attack', 'mana')
+			resource.sub!('mana per rocket', 'mana')
+			resource.sub!('fury a second','fury')
+			resource.sub!('health per sec', 'health')
+			resource.sub!(/builds\s\d\sferocity/, 'ferocity')
+			resource.sub!('nocost or 50 fury', 'nocostorfifty')
+			resource.sub!('initial mana cost per second', 'mana')
+			resource.sub!('1 seed', 'seed')
+			resource.sub!('essence of shadow', 'essenceofshadow')
+			resource_formula = resource.scan(/[efa]\d/)[0]
+			unless resource_formula.nil?
+				resource.sub!(/\{\{\s[efa]\d\s\}\}/, rewrite_tooltip!(resource, count))
+				resource.strip!
+				count += 1
+			end
+			resource
+		end
+		resources
+	end
+
+	# rename text to something more appropriate something plural
+	def rewrite_formulas(text)
+		formulas = []
+		text.each do |formula|
+			my_text = formula.scan(/[efa]\d/)
+			formulas << my_text.join("+")
+		end
+		formulas
+	end
+
+	def parse_formula(text)
+		my_custom_regex = /(\{\{\s[efa]\d\s\}\}.*\}\}|\{\{\s[efa]\d\s\}\})/
+		matched_text = text.match(my_custom_regex)
+		return matched_text[0]
 	end
 
 end
+# RiotApiHandler.new().seed_me_seymour_from_api
 # RiotApiHandler.new().parse_champion_abilities("/Users/keith/Documents/Programming/Ruby/Workspace/lolwebsite/app/riot_api_responses")
-
 

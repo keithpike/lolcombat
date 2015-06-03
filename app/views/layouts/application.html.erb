@@ -1,6 +1,9 @@
 <!DOCTYPE html>
-<html ng-app="myApp">
+<html data-ng-app="myApp">
 <head>
+	<title>
+		LOLCombat
+	</title>
   <%= stylesheet_link_tag    'application', media: 'all' %>
   <%= csrf_meta_tags %>
 
@@ -12,5 +15,18 @@
 
 
 </body>
+	<script>
+		var $buoop = {c:2};
+		function $buo_f() {
+			var e = document.createElement('script');
+			e.src = '//browser-update.org/update.min.js';
+			document.body.appendChild(e);
+		};
+
+		try {document.addEventListener('DOMContentLoaded', $buo_f, false)}
+		catch(e) {window.attachEvent('onload', $buo_f)}
+	</script>
  	<%= javascript_include_tag 'application' %>
+
 </html>
+
