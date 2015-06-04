@@ -10,7 +10,8 @@
 				<div 
 					unselectable='on'
 					class='championSmallPictureContainer unselectable' 
-					ng-class='{selected: championSelectorController.checkSelected(champion)}' 
+					ng-class='{selected: championSelectorController.checkSelected(champion)}'
+					ng-mouseenter='championSelectorController.getChampionData(champion)'
 					ng-click='championSelectorController.selectChampion(champion)' 
 					ng-style='championSelectorController.getSpriteStyle(champion)'
 					data-placement='right-bottom'

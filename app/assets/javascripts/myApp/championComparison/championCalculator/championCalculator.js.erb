@@ -139,7 +139,9 @@ angular.module('championCalculator', [
 		championSelectorController.getName = ChampionsModel.getChampionName;
 		championSelectorController.getTitle = ChampionsModel.getChampionTitle;
 		championSelectorController.getSpriteStyle = ChampionsModel.getChampionSpriteStyle;
-
+		championSelectorController.getChampionData = function(champion) {
+			ChampionsModel.asyncGetDetailedChampionByName(ChampionsModel.getChampionCleanName(champion))
+		}
 		// TODO: modify so selected champion is replaced without having to remove champion specifically
 		championSelectorController.selectChampion = function(champion) {
 			ChampionsModel.asyncGetDetailedChampionByName(ChampionsModel.getChampionCleanName(champion)).then(function() {
