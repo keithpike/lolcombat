@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150602180642) do
+ActiveRecord::Schema.define(version: 20150604151651) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -42,6 +42,7 @@ ActiveRecord::Schema.define(version: 20150602180642) do
     t.text     "sanitizedDescription"
     t.text     "sanitizedTooltip"
     t.text     "damageType"
+    t.text     "damageFormula"
   end
 
   add_index "abilities", ["champion_id"], name: "index_abilities_on_champion_id", using: :btree

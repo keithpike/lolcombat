@@ -194,7 +194,7 @@ angular.module('models.championComparisons', ['services.championDpsCalculator'])
 			comparisons[idx].champion = {'name': 'none'};
 			comparisons[idx].items = [undefined, undefined, undefined, undefined, undefined, undefined];
 			model.setChampionLevel(idx, 1);
-			removeChart(idx);
+			model.removeChart(idx);
 			comparisons[idx].chart = undefined;
 			setSelectedComparison(findFilledComparison());
 			handleComparisonsEmpty();
@@ -340,11 +340,12 @@ angular.module('models.championComparisons', ['services.championDpsCalculator'])
 			}
 		};
 
-		function removeChart(idx) {
+		model.removeChart = function(idx) {
 			if (comparisons[idx].chart) {
 				comparisons[idx].chart.destroy();
+				comparisons[idx].chart = undefined;
 			}
-		}
+		};
 
 		function makeGraph(containerName, data) {
 			var chart = new Highcharts.Chart({
@@ -390,6 +391,7 @@ angular.module('models.championComparisons', ['services.championDpsCalculator'])
 		    },
 
 		    yAxis: {
+		    	min: 0,
 		    	tickPixelInterval: 50,
 		    	title: {
 		    		text: 'Damage'

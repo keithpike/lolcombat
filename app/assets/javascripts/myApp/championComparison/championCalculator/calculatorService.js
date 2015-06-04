@@ -29,11 +29,11 @@ angular.module('services.championDpsCalculator', ['models.items', 'models.champi
 			addChampionId(newChampion, id);
 			addChampionStats(newChampion, champion, level);
 			addItemStats(newChampion, items);
-			addActions(newChampion, champion);
 			newChampion.stats.currentHp = calculateMaxHp(newChampion);
 			newChampion.stats.currentMp = calculateMaxResource(newChampion);
 			newChampion.resourceType = champion.resource_type;
 			newChampion.lastResourceChange = currentTime;
+			addActions(newChampion, champion);
 			return newChampion;
 		}
 
@@ -112,18 +112,23 @@ angular.module('services.championDpsCalculator', ['models.items', 'models.champi
 			var data = [];
 			angular.forEach(events, function(event) {
 				data.push({
-					'y': Math.round(calculateEffectiveDamage(event.ability.initialDamage, event.user, event.target)),
+					'y': Math.round(calculateEffectiveDamage(event.ability.initialDamage, event.ability.damageType, event.user, event.target)),
 					'x': (event.activationTime / 10),
 					'name': event.ability.name,
 					// placeholder ability name
-					'image': getImageOfAbility(event.ability.name)
+					'image': getImageOfAbility(event.ability.image)
 				});
 			});
 			return data;
 		}
 
-		function getImageOfAbility(name) {
-			return 'https://s3-us-west-1.amazonaws.com/lolcomparitor/Images/spell/AutoAttack.png';
+		function getImageOfAbility(url) {
+			if(url == 'autoAttack') {
+				return 'https://s3-us-west-1.amazonaws.com/lolcomparitor/Images/spell/AutoAttack.png';
+			} else {
+				return url;
+			}
+			
 		}
 
 		function updateByArrayLength(val, arr) {
@@ -148,9 +153,14 @@ angular.module('services.championDpsCalculator', ['models.items', 'models.champi
 					return []; // TODO: implement
 					break;
 				default:
-					return [];
+					return handleGenericEvent(event);
 					break;
 			}
+		}
+
+		function handleGenericEvent(event) {
+			return [];
+			// moveForwardInTime(event.activationTime)
 		}
 
 		function handleApplicationEvent(ability, user, target, eventCounter) {
@@ -178,13 +188,7 @@ angular.module('services.championDpsCalculator', ['models.items', 'models.champi
 		function createEvent(type, ability, user, target, eventCounter) {
 			switch(type) {
 				case 'application':
-					// Modify once updateAbility is changed to actually just give back the ability without name
 					ability = updateAbility(ability, user); 
-												// 	{
-												// 		'lastCast': currentTime,
-												// 		'nextAvailable': calculateAbilityNextAvailablity(ability, ability.abilityLockout)
-												// 	}
-												// );
 					return createApplicationEvent(ability, user, target, eventCounter);
 					break;
 				case 'castAnimationEnd':
@@ -196,12 +200,23 @@ angular.module('services.championDpsCalculator', ['models.items', 'models.champi
 				case 'activationReset':
 					return createActivationResetEvent(target, ability, eventCounter);
 					break;
+				case 'championReady':
+					return createChampionReadyEvent(target, eventCounter);
+					break;
 			}
 		}
 
 		// params are currently the user intend to split this into seperate params that need to be updated
 		function updateAbility(ability, user) {
 			return getAbilityAttributes(user, ability, false)
+		}
+
+		function createChampionReadyEvent(user, eventCounter) {
+			return {
+				'activationTime': user.nextAvailable,
+				'id': eventCounter,
+				'type': 'championReady'
+			};
 		}
 
 		function createApplicationEvent(ability, user, target, eventCounter) {
@@ -256,10 +271,13 @@ angular.module('services.championDpsCalculator', ['models.items', 'models.champi
 			updateChampionAvailability(user, ability);
 			action = createEvent("application", ability, user, target, eventCounter);
 			bInsertEvent(action, events, sortLowToHigh);
-			eventCounter += 1;
-
+			eventCounter++;
+			action = createEvent("championReady", null, null, user, eventCounter)
+			bInsertEvent(action, events, sortLowToHigh);
+			eventCounter++;
 			action = createEvent("activationReset", ability, null, user, eventCounter);
 			bInsertEvent(action, events, sortLowToHigh);
+
 			return events;
 		}
 
@@ -372,15 +390,9 @@ angular.module('services.championDpsCalculator', ['models.items', 'models.champi
 		function checkAnyAbilityAvailable(champion) {
 			var flag = false;
 			angular.forEach(champion.actions, function(ability) {
-
-
-				//REMOVE THE AUTOATTACK IF WHEN ABILITIES ARE IMPLEMENTED
-
-				if(ability.name == 'autoAttack') {
-					if (checkAbilityAvailability(ability)) {
-						flag = true;
-					} 
-				}
+				if (checkAbilityAvailability(ability)) {
+					flag = true;
+				} 
 			});
 			return flag;
 		}
@@ -419,30 +431,47 @@ angular.module('services.championDpsCalculator', ['models.items', 'models.champi
 		function findBestAvailableAbility(user, target) {
 			var bestAbility,
 					bestDamage = 0;
-
+					damage = 0;
 			angular.forEach(user.actions, function(ability) {
-				if (checkAbilityAvailability(ability) && bestDamage < ability.initialDamage) {
-					bestDamage = calculateEffectiveDamage(ability.initialDamage, user, target);
+				damage = calculateEffectiveDamage(ability.initialDamage, ability.damageType, user, target)
+				if (checkAbilityAvailability(ability) && bestDamage < damage) {
+					bestDamage = damage;
 					bestAbility = ability;
 				} 
 			});
 			return bestAbility;
 		}
 
-		function calculateEffectiveDamage(damage, user, target) {
-			var resist = target.stats.baseArmor + target.stats.bonusArmor,
+		function calculateEffectiveDamage(damage, damageType, user, target) {
+			var resist = 0;
+			var effectiveResist = 0;
+			if (damageType == 'physical') {
+				resist = target.stats.baseArmor + target.stats.bonusArmor,
 			// TODO: loop through debuffs and user.stats
 			// to get resist reduction, and percentResistReduction
 			// Handle more then just Armor
-					resistReduction = 0,
-					percentResistReduction = 0,
-					resistPenetration = user.stats.bonusArmorpenetration, // genericafy
-					percentResistPenetration = user.stats.bonusPercentarmorpenetration; // genericafy
-			var effectiveResist = calculateEffectiveResist(	resist,
-																											resistReduction,
-																											percentResistReduction,
-																											resistPenetration,
-																											percentResistPenetration);
+				resistReduction = 0,
+				percentResistReduction = 0,
+				resistPenetration = user.stats.bonusArmorpenetration, // genericafy
+				percentResistPenetration = user.stats.bonusPercentarmorpenetration; // genericafy
+			} else if (damageType == 'magic') {
+				resist = target.stats.baseSpellblock + target.stats.bonusSpellblock,
+			// TODO: loop through debuffs and user.stats
+			// to get resist reduction, and percentResistReduction
+			// Handle more then just Armor
+				resistReduction = 0,
+				percentResistReduction = 0,
+				resistPenetration = user.stats.bonusSpellpenetration, // genericafy
+				percentResistPenetration = user.stats.bonusPercentspellpenetration; // genericafy
+			} else {
+				return damage;
+			}
+			effectiveResist = calculateEffectiveResist(		resist,
+																										resistReduction,
+																										percentResistReduction,
+																										resistPenetration,
+																										percentResistPenetration);
+
 			return calculateDamage(damage, effectiveResist);
 		}
 
@@ -454,8 +483,9 @@ angular.module('services.championDpsCalculator', ['models.items', 'models.champi
 			}
 		}
 
+		// TODO: Remove damage requirement once non-damaging abilities are implemented
 		function checkAbilityAvailability(ability) {
-			return ability.nextAvailable <= currentTime;
+			return ability.initialDamage > 0 ? ability.nextAvailable <= currentTime : false;
 		}
 
 		function championDefaultValues() {
@@ -504,6 +534,12 @@ angular.module('services.championDpsCalculator', ['models.items', 'models.champi
 								'autoAttack': {
 									'name': 'autoAttack',
 									'initialDamage': 0,
+									'damageFormula': undefined,
+								 	'damageType': 'physical',
+									'coefficients': [],
+									'effects': [],
+									'formulas': [],
+									'sanitizedTooltip': '',
 									'crittable': true,
 									'tickDamage': 0,
 									'tickDuration': 0,
@@ -513,11 +549,19 @@ angular.module('services.championDpsCalculator', ['models.items', 'models.champi
 									'nextAvailable': 0,
 									'abilityLockout': 0,
 									'stunDuration': 0,
-									'debuffs': []
+									'debuffs': [],
+									'abilityLevel': 0,
+									'image': 'autoAttack'
 								},
 								'ability1': {
 									'name': '',
 									'initialDamage': 0,
+									'damageFormula': undefined,
+								 	'damageType': undefined,
+									'coefficients': [],
+									'effects': [],
+									'formulas': [],
+									'sanitizedTooltip': '',
 									'crittable': false,
 									'tickDamage': 0,
 									'tickDuration': 0,
@@ -526,13 +570,21 @@ angular.module('services.championDpsCalculator', ['models.items', 'models.champi
 									'lastCast': 0,
 									'nextAvailable': 0,
 									'abilityLockout': 0,
+									'baseLockout': 0,
 									'stunDuration': 0,
-									'debuffs': []
+									'debuffs': [],
+									'abilityLevel': 0
 								},
 								'ability2': {
 									'name': '',
 									'initialDamage': 0,
+									'damageFormula': undefined,
+								 	'damageType': undefined,
 									'crittable': false,
+									'coefficients': [],
+									'effects': [],
+									'formulas': [],
+									'sanitizedTooltip': '',
 									'tickDamage': 0,
 									'tickDuration': 0,
 									'tickRate': 0,
@@ -540,13 +592,21 @@ angular.module('services.championDpsCalculator', ['models.items', 'models.champi
 									'lastCast': 0,
 									'nextAvailable': 0,
 									'abilityLockout': 0,
+									'baseLockout': 0,
 									'stunDuration': 0,
-									'debuffs': []
+									'debuffs': [],
+									'abilityLevel': 0
 								},
 								'ability3': {
 									'name': '',
 									'initialDamage': 0,
+									'damageFormula': undefined,
+								 	'damageType': undefined,
 									'crittable': false,
+									'coefficients': [],
+									'effects': [],
+									'formulas': [],
+									'sanitizedTooltip': '',
 									'tickDamage': 0,
 									'tickDuration': 0,
 									'tickRate': 0,
@@ -554,22 +614,32 @@ angular.module('services.championDpsCalculator', ['models.items', 'models.champi
 									'lastCast': 0,
 									'nextAvailable': 0,
 									'abilityLockout': 0,
+									'baseLockout': 0,
 									'stunDuration': 0,
-									'debuffs': []
+									'debuffs': [],
+									'abilityLevel': 0
 								},
 								'ability4': {
 									'name': '',
 									'initialDamage': 0,
+									'damageFormula': undefined,
+								 	'damageType': undefined,
 									'crittable': false,
+									'coefficients': [],
+									'effects': [],
+									'formulas': [],
+									'sanitizedTooltip': '',
 									'tickDamage': 0,
 									'tickDuration': 0,
 									'tickRate': 0,
 									'animationLockout': 0,
+									'baseLockout': 0,
 									'lastCast': 0,
 									'nextAvailable': 0,
 									'abilityLockout': 0,
 									'stunDuration': 0,
-									'debuffs': []
+									'debuffs': [],
+									'abilityLevel': 0
 								},		
 							},
 			}
@@ -583,12 +653,41 @@ angular.module('services.championDpsCalculator', ['models.items', 'models.champi
 		function createActionList(champion, base) {
 				var actions = champion.actions;
 				angular.extend(actions.autoAttack, getAbilityAttributes(champion, champion.actions.autoAttack, true));
-				// angular.forEach(champion.actions, function(ability, idx) {
-				//	angular.extend(champion.actions)
-				// 	angular.extend(champions[idx], createAction(ability))
-				// });
-				// });
+				angular.forEach(base.abilities, function(ability, idx) {
+					
+					// angular.extend(champion.actions)
+					angular.extend(actions, createAction(champion, ability, idx + 1))
+				});
 				return actions;
+		}
+
+		function createAction(champion, ability, index) {
+			result = {};
+			actionName = 'ability' + index.toString();
+			action = 	{
+									'name': ability.name,
+									'crittable': false, // make function to check spell specifically against enumerated list
+									'coefficients': ability.coefficients,
+									'effects': ability.effect,
+									'formulas': ability.formulas,
+									'damageFormula': ability.damageFormula,
+									'damageType': ability.damageType,
+									'initialDamage': 0,
+									'tickDamage': 0,
+									'tickDuration': 0,
+									'tickRate': 0,
+									'animationLockout': 0,
+									'lastCast': 0,
+									'nextAvailable': 0,
+									'abilityLockout': 0,
+									'stunDuration': 0,
+									'debuffs': [],
+									'baseLockout': ability.cooldown[2],
+									'abilityLevel': 3,
+									'image': ability.image.full
+								}
+			result[actionName] = getAbilityAttributes(champion, action, true);
+			return result;
 		}
 
 		function getAbilityAttributes(champion, ability, initialSetup) {
@@ -596,7 +695,7 @@ angular.module('services.championDpsCalculator', ['models.items', 'models.champi
 			var abilityLockout = calculateAbilityLockout(champion.stats, ability);
 
 			var lastCast = initialSetup ? 0 : ability.lastCast;
-			var nextAvailable = initialSetup ? 0 : calculateAbilityNextAvailablity(ability, abilityLockout);
+			var nextAvailable = initialSetup ? 0 : calculateAbilityNextAvailability(ability, abilityLockout);
 
 			// TODO: implement per champion ability and auto attack animation times
 			var animationLockout = calculateAnimationLockout(champion, ability);
@@ -604,23 +703,31 @@ angular.module('services.championDpsCalculator', ['models.items', 'models.champi
 			
 			// return ability
 			return {
-														 'name': ability.name,
-														 'crittable': ability.crittable,
-														 'initialDamage': damage,
-														 'tickDamage': 0,
-														 'tickDuration': 0,
-														 'tickRate': 0,
-														 'animationLockout': animationLockout,
-														 'lastCast': lastCast,
-														 'nextAvailable': nextAvailable,
-														 'abilityLockout': abilityLockout,
-														 'stunDuration': stunDuration,
-														 'debuffs': []
+								'name': ability.name,
+								'crittable': ability.crittable,
+								'coefficients': ability.coefficients,
+								'effects': ability.effects,
+								'formulas': ability.formulas,
+								'damageFormula': ability.damageFormula,
+								'damageType': ability.damageType,
+								'initialDamage': damage,
+								'tickDamage': 0,
+								'tickDuration': 0,
+								'tickRate': 0,
+								'animationLockout': animationLockout,
+								'lastCast': lastCast,
+								'nextAvailable': nextAvailable,
+								'abilityLockout': abilityLockout,
+								'baseLockout': ability.baseLockout,
+								'stunDuration': stunDuration, // roll into debuffs
+								'debuffs': [],
+								'abilityLevel': 3, // change to user defined value
+								'image': ability.image
 							};
 		}
 							
 
-		function calculateAbilityNextAvailablity(ability, lockout) {
+		function calculateAbilityNextAvailability(ability, lockout) {
 			ability.nextAvailable = currentTime + lockout;
 		}
 
@@ -636,21 +743,111 @@ angular.module('services.championDpsCalculator', ['models.items', 'models.champi
 		// the crit damage based on % of crit chance
 		function calculateAbilityDamage(stats, ability) {
 			// TODO: add 
-			var roll = Math.floor(Math.random() * (101 - 1) + 1);
-			var baseDamage = stats.baseAttackdamage + stats.bonusAttackdamage;
-			var critDamage = (stats.baseAttackdamage + stats.bonusAttackdamage) * (stats.baseCritdamage + stats.bonusCritdamage);
-			var critChance = stats.baseCrit + stats.bonusCrit;
-			if (roll > (critChance * 100)) {
-				critDamage = 0;
+			var baseDamage = 0;
+			if(ability.name == 'autoAttack') {
+				var roll = Math.floor(Math.random() * (101 - 1) + 1);
+				baseDamage = stats.baseAttackdamage + stats.bonusAttackdamage;
+				var critDamage = (stats.baseAttackdamage + stats.bonusAttackdamage) * (stats.baseCritdamage + stats.bonusCritdamage);
+				var critChance = stats.baseCrit + stats.bonusCrit;
+				if (roll > (critChance * 100)) {
+					critDamage = 0;
+				}
+			} else {
+				if (ability.damageFormula !== null) {
+					baseDamage = applyFormula.call(ability, stats, getIndexFromString("formula".length, ability.damageFormula));
+				}
 			}
-			return ability.crittable ? baseDamage + critDamage : baseDamage;
+			return ability.crittable ? baseDamage + critDamage : baseDamage;	
+		}
+
+		function applyFormula(championStats, formulaIndex) {
+			var elements = [];
+			var baseDamage = 0;
+			var that = this;
+			this.formulas[formulaIndex] ? elements = this.formulas[formulaIndex].split('+') : undefined;
+			angular.forEach(elements, function(element) {
+				baseDamage += getFormulaElementValue(that, championStats, element);
+			});
+			return baseDamage;
+		}
+
+		function getFormulaElementValue(ability, championStats, element) {
+			var value = 0;
+			var coefficient = undefined;
+			var elementType = getElementTypeFromString(element);
+			if(elementType == 'effects') {
+				value = getEffectValue(ability.effects, [getIndexFromString(1, element)], ability.abilityLevel )
+			} else {
+				coefficient = _.find(ability.coefficients, function(coefficient) {
+					return coefficient.key == element;
+				})
+				if (coefficient) {
+					value = handleCoefficientCalculations(coefficient, championStats, ability.abilityLevel)
+				} else {
+					value = 0;
+				}
+			}
+			return value;
+		}
+
+		// TODO: Add the unique scenario handling, handle Karma, change Heimerdinger enumeration
+		function handleCoefficientCalculations(coefficient, championStats, abilityLevel) {
+			var value = 0;
+			switch (coefficient['link']) {
+			  case 'spelldamage':
+			  	value = coefficient['coeff'][0] * championStats.bonusAbilitypower;
+			    break;
+			  case 'attackdamage':
+			  	value = coefficient['coeff'][0] * (championStats.baseAttackdamage + championStats.bonusAttackdamage);
+				  break;
+			  case 'bonusattackdamage':
+				  value = coefficient['coeff'][0] * championStats.bonusAttackdamage;
+			    break;
+			  default:
+				  break;
+			}
+			return value
+		}
+
+		function getEffectValue(effects, effectIndex, abilityLevel) {
+			if(effects[effectIndex].length >= abilityLevel) {
+				return effects[effectIndex][abilityLevel - 1];
+			}
+			return undefined;
+		}
+
+		function getElementTypeFromString(text) {
+			var elementType = undefined;
+			switch (text[0]) {
+			  case 'a':
+			  	elementType = 'coefficients';
+			    break;
+			  case 'e':
+			  	elementType = 'effects';
+				  break;
+			  case 'f':
+				  elementType = 'coefficients';
+			    break;
+			  default:
+				  break;
+			}
+			return elementType;
+		}
+
+		function getIndexFromString(startIdx, text) {
+			return parseInt(text.substr(startIdx));
 		}
 
 		// TODO: Setup to use function to find delay based on ability
 		// CURRENTLY ONLY SETS A DELAY FOR AUTO ATTACKS
 		function calculateAbilityLockout(stats, ability) {
-			var delay = 1.0 / stats.attackspeed;
-			return delay * 10;
+			delay = 0;
+			if (ability.name == 'autoAttack') {
+				delay = 1.0 / stats.attackspeed;
+			} else {
+				delay = ability.baseLockout * (1 - stats.bonusCooldownreduction);
+			}
+			return delay * 10;	
 		}
 
 		function calculatePercentDelayRemaining(ability) {

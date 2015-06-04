@@ -352,6 +352,7 @@ class RiotApiHandler
 	def seed_me_seymour_from_api()
 		seed_data = {}
 		champion_data = handle_request("#{get_champions_url('na')}#{add_params({'champData' => 'all'})}")
+		puts 'champion data received from RIOT'
 		seed_data['champions'] = get_resources_from_api(JSON.parse(champion_data.body))
 		seed_data['champions'].each do |champion|
 			image = champion.delete("image")
@@ -369,7 +370,6 @@ class RiotApiHandler
 				spell = modify_spell(spell, champion['name'])
 				coefficients = spell.delete('coefficients')
 				spell.merge!({'champion_id' => champ.id})
-				puts spell
 				# spell.delete('effect')
 				ability = Ability.create(spell)
 				ability.create_image(image)
@@ -407,13 +407,14 @@ class RiotApiHandler
 		spell['damageType'] = parse_damage_type(spell["sanitizedTooltip"])
 		# cost[spell['costType'].downcase] = cost[spell['costType'].downcase] ? cost[spell['costType'].downcase] + "," + spell['name'] : spell['name']
 		sentences = get_sentences_with_elements(spell['sanitizedTooltip'])
-
 		sentences.each do |sentence|
-			formulas = rewrite_formulas(get_formulas(sentence[0]))
+			rewrite_formulas(get_formulas(sentence[0])).each do |formula|
+				formulas << formula
+			end
 		end
-
 		rewrite_tooltip!(spell['tooltip'], formula_count)
 		rewrite_tooltip!(spell['sanitizedTooltip'], formula_count)
+		spell['damageFormula'] = parse_damage_formula(spell["sanitizedTooltip"])
 		spell['range'] = modify_range(spell['range'])
 		formula_count += formulas.length
 		new_formulas = rewrite_formulas(get_formulas(spell['resource']))
@@ -545,9 +546,19 @@ class RiotApiHandler
 #                "tooltip": "Aatrox takes flight and slams down at a targeted location, dealing {{ e1 }}<span class=\"colorF88017\"> (+{{ a1 }})<\/span> physical damage to all nearby enemies and knocking up targets at the center of impact for {{ e5 }} second."
 #             },
 
+	def parse_damage_formula(text)
+		damage_formula = nil
+		my_custom_regex = /(formula\d)(?!formula\d).?([Bb]onus|)\s([Pp]hysical|[mM]agic|[mM]agical|[tT]rue)\s([dD]amage)/
+		matched_text = text.match(my_custom_regex)
+		unless matched_text.nil? 
+			damage_formula =  matched_text.to_a[1].downcase
+		end
+		damage_formula
+	end
+
 	def parse_damage_type(text)
 		damage_type = nil
-		my_custom_regex = /\{\{\s[efa]\d\s\}\}.{0,30}([Bb]onus|)\s([Pp]hysical|[mM]agic|[mM]agical|[tT]rue)\s([dD]amage)/
+		my_custom_regex = /\{\{\s[efa]\d\s\}\}(?!\{\{\s[efa]\d\s\}\}).?([Bb]onus|)\s([Pp]hysical|[mM]agic|[mM]agical|[tT]rue)\s([dD]amage)/
 		matched_text = text.match(my_custom_regex)
 		unless matched_text.nil? 
 			damage_type =  matched_text.to_a[-2].downcase

@@ -73,7 +73,7 @@ angular.module('championCalculator', [
 		//};
 	}])
 
-	.controller('ChampionComparisonController', ['ChampionComparisonModel', 'ItemsModel', 'ChampionsModel', 'ChampionDpsCalculator', function championComparisonController(ChampionComparisonModel, ItemsModel, ChampionsModel, ChampionDpsCalculator){
+	.controller('ChampionComparisonController', ['ChampionComparisonModel', 'ItemsModel', 'ChampionsModel', 'ChampionDpsCalculator', '$scope', function championComparisonController(ChampionComparisonModel, ItemsModel, ChampionsModel, ChampionDpsCalculator, $scope){
 		var championComparisonController = this;
 		championComparisonController.getChampionLevel = ChampionComparisonModel.getChampionLevel;
 		championComparisonController.setChampionLevel = ChampionComparisonModel.setChampionLevel;
@@ -97,6 +97,14 @@ angular.module('championCalculator', [
 		championComparisonController.calculateDps = ChampionComparisonModel.calculateDpsInfo;
 		championComparisonController.deselectChampion = ChampionComparisonModel.resetChampionComparison;
 		ChampionComparisonModel.makeSureGraphsFilled();
+		$scope.$on("$destroy", function(){
+	        cleanup();
+	    });
+
+		function cleanup() {
+			ChampionComparisonModel.removeChart(0);
+			ChampionComparisonModel.removeChart(1);
+		}
 	}])
 
 	.controller('ItemSelectorController', ['items', 'ItemsModel', 'ChampionComparisonModel', function itemSelectorController(items, ItemsModel, ChampionComparisonModel){
@@ -136,15 +144,11 @@ angular.module('championCalculator', [
 		championSelectorController.selectChampion = function(champion) {
 
 		
-			ChampionsModel.getChampion(ChampionsModel.getChampionCleanName(champion));
+			ChampionsModel.getChampion(ChampionsModel.getChampionCleanName(champion)).then(ChampionComparisonModel.championSelected(champion));
 
 			// if (ChampionComparisonModel.comparisonFilled(0) && ChampionComparisonModel.comparisonFilled(1)) {
 			// 	ChampionComparisonModel.removeCurrentSelectedComparison();	
 			// }
-
-			ChampionComparisonModel.championSelected(champion);
-			
-			
 		};
 
 		// TODO: Move this code to a directive no reason to be in a controller!!

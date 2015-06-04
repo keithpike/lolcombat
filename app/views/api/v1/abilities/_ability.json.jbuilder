@@ -19,7 +19,7 @@ json.resource								ability.resource
 json.sanitizedDescription		ability.sanitizedDescription
 json.sanitizedTooltip				ability.sanitizedTooltip
 json.damageType						 	ability.damageType
-
+json.damageFormula				 	ability.damageFormula
 
 json.set! :image do
 	json.partial!('api/v1/images/image', image: ability.image) unless ability.image.nil?
