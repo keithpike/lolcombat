@@ -110,7 +110,7 @@ angular.module('models.champions', [])
 					function findChampion(name) {
 						// loop over champions and return champion that matches or nil
             return _.find(champions, function(champion) {
-              return champion.name == name;
+              return champion.name == name && typeof champion.splash != "undefined";
             });
 					}
 					model.getChampion(championName)
