@@ -10,7 +10,7 @@
 				data-html='true'
 				data-content='<div class="championTooltipContainer"><span class="championTooltipName">{{ championsController.getName(champion) }}</span></br><span class="championTooltipTitle">{{ championsController.getTitle(champion) }}</span></br></br><span class="championTooltipBlurb">{{ championsController.getBlurb(champion) }}</span></div>'
 				bs-popover>
-					<img class='resize' ng-src='{{ ::championsController.getImage(champion) }}'>
+					<img class='resize' ng-src="{{ ::championsController.getImage(champion) || '//:0'}}">
 					</img>
 				</div>
 				<span class='championName' ng-bind='championsController.getName(champion)'</span>

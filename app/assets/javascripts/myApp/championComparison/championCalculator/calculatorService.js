@@ -18,10 +18,39 @@ angular.module('services.championDpsCalculator', ['models.items', 'models.champi
 			return simulateSimpleDps(firstChampion, secondChampion, timeframe);
 		};
 
-		// model.test = function(champions, items, levels) {
-		// 	model.getDpsInfo(champions, items, levels, 10);
-		// 	console.log(calculateAfterResistDamageMultiplier(150, 26, .2, 25, .2));
-		// };
+		model.test = function() {//function(champions, items, levels) { 
+	    var root = angular.element(document.getElementById('test'));
+
+	    var watchers = [];
+
+	    var f = function (element) {
+	        angular.forEach(['$scope', '$isolateScope'], function (scopeProperty) { 
+	            if (element.data() && element.data().hasOwnProperty(scopeProperty)) {
+	                angular.forEach(element.data()[scopeProperty].$$watchers, function (watcher) {
+	                    watchers.push(watcher);
+	                });
+	            }
+	        });
+
+	        angular.forEach(element.children(), function (childElement) {
+	            f(angular.element(childElement));
+	        });
+	    };
+
+	    f(root);
+
+	    // Remove duplicate watchers
+	    var watchersWithoutDuplicates = [];
+	    angular.forEach(watchers, function(item) {
+	        if(watchersWithoutDuplicates.indexOf(item) < 0) {
+	             watchersWithoutDuplicates.push(item);
+	        }
+	    });
+
+	    console.log("watchers without duplicates " + watchersWithoutDuplicates.length.toString());
+			// model.getDpsInfo(champions, items, levels, 10);
+			// console.log(calculateAfterResistDamageMultiplier(150, 26, .2, 25, .2));
+		};
 
 		function setupChampion(champion, items, level, id) {
 			var newChampion = {};
@@ -421,9 +450,9 @@ angular.module('services.championDpsCalculator', ['models.items', 'models.champi
 		}
 		
 		// deals with floating points, perhaps I should modify this for consistancy
-		function sortLowToHigh(a, b) {
-			if (typeof a == 'undefined' || typeof b == 'undefined') { return 0;}
-		 	return a.activationTime - b.activationTime;
+		function sortLowToHigh(firstElement, secondElement) {
+			if (typeof firstElement == 'undefined' || typeof secondElement == 'undefined') { return 0;}
+		 	return firstElement.activationTime - secondElement.activationTime;
 		};
 
 		// TODO calculate for tickDamage as well as initial damage

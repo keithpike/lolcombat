@@ -6,6 +6,7 @@
 	</title>
   <%= stylesheet_link_tag    'application', media: 'all' %>
   <%= csrf_meta_tags %>
+ 	<%= javascript_include_tag 'application', defer: true %>
 
 </head>
 <body>
@@ -26,7 +27,5 @@
 		try {document.addEventListener('DOMContentLoaded', $buo_f, false)}
 		catch(e) {window.attachEvent('onload', $buo_f)}
 	</script>
- 	<%= javascript_include_tag 'application' %>
-
 </html>
 

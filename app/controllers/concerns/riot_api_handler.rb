@@ -135,6 +135,7 @@ class RiotApiHandler
 		results
 	end
 
+
 	def get_image_path_by_data_type(data_type)
 			case(data_type)
 			when "champion"
@@ -149,6 +150,8 @@ class RiotApiHandler
 				'https://s3-us-west-1.amazonaws.com/lolcomparitor/Images/sprite/'
 			when "ability"
 				'https://s3-us-west-1.amazonaws.com/lolcomparitor/Images/ability/'
+			when "splash"
+				'https://s3-us-west-1.amazonaws.com/lolcomparitor/Images/splash/'
 			else
 				[]
 			end
@@ -337,7 +340,7 @@ class RiotApiHandler
 
 			a = Champion.create(champion)
 			a.create_image(image)
-			splash_path = "https://s3-us-west-1.amazonaws.com/lolcomparitor/Images/splash/#{get_clean_name(a.name)}_0.png"  
+			splash_path = "#{get_image_path_by_data_type('splash')}#{get_clean_name(a.name)}_0.png"  
 			Splash.create({"champion_id" => a.id, "path" => splash_path})
 		end
 		seed_data['items'] = get_resources_from_api_test(path + '/items.json')
@@ -361,7 +364,7 @@ class RiotApiHandler
 			champion.merge!({'clean_name' => clean_name})
 			champ = Champion.create(champion)
 			champ.create_image(image)
-			splash_path = "https://s3-us-west-1.amazonaws.com/lolcomparitor/Images/splash/#{clean_name}_0.png"  
+			splash_path = "#{get_image_path_by_data_type('splash')}#{clean_name}_0.png"  
 			Splash.create({"champion_id" => champ.id, "path" => splash_path})
 			spells.each do |spell|
 				image = spell.delete('image')
@@ -397,7 +400,6 @@ class RiotApiHandler
 		spell.delete('altimages')
 		spell.delete('leveltip')
 		spell.delete('rangeBurn')
-		spell.delete('effectBurn')
 		spell.delete('image')
 		spell['resource'] = 'No Cost' if spell['resource'].nil? ||
 																		 spell['resource'] == 'Passive ' ||
@@ -441,10 +443,9 @@ class RiotApiHandler
 
 	def modify_spell_variables(vars, champion_name)
 		if vars
-			# puts vars.inspect
 			vars.each do |var|
 				var.keys.each do |key|
-					unless key == 'link' || key == 'coeff' || key == 'key'
+					unless key_variable_wanted?(key)
 						var.delete(key)
 					end
 				end
@@ -452,6 +453,12 @@ class RiotApiHandler
 			end
 		end
 		vars
+	end
+
+	def key_variable_wanted?(key)
+		key == 'link' ||
+		key == 'coeff' ||
+		key == 'key'
 	end
 
 	def handle_special_links(link, champion)
@@ -619,7 +626,7 @@ class RiotApiHandler
 			resource.sub!('fury a second','fury')
 			resource.sub!('health per sec', 'health')
 			resource.sub!(/builds\s\d\sferocity/, 'ferocity')
-			resource.sub!('nocost or 50 fury', 'nocostorfifty')
+			resource.sub!('nocost or 50 fury', 'nocostorfifty') # change to fury?
 			resource.sub!('initial mana cost per second', 'mana')
 			resource.sub!('1 seed', 'seed')
 			resource.sub!('essence of shadow', 'essenceofshadow')

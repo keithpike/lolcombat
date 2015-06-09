@@ -54,9 +54,9 @@ angular.module('championInfo', [
 				resolve: {
 
 					championData: ['$stateParams', 'ChampionsModel', function($stateParams, ChampionsModel){
-						return ChampionsModel.getChampion($stateParams.key)
+						return ChampionsModel.asyncGetChampionByCleanName($stateParams.key)
 							.then(function(result){
-								ChampionsModel.setCurrentChampion(ChampionsModel.getChampionName(result))
+								ChampionsModel.setCurrentChampion(ChampionsModel.getChampionCleanName(result));
 								return result;
 							});
 					}]
@@ -76,6 +76,7 @@ angular.module('championInfo', [
 		var championsController = this;
 
 		championsController.championsData = championsData;
+		championsController.getAbilities = ChampionsModel.getChampionAbilities;
 		championsController.getBlurb = ChampionsModel.getChampionBlurb;
 		championsController.getCurrentChampion = ChampionsModel.getCurrentChampion;
 		championsController.getCurrentChampionImage = ChampionsModel.getCurrentChampionImage;

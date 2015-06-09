@@ -80,7 +80,7 @@ angular.module('championCalculator', [
 		championComparisonController.firstChampionLevel = ChampionComparisonModel.getChampionLevel;
 		championComparisonController.secondChampionLevel = ChampionComparisonModel.getChampionLevel;
 		championComparisonController.timeframe = ChampionComparisonModel.timeframe;
-		championComparisonController.test = ChampionDpsCalculator.test;
+		championComparisonController.test = ChampionsModel.replaceTooltipFormulas;
 		championComparisonController.comparisonFilled = ChampionComparisonModel.comparisonFilled;
 		championComparisonController.selectComparison = ChampionComparisonModel.selectComparison;
 		championComparisonController.getComparisonItems = ChampionComparisonModel.getComparisonItems;
@@ -145,8 +145,8 @@ angular.module('championCalculator', [
 		// TODO: modify so selected champion is replaced without having to remove champion specifically
 		championSelectorController.selectChampion = function(champion) {
 			ChampionsModel.asyncGetDetailedChampionByName(ChampionsModel.getChampionCleanName(champion)).then(function() {
-							ChampionComparisonModel.championSelected(champion);
-						});
+				ChampionComparisonModel.championSelected(champion);
+			});
 				
 			// ChampionsModel.getChampion(ChampionsModel.getChampionCleanName(champion)).then(ChampionComparisonModel.championSelected(champion));
 			// if (ChampionComparisonModel.comparisonFilled(0) && ChampionComparisonModel.comparisonFilled(1)) {
@@ -200,7 +200,7 @@ angular.module('championCalculator', [
         // Firefox
         document.getElementById('championSelectorContainer').addEventListener("DOMMouseScroll", mouseScrollHorizontally, false);
 	    } else {
-        // IE 6/7/8
+        // IE 6/7/8 should remove not supporting older browsers
         document.getElementById('championSelectorContainer').attachEvent("onmousewheel", mouseScrollHorizontally);
 	    }
 			$scope.$on("$destroy", function(){
@@ -218,10 +218,9 @@ angular.module('championCalculator', [
 	        // Firefox
 	        document.getElementById('championSelectorContainer').removeEventListener("DOMMouseScroll", mouseScrollHorizontally);
 		    } else {
-		    	// IE 6/7/8
+		    	// IE 6/7/8 should remove...not supporting older browsers
 	        document.getElementById('championSelectorContainer').detachEvent("onmousewheel", mouseScrollHorizontally);
-		    }
-       
+		    }  
 			}
 		};
 

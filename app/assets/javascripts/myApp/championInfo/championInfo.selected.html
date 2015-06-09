@@ -16,6 +16,16 @@
 				</div>
 				<div class='championStatsContainer' ng-bind-html="championsController.getStats(championsController.getCurrentChampion())">
 				</div>
+
+				<div class='championAbilityContainer' ng-repeat="ability in championsController.getAbilities(championsController.getCurrentChampion())">
+					<div class='championAbilityImageContainer'>
+						<img class='championAbilityImage' ng-src='{{ ability.image.full }}'></img>
+					</div>
+					<div class='championSanitizedTooltipContainer'>
+						<p class='championSanitizedTooltip' ng-bind="ability.cleanSanitizedTooltip">
+						</p>
+					</div>
+				</div> 
 				<div class='championLoreContainer' ng-bind-html="championsController.getLore(championsController.getCurrentChampion())">
 				</div>
 			</div>

@@ -2,7 +2,7 @@
 	<div class= ng-repeat='img in itemSelectionController.itemImages track by $index'>
 		<ul>
 			<li class='list-unstyled'>
-				<img ng-src='{{ img }}'/>
+				<img ng-src="{{ img || '//:0'}}"/>
 			</li>
 		</ul>
 	</div>

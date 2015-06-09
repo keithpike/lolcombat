@@ -5,11 +5,11 @@ json.tooltip					 			ability.tooltip
 # json.leveltip_effect				ability.leveltip_effect
 json.maxrank								ability.maxrank
 json.cooldown								ability.cooldown
-# json.cooldownBurn						ability.cooldownBurn
+json.cooldownBurn						ability.cooldownBurn
 json.cost						 				ability.cost
-# json.costBurn								ability.costBurn
+json.costBurn								ability.costBurn
 json.effect									ability.effect
-# json.effectBurn							ability.effectBurn
+json.effectBurn							ability.effectBurn
 json.costType								ability.costType
 json.range						 			ability.range
 # json.rangeBurn							ability.rangeBurn

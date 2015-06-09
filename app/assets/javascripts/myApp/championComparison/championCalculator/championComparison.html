@@ -5,6 +5,7 @@
 			class='championComparisonWrapper col-md-6'>
 				<div hul-champion-comparison
 					class='championComparisonLeft'
+					ng-cloak
 					comparison-index='0'
 					champion-level='championComparisonController.firstChampionLevel(comparisonIndex)'
 					select-comparison='championComparisonController.selectComparison(comparisonIndex)'
@@ -27,6 +28,7 @@
 		<div
 			class='championComparisonWrapper col-md-6'>
 				<div hul-champion-comparison
+					ng-cloak
 					class='championComparisonRight'
 					comparison-index='1'
 					champion-level='championComparisonController.secondChampionLevel(comparisonIndex)'
@@ -48,10 +50,10 @@
 				</div>
 		</div>
 	</div>
-	<!-- <div style='float:right'>
+<!-- 	<div style='float:right'>
 		<div>{{championComparisonController.timeframe}}</div>
 		<div>{{championComparisonController.firstChampionLevel}}</div>
 		<div>{{championComparisonController.secondChampionLevel}}</div>
-		<input type='button' value='calculate' ng-click='championComparisonController.calculateDps()'>
+		<input type='button' value='calculate' ng-click='championComparisonController.test(championComparisonController.getComparisonChampionByIndex(0))'>
 	</div> -->
 </div>

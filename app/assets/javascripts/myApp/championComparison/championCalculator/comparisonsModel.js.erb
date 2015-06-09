@@ -360,10 +360,20 @@ angular.module('models.championComparisons', ['services.championDpsCalculator'])
 		    credits: {
 		    	enabled: false
 		    },
-
+				plotOptions: {
+					series: {
+						marker: {
+		          // enabled: true,
+		          // symbol: 'circle',
+	            radius: 3
+	          }	
+					}
+		    	
+			  },
 		    series: [{
 		      data: data,
-		      showInLegend: false
+		      showInLegend: false,
+			    
 		    }],
 
 		    tooltip: {

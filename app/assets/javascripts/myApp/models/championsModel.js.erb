@@ -39,11 +39,16 @@ angular.module('models.champions', [])
 		}
 
 		function extractDetailed(result) {
-			return result.data
+			return result.data;
 		}
 
 		function cacheDetailedChampion(result) {
-			return addChampion(extractDetailed(result));
+			var champion = extractDetailed(result);
+			if(championExist(champion) && champions[champion.champion_id].abilities == undefined) {
+				champion = getCleanSanitizedAbilityTooltips(champion);
+				champion = addChampion(champion);
+			}
+			return champion;
 		}
 
 		function addChampion(champion) {
@@ -55,6 +60,11 @@ angular.module('models.champions', [])
 				}
 				return champion;
 			}
+		}
+
+		function getCleanSanitizedAbilityTooltips(champion) {
+			champion.abilities = createCleanTooltipFormulas(champion);
+			return champion;
 		}
 
 		function championExist(champion) {
@@ -70,7 +80,7 @@ angular.module('models.champions', [])
     	return model.asyncGetChampionByCleanName(championKey).then(function(champion){
     		currentChampion = champion;
     	});
-    }
+    };
 
     // no longer called, perhaps I'll have a use for it later
     // Parent view resolve and child resolve race condition
@@ -127,17 +137,12 @@ angular.module('models.champions', [])
 					function findChampion(name) {
 						// loop over champions and return champion that matches or nil
             return _.find(champions, function(champion) {
-              return champion.name == name;
+              return champion.key == name;
             });
 					}
-					if(champions) {
-						resolve(findChampion(championName)); 
-					} else {
-						model.getChampions()
-							.then(function() {
-								resolve(findChampion(championName));
-							});
-					}
+					model.getChampion(championName).then(function() {
+						resolve(findChampion(championName));
+					});
 				}, 0);
 			});
 		};
@@ -204,6 +209,11 @@ angular.module('models.champions', [])
 
     model.getChampionEnemyTips = function(champion) {
     	return champion ? champion.enemytips : '';
+    };
+
+    // should make another model for abilities
+    model.getChampionAbilities = function(champion) {
+    	return champion ? champion.abilities : '';
     };
 
     model.getChampionStatsHtml = function(champion) {
@@ -275,6 +285,106 @@ angular.module('models.champions', [])
 	       'attackspeed_per_level': 	champion.attackspeed_per_level
     	};
     };
+
+    function createCleanTooltipFormulas(champion) {
+    	angular.forEach(champion.abilities, function(ability) {
+    		ability.cleanSanitizedTooltip = modifyTooltip(ability);
+    	});
+    	return champion.abilities
+    }
+
+    function modifyTooltip(ability) {
+    	var resultText = ability.sanitizedTooltip;
+			var elements = [];
+			var myCustomRegex = /\(formula\d/;
+			var matchedText = resultText.match(myCustomRegex);
+			while(matchedText) {
+				resultText = resultText.replace(matchedText[0] + ")", getFormulaText(	ability, getIndexFromString("(formula".length, matchedText[0])))
+				matchedText = resultText.match(myCustomRegex);
+			}
+			return resultText;
+    }
+
+    function getFormulaText(ability, formulaIndex) {
+			var elements = [];
+			var resultText = '';
+			elements = ability.formulas[formulaIndex] ? ability.formulas[formulaIndex].split('+') : undefined;
+			angular.forEach(elements, function(element) {
+				resultText = resultText + getFormulaElementText(ability, element);
+			});
+			return resultText;
+		}
+
+		function getFormulaElementText(ability, element) {
+			var resultText = '';
+			var coefficient = undefined;
+			var elementType = getElementTypeFromString(element);
+			if(elementType == 'effects') {
+				resultText = ability.effectBurn[getIndexFromString(1, element)];
+			} else {
+				coefficient = _.find(ability.coefficients, function(coefficient) {
+					return coefficient.key == element;
+				})
+				if (coefficient) {
+					resultText = getCoefficientTextBasedOnLinkType(coefficient)
+				} else {
+					resultText = '(coefficient not found)';
+				}
+			}
+			resultText = resultText == undefined ? '(effect not found)' : resultText;
+			return resultText;
+		}
+
+		// TODO: Add the unique scenario handling, handle Karma, change Heimerdinger enumeration
+		function getCoefficientTextBasedOnLinkType(coefficient) {
+			var coefficientText = getCoefficientText(coefficient['coeff']);
+			var resultText = "(+" + coefficientText;
+			switch (coefficient.link) {
+			  case 'spelldamage':
+			  	resultText = resultText + ' Ability Power)';
+			    break;
+			  case 'attackdamage':
+			  	resultText = resultText + ' Attack Damage)';
+				  break;
+			  case 'bonusattackdamage':
+				  resultText = resultText +  ' Bonus Attack Damage)';
+			    break;
+			  default:
+			  	resultText = '(coefficient type not handled yet)';
+				  break;
+			}
+			return resultText;
+		}
+
+		function getCoefficientText(coefficient) {
+			if(coefficient.length > 1) {
+				return coefficient.join('/');
+			} else {
+				return (coefficient[0] * 100).toString() + "%";
+			}
+		}
+
+		function getElementTypeFromString(text) {
+			var elementType = undefined;
+			switch (text[0]) {
+			  case 'a':
+			  	elementType = 'coefficients';
+			    break;
+			  case 'e':
+			  	elementType = 'effects';
+				  break;
+			  case 'f':
+				  elementType = 'coefficients';
+			    break;
+			  default:
+				  break;
+			}
+			return elementType;
+		}
+
+		function getIndexFromString(startIdx, text) {
+			return parseInt(text.substr(startIdx));
+		}
 
     model.getChampionSpriteStyle = function(champion) {
     	return {
