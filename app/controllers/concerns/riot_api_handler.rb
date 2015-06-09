@@ -178,7 +178,7 @@ class RiotApiHandler
 			name.slice!(/['\\.]/)
 			name.capitalize!	
 		end
-		clean_name.join("")		
+		clean_name.join("")
 	end
 
 	public
