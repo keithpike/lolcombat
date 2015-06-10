@@ -24,27 +24,58 @@
 					<input class='rawCheck clear' type="checkbox" name="RawDPS" value="car">
 				</div> -->
 			</div>
-		</div>
-		<div class='halfComparisonWrapper bottomHalfComparisonWrapper'>
-			<div class='inputsWrapper'>
-				<label class='championComparisonInputLabel clear' for=TimeFrame>TimeFrame (seconds)</label> 
-				<input ng-model='timeframe' class='timeFrameSlider' type='range' value='{{ timeframe }}' step='1' min='1' max='60' name='TimeFrame' ng-change='{{ setTimeframe({ seconds: timeframe }) }}'>
-				<output class='championComparisonOutputText' name="TimeFrameValue">{{ timeframe }}</output>
-				<label class='championComparisonInputLabel clear' for=ChampionLevel>Champion Level</label> 
-				<input ng-model='championLevel' class='timeFrameSlider' type='range' value='{{ championLevel }}' step='1' min='1' max='18' name='ChampionLevel' ng-change='{{ setChampionLevel({ comparisonIndex: comparisonIndex, level: championLevel }); championLevel = getChampionLevel({comparisonIndex: comparisonIndex}); }}'>
-				<output class='championComparisonOutputText' name="ChampionLevelValue">{{ championLevel }}</output>
+			<div class='championStats'>
+				{{champion}}
 			</div>
+		</div>
+
+		<div class='halfComparisonWrapper bottomHalfComparisonWrapper'>
+			
+			<div class='inputsWrapper'>
+				
+				<label class='championComparisonInputLabel clear' for=TimeFrame>TimeFrame (seconds)</label> 
+				
+				<input ng-model='timeframe' class='timeFrameSlider' type='range' value='{{ timeframe }}' step='1' min='1' max='60' name='TimeFrame' ng-change='{{ setTimeframe({ seconds: timeframe }) }}'>
+				
+				<output class='championComparisonOutputText' name="TimeFrameValue">{{ timeframe }}</output>
+				
+				<label class='championComparisonInputLabel clear' for=ChampionLevel>Champion Level</label> 
+				
+				<input ng-model='championLevel' class='timeFrameSlider' type='range' value='{{ championLevel }}' step='1' min='1' max='18' name='ChampionLevel' ng-change='{{ setChampionLevel({ comparisonIndex: comparisonIndex, level: championLevel }); championLevel = getChampionLevel({comparisonIndex: comparisonIndex}); }}'>
+				
+				<output class='championComparisonOutputText' name="ChampionLevelValue">{{ championLevel }}</output>
+			
+			</div>
+
 			<div class='comparisonItemWrapper col-md-6'>
+				
 				<div 
 					ng-repeat='item in getComparisonItems({ comparisonIndex: comparisonIndex }) track by $index'
 					ng-class='getComparisonItemClass({itemIndex: $index, item: item })'
 					ng-click='removeItem({ itemIndex: $index, comparisonIndex : comparisonIndex })'
 					unselectable='on'
 					class='unselectable'
-					ng-style='getSpriteStyle({ item: item })'>
-				</div>
-			</div>
-		</div>
-	</div>
-</form>
+					ng-style='getSpriteStyle({ item: item })'
+					>
 
+					<div
+					class='invisibleTooltip'
+					ng-if='item'
+					data-placement='right-top'
+					data-trigger='hover'
+					data-container='body'
+					data-html='true'
+					data-content='<div class="itemTooltipContainer"><span class="itemTooltipName">{{ item.name }}</span></br><span class="itemTooltipDescription">{{ item.description }}</span></div>'
+					bs-popover>
+					
+					</div>
+
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+</form>

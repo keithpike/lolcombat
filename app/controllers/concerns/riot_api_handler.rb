@@ -381,7 +381,6 @@ class RiotApiHandler
           end
         end
       end
-
     end
     item_data = handle_request("#{get_items_url('na')}#{add_params({'itemListData' => 'all'})}")
     seed_data['items'] = get_resources_from_api(JSON.parse(item_data.body))
@@ -399,10 +398,6 @@ class RiotApiHandler
     spell.delete('leveltip')
     spell.delete('rangeBurn')
     spell.delete('image')
-    spell['resource'] = 'No Cost' if spell['resource'].nil? ||
-                                     spell['resource'] == 'Passive ' ||
-                                     spell['resource'] == 'Passive' ||
-                                     spell['resource'] == 'No Cost '
 
     spell['damageType'] = parse_damage_type(spell["sanitizedTooltip"])
     # cost[spell['costType'].downcase] = cost[spell['costType'].downcase] ? cost[spell['costType'].downcase] + "," + spell['name'] : spell['name']
@@ -611,6 +606,10 @@ class RiotApiHandler
   end
 
   def rewrite_resource(text, count)
+    spell['resource'] = 'No Cost' if spell['resource'].nil? ||
+                                     spell['resource'] == 'Passive ' ||
+                                     spell['resource'] == 'Passive' ||
+                                     spell['resource'] == 'No Cost '
     resources = text.split(/,|a+n+d+|\//)
     resources.map! do |resource|
       resource.downcase!
