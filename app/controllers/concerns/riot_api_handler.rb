@@ -606,10 +606,10 @@ class RiotApiHandler
   end
 
   def rewrite_resource(text, count)
-    spell['resource'] = 'No Cost' if spell['resource'].nil? ||
-                                     spell['resource'] == 'Passive ' ||
-                                     spell['resource'] == 'Passive' ||
-                                     spell['resource'] == 'No Cost '
+    text = 'nocost' if text.nil? ||
+                       text == 'Passive ' ||
+                       text == 'Passive' ||
+                       text == 'No Cost '
     resources = text.split(/,|a+n+d+|\//)
     resources.map! do |resource|
       resource.downcase!
